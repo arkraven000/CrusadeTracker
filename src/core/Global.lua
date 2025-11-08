@@ -17,8 +17,13 @@ It manages the overall campaign state and coordinates all subsystems.
 local Constants = require("src/core/Constants")
 local Utils = require("src/core/Utils")
 local DataModel = require("src/core/DataModel")
+local RulesConfig = require("src/core/RulesConfig")
 local CrusadePoints = require("src/crusade/CrusadePoints")
 local Experience = require("src/crusade/Experience")
+local OutOfAction = require("src/crusade/OutOfAction")
+local Notebook = require("src/persistence/Notebook")
+local Backup = require("src/persistence/Backup")
+local SaveLoad = require("src/persistence/SaveLoad")
 
 -- ============================================================================
 -- GLOBAL STATE
@@ -62,26 +67,51 @@ function onLoad(saved_data)
 
     math.randomseed(os.time())
 
+    -- Load rules configuration
+    RulesConfig.loadRulesConfig("10th")
+    Utils.logInfo("Loaded rules configuration: " .. RulesConfig.getActiveEdition() .. " Edition")
+
     if saved_data and saved_data ~= "" then
         -- Load existing campaign
-        local success, result = pcall(function()
-            local data = JSON.decode(saved_data)
-            CrusadeCampaign = data.campaign
-            NotebookGUIDs = data.notebookGUIDs or {}
-            Utils.logInfo("Campaign loaded successfully: " .. (CrusadeCampaign.name or "Unnamed"))
-        end)
+        local notebookGUIDs, campaignName = SaveLoad.processTTSLoadData(saved_data)
 
-        if not success then
-            Utils.logError("Failed to load campaign data: " .. tostring(result))
-            Utils.logWarning("Attempting to restore from last backup...")
-            -- TODO: Implement backup restoration
-            showError("Failed to load campaign. Please check logs.")
+        if notebookGUIDs then
+            NotebookGUIDs = notebookGUIDs
+            Utils.logInfo("Found notebook GUIDs for campaign: " .. (campaignName or "Unknown"))
+
+            -- Load campaign from notebooks
+            local campaign = SaveLoad.loadCampaign(NotebookGUIDs)
+
+            if campaign then
+                CrusadeCampaign = campaign
+                Utils.logInfo("Campaign loaded successfully: " .. campaign.name)
+
+                -- Initialize UI
+                createMainUI()
+                startAutosaveTimer()
+            else
+                -- Load failed, attempt recovery
+                Utils.logError("Failed to load campaign from notebooks")
+                campaign = SaveLoad.attemptRecovery(NotebookGUIDs)
+
+                if campaign then
+                    CrusadeCampaign = campaign
+                    Utils.logInfo("Campaign recovered from backup: " .. campaign.name)
+                    broadcastToAll("Campaign recovered from backup", {1, 1, 0})
+
+                    -- Initialize UI
+                    createMainUI()
+                    startAutosaveTimer()
+                else
+                    showError("Failed to load campaign. All recovery attempts failed.")
+                    return
+                end
+            end
+        else
+            Utils.logError("Failed to parse TTS save data")
+            showError("Failed to load campaign. Save data corrupted.")
             return
         end
-
-        -- Initialize UI
-        createMainUI()
-        startAutosaveTimer()
 
     else
         -- New campaign - show setup wizard
@@ -101,25 +131,19 @@ function onSave()
 
     Utils.logInfo("Saving campaign: " .. (CrusadeCampaign.name or "Unnamed"))
 
-    local saveData = {
-        campaign = CrusadeCampaign,
-        notebookGUIDs = NotebookGUIDs,
-        version = Constants.CAMPAIGN_VERSION
-    }
-
-    local jsonString = Utils.safeJSONEncode(saveData)
-    if not jsonString then
-        Utils.logError("Failed to encode save data to JSON")
-        return ""
-    end
-
-    -- Also save to notebooks for backup
+    -- Save to notebooks
     if NotebookGUIDs.core then
-        -- TODO: Implement saveToNotebook()
+        local success = SaveLoad.saveCampaign(CrusadeCampaign, NotebookGUIDs, false)
+        if not success then
+            Utils.logWarning("Failed to save to notebooks")
+        end
     end
+
+    -- Prepare TTS save data (just notebook references)
+    local ttsData = SaveLoad.prepareTTSSaveData(CrusadeCampaign, NotebookGUIDs)
 
     Utils.logInfo("Campaign saved successfully")
-    return jsonString
+    return ttsData
 end
 
 -- ============================================================================
@@ -132,6 +156,9 @@ function createNewCampaign(config)
     Utils.logInfo("Creating new campaign: " .. config.name)
 
     CrusadeCampaign = DataModel.createCampaign(config.name, config)
+
+    -- Create notebooks for data persistence
+    NotebookGUIDs = Notebook.createCampaignNotebooks(config.name)
 
     -- Create hex map if configured
     if config.mapWidth and config.mapHeight then
@@ -161,6 +188,9 @@ function createNewCampaign(config)
         supplyLimit = config.supplyLimit or Constants.DEFAULT_SUPPLY_LIMIT,
         playerCount = #(config.players or {})
     })
+
+    -- Initial save to notebooks
+    SaveLoad.saveCampaign(CrusadeCampaign, NotebookGUIDs, true)
 
     Utils.logInfo("Campaign created successfully")
 end
@@ -355,18 +385,8 @@ function autoSave()
         return
     end
 
-    Utils.logInfo("Autosaving campaign...")
-
-    CrusadeCampaign.lastAutosave = Utils.getUnixTimestamp()
-
-    -- Create backup
-    -- TODO: Implement createBackup()
-
-    -- Save to TTS save system
-    -- This will trigger onSave()
-
-    broadcastToAll("Campaign autosaved", {0, 1, 0})
-    Utils.logInfo("Autosave completed")
+    -- Delegate to SaveLoad module
+    SaveLoad.autosave()
 end
 
 -- ============================================================================
