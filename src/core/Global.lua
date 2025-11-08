@@ -25,6 +25,15 @@ local Notebook = require("src/persistence/Notebook")
 local Backup = require("src/persistence/Backup")
 local SaveLoad = require("src/persistence/SaveLoad")
 
+-- UI Modules (Phase 2)
+local UICore = require("src/ui/UICore")
+local MainPanel = require("src/ui/MainPanel")
+local CampaignSetup = require("src/ui/CampaignSetup")
+local PlayerManagement = require("src/ui/PlayerManagement")
+local Settings = require("src/ui/Settings")
+local CampaignLog = require("src/ui/CampaignLog")
+local MapView = require("src/ui/MapView")
+
 -- ============================================================================
 -- GLOBAL STATE
 -- ============================================================================
@@ -390,27 +399,90 @@ function autoSave()
 end
 
 -- ============================================================================
--- UI MANAGEMENT (Placeholder for Phase 2)
+-- UI MANAGEMENT (Phase 2)
 -- ============================================================================
 
 --- Create the main UI
 function createMainUI()
-    -- TODO: Implement in Phase 2
-    Utils.logInfo("UI creation not yet implemented (Phase 2)")
+    Utils.logInfo("Initializing UI system...")
+
+    -- Initialize UI Core
+    UICore.initialize()
+
+    -- Register UI modules
+    UICore.registerModule("campaignSetup", CampaignSetup)
+    UICore.registerModule("playerManagement", PlayerManagement)
+    UICore.registerModule("settings", Settings)
+    UICore.registerModule("campaignLog", CampaignLog)
+
+    -- Initialize modules with campaign data
+    if CrusadeCampaign then
+        MainPanel.initialize(CrusadeCampaign)
+        PlayerManagement.initialize(CrusadeCampaign)
+        Settings.initialize(CrusadeCampaign)
+        CampaignLog.initialize(CrusadeCampaign)
+
+        -- Initialize map view if map config exists
+        if CrusadeCampaign.mapConfig then
+            MapView.initialize(CrusadeCampaign)
+        end
+
+        -- Show main campaign panel
+        UICore.showPanel("mainCampaignPanel")
+    else
+        -- Show main menu
+        UICore.showPanel("mainMenuPanel")
+    end
+
+    Utils.logInfo("UI system initialized successfully")
 end
 
 --- Show campaign setup wizard
 function showCampaignSetupWizard()
-    -- TODO: Implement in Phase 2
-    Utils.logInfo("Setup wizard not yet implemented (Phase 2)")
+    Utils.logInfo("Opening campaign setup wizard...")
 
-    -- For now, create a default test campaign
-    createNewCampaign({
-        name = "Test Campaign",
-        supplyLimit = 1000,
-        mapWidth = 7,
-        mapHeight = 7
-    })
+    -- Initialize UI if not already done
+    if not UICore.initialized then
+        UICore.initialize()
+        UICore.registerModule("campaignSetup", CampaignSetup)
+    end
+
+    -- Reset wizard and show panel
+    CampaignSetup.reset()
+    UICore.showPanel("campaignSetupPanel")
+end
+
+--- Complete campaign setup from wizard
+-- @param wizardData table Data from campaign setup wizard
+function completeCampaignSetup(wizardData)
+    Utils.logInfo("Completing campaign setup...")
+
+    -- Create campaign from wizard
+    local campaign = CampaignSetup.createCampaign()
+
+    if campaign then
+        CrusadeCampaign = campaign
+
+        -- Create notebooks
+        NotebookGUIDs = Notebook.createCampaignNotebooks(campaign.name)
+
+        -- Initial save
+        SaveLoad.saveCampaign(CrusadeCampaign, NotebookGUIDs, true)
+
+        -- Initialize UI with new campaign
+        createMainUI()
+
+        -- Start autosave
+        startAutosaveTimer()
+
+        broadcastToAll("Campaign created: " .. campaign.name, {0, 1, 0})
+        Utils.logInfo("Campaign setup completed successfully")
+
+        return true
+    else
+        Utils.logError("Campaign setup failed")
+        return false
+    end
 end
 
 --- Show error message to all players
@@ -419,16 +491,26 @@ function showError(message)
     broadcastToAll("ERROR: " .. message, {1, 0, 0})
 end
 
+--- UI Callback: Handle button clicks (called from XML UI)
+-- @param player object Player who clicked
+-- @param value string Button value
+-- @param id string Button ID
+function onUIButtonClick(player, value, id)
+    UICore.onButtonClick(player, value, id)
+end
+
 -- ============================================================================
 -- EXPORTS FOR TESTING
 -- ============================================================================
 
--- Make functions available globally for testing
+-- Make functions available globally for testing and UI
 _G.CrusadeCampaign = CrusadeCampaign
 _G.createNewCampaign = createNewCampaign
 _G.addPlayer = addPlayer
 _G.addUnit = addUnit
 _G.deleteUnit = deleteUnit
 _G.createAlliance = createAlliance
+_G.onUIButtonClick = onUIButtonClick
+_G.UICore = UICore
 
 Utils.logInfo("Global script initialized")

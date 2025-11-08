@@ -45,6 +45,15 @@ DEFAULT_MAP_WIDTH = 7
 DEFAULT_MAP_HEIGHT = 7
 MAP_CENTER = {x = 0, y = 1, z = 0}
 
+-- Map Skin System (FTC-Inspired Architecture)
+HEX_GRID_BASE_HEIGHT = 1.0 -- Y position for functional hex grid zones
+MAP_SKIN_HEIGHT = 1.05 -- Y position for visual map skins (above base)
+TERRITORY_OVERLAY_HEIGHT = 1.15 -- Y position for territory control overlays (above skin)
+
+-- Map Skin Settings
+DEFAULT_MAP_SKIN = "forgeWorld" -- Default preset skin to load
+OVERLAY_ALPHA_DEFAULT = 0.4 -- Default transparency for territory overlays
+
 -- ============================================================================
 -- CAMPAIGN DEFAULTS
 -- ============================================================================
@@ -302,6 +311,11 @@ return {
     DEFAULT_MAP_WIDTH = DEFAULT_MAP_WIDTH,
     DEFAULT_MAP_HEIGHT = DEFAULT_MAP_HEIGHT,
     MAP_CENTER = MAP_CENTER,
+    HEX_GRID_BASE_HEIGHT = HEX_GRID_BASE_HEIGHT,
+    MAP_SKIN_HEIGHT = MAP_SKIN_HEIGHT,
+    TERRITORY_OVERLAY_HEIGHT = TERRITORY_OVERLAY_HEIGHT,
+    DEFAULT_MAP_SKIN = DEFAULT_MAP_SKIN,
+    OVERLAY_ALPHA_DEFAULT = OVERLAY_ALPHA_DEFAULT,
     DEFAULT_SUPPLY_LIMIT = DEFAULT_SUPPLY_LIMIT,
     SUPPLY_LIMIT_INCREASE = SUPPLY_LIMIT_INCREASE,
     STARTING_RP = STARTING_RP,

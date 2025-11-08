@@ -1,7 +1,7 @@
 # Development Status
 
 **Last Updated**: 2025-11-08
-**Current Phase**: Phase 1 - Data Persistence & Core Architecture
+**Current Phase**: Phase 2 - Campaign Setup & Basic UI
 **Progress**: ✅ **100% COMPLETE**
 
 ---
@@ -154,18 +154,199 @@
 
 ---
 
+## Phase 1.5: Map Skin System (FTC-Inspired)
+
+**Target**: 1 week | **Status**: ✅ **COMPLETE**
+
+### ✅ All Features Implemented
+
+**Community-Inspired Enhancement**: Based on FTC (For the Community) map base architecture
+
+1. **Hex Grid Base (Functional Layer)** ✅
+   - Invisible ScriptingTrigger zones for each hex
+   - Axial coordinate system with flat-top hexagons
+   - Hex-to-pixel coordinate conversion utilities
+   - Click detection and interaction handlers
+   - Optional alignment guide markers (toggleable)
+   - Neighbor detection for territory expansion
+   - Clean initialization and cleanup
+
+2. **Map Skins (Visual Layer)** ✅
+   - Preset skin library (6 themes included):
+     - Forge World Alpha (industrial)
+     - Death World Tertius (jungle)
+     - Hive Primus (urban)
+     - Drifting Hulk Mortis (space hulk)
+     - Glacius Extremis (ice world)
+     - Arrakis Wastes (desert)
+   - Custom skin support (user-created via TTS Saved Objects)
+   - Additive loading system (no scripts required)
+   - Alignment validation and snap-to-grid
+   - Persistence support (save/restore skin selection)
+
+3. **Territory Control Overlays** ✅
+   - Dynamic colored tokens showing player control
+   - Semi-transparent overlays (configurable alpha)
+   - Support for controlled, neutral, and dormant hexes
+   - Capture animations (pulse effect)
+   - Adjacent hex highlighting
+   - Bulk update system for efficiency
+
+4. **Data Model Integration** ✅
+   - Extended `createHexMapConfig()` with map skin tracking
+   - Current skin persistence
+   - Custom skin metadata storage
+   - Display option toggles (guides, overlays)
+
+5. **Constants & Configuration** ✅
+   - Layer height definitions (base: 1.0, skin: 1.05, overlays: 1.15)
+   - Default map skin setting
+   - Overlay transparency defaults
+   - Export for module access
+
+6. **Documentation** ✅
+   - Comprehensive map skin creation guide (MAP_SKIN_GUIDE.md)
+   - Technical architecture documentation (MAP_SKIN_SYSTEM.md)
+   - Step-by-step user instructions
+   - Troubleshooting and FAQ
+   - Community contribution guidelines
+
+### 📊 Phase 1.5 Metrics
+
+- **New Modules**: 3 (HexGrid, MapSkins, TerritoryOverlays)
+- **Lines of Code**: ~1,200
+- **Preset Skins**: 6 themes
+- **Documentation Pages**: 2 comprehensive guides
+- **Architecture**: 3-layer system (base, skin, overlays)
+
+### 🎯 Key Achievements
+
+**Modularity**:
+- Functional logic completely separate from visual presentation
+- Swappable map themes without data loss
+- Community content creation enabled
+
+**FTC Design Principles Applied**:
+- Base object handles all logic
+- Skins are aesthetic-only (no scripts)
+- Additive loading from Saved Objects
+- Clean separation of concerns
+
+**Community Enablement**:
+- No scripting knowledge required for skin creation
+- Clear creation guide with examples
+- Workshop/direct file sharing support
+- Custom skin loading built-in
+
+---
+
 ## Phase 2: Campaign Setup & Basic UI
 
-**Target**: 3-4 weeks | **Status**: Ready to Start
+**Target**: 3-4 weeks | **Status**: ✅ **COMPLETE**
 
-### Planned Features
+### ✅ All Features Implemented
 
-1. Campaign Setup Wizard (5-step process)
-2. Basic hex map visualization
-3. Player/faction management UI
-4. Settings panel
-5. Campaign notes panel
-6. Main floating UI panel (20% screen)
+1. **UI Core System** ✅
+   - Panel management framework
+   - UI element helper functions
+   - Notification system
+   - Module registration and delegation
+   - State management
+
+2. **Campaign Setup Wizard** ✅
+   - 5-step wizard workflow
+   - Step 1: Campaign name and settings
+   - Step 2: Map configuration (dimensions, skin selection)
+   - Step 3: Add players (name, color, faction)
+   - Step 4: Mission pack selection (optional)
+   - Step 5: Review and create
+   - Validation at each step
+   - Campaign creation integration
+
+3. **Main UI Panel** ✅
+   - Floating panel (400x600 default)
+   - Campaign overview display
+   - Quick stats (players, battles, territories)
+   - Action buttons (player management, map, log, settings)
+   - Save campaign button
+   - Auto-refresh capability
+
+4. **Player Management UI** ✅
+   - Add/remove players
+   - Player list display
+   - Faction and color assignment
+   - Integration with campaign data
+
+5. **Settings Panel** ✅
+   - Tabbed interface (General, Map, Display)
+   - Map skin selection (6 preset skins)
+   - Hex guide toggle
+   - Display options configuration
+   - Custom skin loading support
+
+6. **Campaign Log Viewer** ✅
+   - Event log display
+   - Filter by event type (All, Battles, Players, Units)
+   - Timestamped entries
+   - Scrollable content area
+
+7. **Map View Integration** ✅
+   - Hex map visualization
+   - Map skin loading
+   - Territory overlay management
+   - Hex click interaction
+   - Territory claim/toggle
+   - Hex information display
+
+8. **UI XML Definition** ✅
+   - Complete TTS UI layout
+   - Main menu panel
+   - Campaign setup panels (5 steps)
+   - Main campaign panel
+   - Settings panel
+   - Campaign log panel
+   - Responsive button layouts
+
+9. **Global.lua Integration** ✅
+   - UI module imports
+   - UI initialization on load
+   - Campaign setup wizard trigger
+   - UI callback handlers
+   - Module registration system
+
+### 📊 Phase 2 Metrics
+
+- **New Modules**: 8 UI modules
+- **Lines of Code**: ~2,500+ (UI + integration)
+- **UI Panels**: 6 main panels
+- **Wizard Steps**: 5-step campaign creation
+- **Map Skins**: Integrated 6 preset themes
+
+### 🎯 Key Achievements
+
+**Complete UI Framework**:
+- Modular architecture with delegation pattern
+- Panel management system
+- Event handling and callbacks
+- State synchronization
+
+**Campaign Setup**:
+- Guided 5-step wizard
+- Input validation
+- Player configuration
+- Map setup integration
+
+**Map System Integration**:
+- UI controls for map skins
+- Hex visualization
+- Territory management
+- Display option toggles
+
+**User Experience**:
+- Intuitive navigation
+- Quick access to common actions
+- Real-time campaign stats
+- Error handling and notifications
 
 **Dependencies**: Phase 1 Complete ✅
 
@@ -221,16 +402,20 @@
 
 ## Phase 6: Hex Map & Territory System
 
-**Target**: 4-5 weeks | **Status**: Pending Phase 5
+**Target**: 3-4 weeks | **Status**: Pending Phase 5
 
-### Planned Features
+**NOTE**: Core map skin system already implemented in Phase 1.5
 
-1. Interactive hex map
-2. Hex click handlers
-3. Territory control visualization
+### Remaining Features
+
+1. ~~Interactive hex map~~ ✅ (Phase 1.5)
+2. ~~Hex click handlers~~ ✅ (Phase 1.5)
+3. ~~Territory control visualization~~ ✅ (Phase 1.5)
 4. Territory bonuses system
 5. Alliance territory sharing
 6. Faction token tracking
+7. UI integration for map controls
+8. Battle location assignment
 
 ---
 
@@ -254,9 +439,9 @@
 
 **Branch**: `claude/wh40k-crusade-tracker-tts-mod-011CUwEK5yKfyUgydE4A1GBY`
 
-**Commits**: 2 (About to add Phase 1 completion commit)
+**Commits**: 5 (Phases 1, 1.5, 2)
 
-**Phase 1 Files**:
+**Phase 1, 1.5 & 2 Files**:
 - ✅ README.md
 - ✅ DEVELOPMENT_STATUS.md
 - ✅ config/rules_10th.json
@@ -274,6 +459,19 @@
 - ✅ src/persistence/Notebook.lua
 - ✅ src/persistence/Backup.lua
 - ✅ src/persistence/SaveLoad.lua
+- ✅ src/hexmap/HexGrid.lua
+- ✅ src/hexmap/MapSkins.lua
+- ✅ src/hexmap/TerritoryOverlays.lua
+- ✅ docs/MAP_SKIN_GUIDE.md
+- ✅ docs/MAP_SKIN_SYSTEM.md
+- ✅ src/ui/UICore.lua
+- ✅ src/ui/CampaignSetup.lua
+- ✅ src/ui/MainPanel.lua
+- ✅ src/ui/PlayerManagement.lua
+- ✅ src/ui/Settings.lua
+- ✅ src/ui/CampaignLog.lua
+- ✅ src/ui/MapView.lua
+- ✅ src/ui/UI.xml
 
 ---
 
@@ -286,6 +484,7 @@
 - ✅ Automatic recovery mechanisms
 - ✅ Rolling backup system
 - ✅ Multi-notebook persistence
+- ✅ FTC-inspired map skin system (3-layer architecture)
 
 ### Critical Calculations
 - ✅ Crusade Points: `CP = floor(XP/5) + Honours - Scars`
@@ -300,17 +499,37 @@
 - ✅ JSON export/import capability
 - ✅ Event logging with auto-trimming (1000 max)
 
+### Map System (Phase 1.5)
+- ✅ Hex grid base with axial coordinates
+- ✅ Map skin system (6 preset themes)
+- ✅ Territory control visualization
+- ✅ Custom skin support (community content)
+- ✅ Additive loading architecture
+- ✅ Alignment guides and snap-to-grid
+
+### UI System (Phase 2)
+- ✅ Complete UI framework (UICore)
+- ✅ 5-step campaign setup wizard
+- ✅ Main campaign panel with stats
+- ✅ Player management interface
+- ✅ Settings panel (General, Map, Display tabs)
+- ✅ Campaign log viewer with filtering
+- ✅ Map view integration
+- ✅ TTS XML UI definitions
+
 ---
 
 ## Next Session Goals
 
-**Phase 2 Start: Campaign Setup & Basic UI**
+**Phase 3 Start: Order of Battle & Unit Management**
 
-1. Create Campaign Setup Wizard (5 steps)
-2. Implement basic hex map visualization
-3. Build player management UI
-4. Create Settings panel
-5. Develop campaign notes/log viewer
+1. Manage Forces panel
+2. Unit Details panel (comprehensive editor)
+3. Manual unit entry
+4. New Recruit JSON import
+5. Unit editing with live CP recalculation
+6. Unit deletion confirmation
+7. Supply tracking UI with visual indicators
 
 ---
 
@@ -319,9 +538,11 @@
 - **10th Edition Rules**: https://wahapedia.ru/wh40k10ed/the-rules/crusade-rules/
 - **TTS Lua API**: https://api.tabletopsimulator.com/
 - **New Recruit**: https://www.newrecruit.eu/
+- **Hex Grid Reference**: https://www.redblobgames.com/grids/hexagons/
+- **FTC Map Base**: Community inspiration for map skin architecture
 
 ---
 
-**Phase 1 Status**: ✅ **COMPLETE - Ready for Phase 2**
+**Phases 1, 1.5 & 2 Status**: ✅ **COMPLETE - Ready for Phase 3**
 
-All core systems implemented, tested, and integrated. Data persistence is robust with automatic recovery. Campaign architecture is solid and extensible. Ready to begin UI development in Phase 2.
+All core systems implemented, tested, and integrated. Data persistence is robust with automatic recovery. Campaign architecture is solid and extensible. FTC-inspired map skin system adds community content support. **NEW**: Complete UI framework with campaign setup wizard, main panel, settings, and map integration. Ready to begin unit management in Phase 3.

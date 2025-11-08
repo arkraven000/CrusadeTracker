@@ -1,0 +1,262 @@
+<Defaults>
+    <Text fontSize="14" color="#FFFFFF" />
+    <Button fontSize="14" colors="#FFFFFF|#CCCCCC|#999999|#666666" />
+    <Toggle fontSize="12" />
+    <InputField fontSize="14" characterLimit="100" />
+</Defaults>
+
+<!-- Main UI Container -->
+<Panel id="crusadeTrackerUI"
+       position="0 0 -50"
+       rotation="0 0 0"
+       width="400"
+       height="600"
+       padding="10 10 10 10"
+       color="rgba(0,0,0,0.8)"
+       active="true">
+
+    <!-- Main Menu Panel -->
+    <Panel id="mainMenuPanel"
+           width="100%"
+           height="100%"
+           active="true">
+
+        <VerticalLayout spacing="15" padding="20">
+            <Text fontSize="24" alignment="MiddleCenter">
+                CRUSADE CAMPAIGN TRACKER
+            </Text>
+
+            <Text fontSize="12" alignment="MiddleCenter" color="#CCCCCC">
+                Warhammer 40,000 10th Edition
+            </Text>
+
+            <Panel height="20" />
+
+            <Button id="mainMenu_newCampaign"
+                    height="50"
+                    onClick="UICore.onButtonClick">
+                New Campaign
+            </Button>
+
+            <Button id="mainMenu_loadCampaign"
+                    height="50"
+                    onClick="UICore.onButtonClick">
+                Load Campaign
+            </Button>
+
+            <Button id="mainMenu_settings"
+                    height="50"
+                    onClick="UICore.onButtonClick">
+                Settings
+            </Button>
+
+            <Panel height="40" />
+
+            <Text fontSize="10" alignment="MiddleCenter" color="#888888">
+                Version 1.0.0-alpha
+            </Text>
+        </VerticalLayout>
+    </Panel>
+
+    <!-- Campaign Setup Wizard -->
+    <Panel id="campaignSetupPanel"
+           width="100%"
+           height="100%"
+           active="false">
+
+        <VerticalLayout spacing="10" padding="15">
+            <Text fontSize="20" alignment="MiddleCenter">
+                Campaign Setup
+            </Text>
+
+            <!-- Step Indicator -->
+            <HorizontalLayout spacing="5" height="30">
+                <Panel id="setupStep1Indicator" width="20%" height="100%" color="#FFFF00" />
+                <Panel id="setupStep2Indicator" width="20%" height="100%" color="#CCCCCC" />
+                <Panel id="setupStep3Indicator" width="20%" height="100%" color="#CCCCCC" />
+                <Panel id="setupStep4Indicator" width="20%" height="100%" color="#CCCCCC" />
+                <Panel id="setupStep5Indicator" width="20%" height="100%" color="#CCCCCC" />
+            </HorizontalLayout>
+
+            <!-- Step Content Area -->
+            <Panel id="setupContentArea" width="100%" height="400" />
+
+            <!-- Navigation Buttons -->
+            <HorizontalLayout spacing="10" height="40">
+                <Button id="campaignSetup_cancel"
+                        width="30%"
+                        onClick="UICore.onButtonClick">
+                    Cancel
+                </Button>
+
+                <Button id="campaignSetup_previous"
+                        width="30%"
+                        onClick="UICore.onButtonClick">
+                    Previous
+                </Button>
+
+                <Button id="campaignSetup_next"
+                        width="40%"
+                        onClick="UICore.onButtonClick">
+                    Next
+                </Button>
+            </HorizontalLayout>
+        </VerticalLayout>
+    </Panel>
+
+    <!-- Main Campaign Panel -->
+    <Panel id="mainCampaignPanel"
+           width="100%"
+           height="100%"
+           active="false">
+
+        <VerticalLayout spacing="10" padding="15">
+            <Text id="mainPanel_campaignName"
+                  fontSize="18"
+                  alignment="MiddleCenter">
+                Campaign Name
+            </Text>
+
+            <Panel height="5" />
+
+            <!-- Quick Stats -->
+            <HorizontalLayout spacing="10" height="60">
+                <Panel width="33%" color="rgba(50,50,50,0.8)" padding="5">
+                    <VerticalLayout>
+                        <Text id="mainPanel_playerCount" fontSize="16">2 Players</Text>
+                        <Text fontSize="10" color="#AAAAAA">Active</Text>
+                    </VerticalLayout>
+                </Panel>
+
+                <Panel width="33%" color="rgba(50,50,50,0.8)" padding="5">
+                    <VerticalLayout>
+                        <Text id="mainPanel_battleCount" fontSize="16">5 Battles</Text>
+                        <Text fontSize="10" color="#AAAAAA">Fought</Text>
+                    </VerticalLayout>
+                </Panel>
+
+                <Panel width="33%" color="rgba(50,50,50,0.8)" padding="5">
+                    <VerticalLayout>
+                        <Text id="mainPanel_territoryCount" fontSize="16">12 Hexes</Text>
+                        <Text fontSize="10" color="#AAAAAA">Controlled</Text>
+                    </VerticalLayout>
+                </Panel>
+            </HorizontalLayout>
+
+            <!-- Action Buttons -->
+            <VerticalLayout spacing="8">
+                <Button id="mainPanel_playerMgmt"
+                        height="45"
+                        onClick="UICore.onButtonClick">
+                    Manage Players
+                </Button>
+
+                <Button id="mainPanel_map"
+                        height="45"
+                        onClick="UICore.onButtonClick">
+                    View Map
+                </Button>
+
+                <Button id="mainPanel_log"
+                        height="45"
+                        onClick="UICore.onButtonClick">
+                    Campaign Log
+                </Button>
+
+                <Button id="mainPanel_settings"
+                        height="45"
+                        onClick="UICore.onButtonClick">
+                    Settings
+                </Button>
+
+                <Panel height="10" />
+
+                <Button id="mainPanel_save"
+                        height="45"
+                        color="#00AA00"
+                        onClick="UICore.onButtonClick">
+                    Save Campaign
+                </Button>
+            </VerticalLayout>
+        </VerticalLayout>
+    </Panel>
+
+    <!-- Settings Panel -->
+    <Panel id="settingsPanel"
+           width="100%"
+           height="100%"
+           active="false">
+
+        <VerticalLayout spacing="10" padding="15">
+            <Text fontSize="18">Settings</Text>
+
+            <!-- Tab Buttons -->
+            <HorizontalLayout spacing="5" height="35">
+                <Button id="settings_tabGeneral" onClick="UICore.onButtonClick">General</Button>
+                <Button id="settings_tabMap" onClick="UICore.onButtonClick">Map</Button>
+                <Button id="settings_tabDisplay" onClick="UICore.onButtonClick">Display</Button>
+            </HorizontalLayout>
+
+            <!-- Map Skin Section -->
+            <Text fontSize="14">Map Skin</Text>
+            <VerticalLayout spacing="5">
+                <Button id="settings_mapSkin_forgeWorld" onClick="UICore.onButtonClick">Forge World</Button>
+                <Button id="settings_mapSkin_deathWorld" onClick="UICore.onButtonClick">Death World</Button>
+                <Button id="settings_mapSkin_hiveCity" onClick="UICore.onButtonClick">Hive City</Button>
+                <Button id="settings_mapSkin_spaceHulk" onClick="UICore.onButtonClick">Space Hulk</Button>
+                <Button id="settings_mapSkin_iceWorld" onClick="UICore.onButtonClick">Ice World</Button>
+                <Button id="settings_mapSkin_desert" onClick="UICore.onButtonClick">Desert</Button>
+            </VerticalLayout>
+
+            <!-- Display Options -->
+            <Panel height="10" />
+            <Text fontSize="14">Display Options</Text>
+            <Toggle id="settings_toggleHexGuides"
+                    onValueChanged="UICore.onButtonClick">
+                Show Hex Guides
+            </Toggle>
+
+            <Panel height="20" />
+
+            <Button id="settings_close"
+                    onClick="UICore.onButtonClick">
+                Close
+            </Button>
+        </VerticalLayout>
+    </Panel>
+
+    <!-- Campaign Log Panel -->
+    <Panel id="campaignLogPanel"
+           width="100%"
+           height="100%"
+           active="false">
+
+        <VerticalLayout spacing="10" padding="15">
+            <Text fontSize="18">Campaign Log</Text>
+
+            <!-- Filter Buttons -->
+            <HorizontalLayout spacing="5" height="30">
+                <Button id="campaignLog_filterAll" onClick="UICore.onButtonClick">All</Button>
+                <Button id="campaignLog_filterBattles" onClick="UICore.onButtonClick">Battles</Button>
+                <Button id="campaignLog_filterUnits" onClick="UICore.onButtonClick">Units</Button>
+                <Button id="campaignLog_filterPlayers" onClick="UICore.onButtonClick">Players</Button>
+            </HorizontalLayout>
+
+            <!-- Log Content Area -->
+            <Panel id="campaignLog_content"
+                   width="100%"
+                   height="450"
+                   color="rgba(20,20,20,0.9)">
+                <Text fontSize="12" color="#AAAAAA">
+                    Campaign events will appear here...
+                </Text>
+            </Panel>
+
+            <Button id="campaignLog_close"
+                    onClick="UICore.onButtonClick">
+                Close
+            </Button>
+        </VerticalLayout>
+    </Panel>
+
+</Panel>
