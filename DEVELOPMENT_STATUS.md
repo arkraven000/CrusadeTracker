@@ -154,6 +154,92 @@
 
 ---
 
+## Phase 1.5: Map Skin System (FTC-Inspired)
+
+**Target**: 1 week | **Status**: ✅ **COMPLETE**
+
+### ✅ All Features Implemented
+
+**Community-Inspired Enhancement**: Based on FTC (For the Community) map base architecture
+
+1. **Hex Grid Base (Functional Layer)** ✅
+   - Invisible ScriptingTrigger zones for each hex
+   - Axial coordinate system with flat-top hexagons
+   - Hex-to-pixel coordinate conversion utilities
+   - Click detection and interaction handlers
+   - Optional alignment guide markers (toggleable)
+   - Neighbor detection for territory expansion
+   - Clean initialization and cleanup
+
+2. **Map Skins (Visual Layer)** ✅
+   - Preset skin library (6 themes included):
+     - Forge World Alpha (industrial)
+     - Death World Tertius (jungle)
+     - Hive Primus (urban)
+     - Drifting Hulk Mortis (space hulk)
+     - Glacius Extremis (ice world)
+     - Arrakis Wastes (desert)
+   - Custom skin support (user-created via TTS Saved Objects)
+   - Additive loading system (no scripts required)
+   - Alignment validation and snap-to-grid
+   - Persistence support (save/restore skin selection)
+
+3. **Territory Control Overlays** ✅
+   - Dynamic colored tokens showing player control
+   - Semi-transparent overlays (configurable alpha)
+   - Support for controlled, neutral, and dormant hexes
+   - Capture animations (pulse effect)
+   - Adjacent hex highlighting
+   - Bulk update system for efficiency
+
+4. **Data Model Integration** ✅
+   - Extended `createHexMapConfig()` with map skin tracking
+   - Current skin persistence
+   - Custom skin metadata storage
+   - Display option toggles (guides, overlays)
+
+5. **Constants & Configuration** ✅
+   - Layer height definitions (base: 1.0, skin: 1.05, overlays: 1.15)
+   - Default map skin setting
+   - Overlay transparency defaults
+   - Export for module access
+
+6. **Documentation** ✅
+   - Comprehensive map skin creation guide (MAP_SKIN_GUIDE.md)
+   - Technical architecture documentation (MAP_SKIN_SYSTEM.md)
+   - Step-by-step user instructions
+   - Troubleshooting and FAQ
+   - Community contribution guidelines
+
+### 📊 Phase 1.5 Metrics
+
+- **New Modules**: 3 (HexGrid, MapSkins, TerritoryOverlays)
+- **Lines of Code**: ~1,200
+- **Preset Skins**: 6 themes
+- **Documentation Pages**: 2 comprehensive guides
+- **Architecture**: 3-layer system (base, skin, overlays)
+
+### 🎯 Key Achievements
+
+**Modularity**:
+- Functional logic completely separate from visual presentation
+- Swappable map themes without data loss
+- Community content creation enabled
+
+**FTC Design Principles Applied**:
+- Base object handles all logic
+- Skins are aesthetic-only (no scripts)
+- Additive loading from Saved Objects
+- Clean separation of concerns
+
+**Community Enablement**:
+- No scripting knowledge required for skin creation
+- Clear creation guide with examples
+- Workshop/direct file sharing support
+- Custom skin loading built-in
+
+---
+
 ## Phase 2: Campaign Setup & Basic UI
 
 **Target**: 3-4 weeks | **Status**: Ready to Start
@@ -221,16 +307,20 @@
 
 ## Phase 6: Hex Map & Territory System
 
-**Target**: 4-5 weeks | **Status**: Pending Phase 5
+**Target**: 3-4 weeks | **Status**: Pending Phase 5
 
-### Planned Features
+**NOTE**: Core map skin system already implemented in Phase 1.5
 
-1. Interactive hex map
-2. Hex click handlers
-3. Territory control visualization
+### Remaining Features
+
+1. ~~Interactive hex map~~ ✅ (Phase 1.5)
+2. ~~Hex click handlers~~ ✅ (Phase 1.5)
+3. ~~Territory control visualization~~ ✅ (Phase 1.5)
 4. Territory bonuses system
 5. Alliance territory sharing
 6. Faction token tracking
+7. UI integration for map controls
+8. Battle location assignment
 
 ---
 
@@ -254,9 +344,9 @@
 
 **Branch**: `claude/wh40k-crusade-tracker-tts-mod-011CUwEK5yKfyUgydE4A1GBY`
 
-**Commits**: 2 (About to add Phase 1 completion commit)
+**Commits**: 4 (Phase 1 + Phase 1.5 Map Skin System)
 
-**Phase 1 Files**:
+**Phase 1 & 1.5 Files**:
 - ✅ README.md
 - ✅ DEVELOPMENT_STATUS.md
 - ✅ config/rules_10th.json
@@ -274,6 +364,11 @@
 - ✅ src/persistence/Notebook.lua
 - ✅ src/persistence/Backup.lua
 - ✅ src/persistence/SaveLoad.lua
+- ✅ src/hexmap/HexGrid.lua
+- ✅ src/hexmap/MapSkins.lua
+- ✅ src/hexmap/TerritoryOverlays.lua
+- ✅ docs/MAP_SKIN_GUIDE.md
+- ✅ docs/MAP_SKIN_SYSTEM.md
 
 ---
 
@@ -286,6 +381,7 @@
 - ✅ Automatic recovery mechanisms
 - ✅ Rolling backup system
 - ✅ Multi-notebook persistence
+- ✅ FTC-inspired map skin system (3-layer architecture)
 
 ### Critical Calculations
 - ✅ Crusade Points: `CP = floor(XP/5) + Honours - Scars`
@@ -299,6 +395,14 @@
 - ✅ Corruption detection and auto-recovery
 - ✅ JSON export/import capability
 - ✅ Event logging with auto-trimming (1000 max)
+
+### Map System (Phase 1.5)
+- ✅ Hex grid base with axial coordinates
+- ✅ Map skin system (6 preset themes)
+- ✅ Territory control visualization
+- ✅ Custom skin support (community content)
+- ✅ Additive loading architecture
+- ✅ Alignment guides and snap-to-grid
 
 ---
 
@@ -319,9 +423,11 @@
 - **10th Edition Rules**: https://wahapedia.ru/wh40k10ed/the-rules/crusade-rules/
 - **TTS Lua API**: https://api.tabletopsimulator.com/
 - **New Recruit**: https://www.newrecruit.eu/
+- **Hex Grid Reference**: https://www.redblobgames.com/grids/hexagons/
+- **FTC Map Base**: Community inspiration for map skin architecture
 
 ---
 
-**Phase 1 Status**: ✅ **COMPLETE - Ready for Phase 2**
+**Phase 1 & 1.5 Status**: ✅ **COMPLETE - Ready for Phase 2**
 
-All core systems implemented, tested, and integrated. Data persistence is robust with automatic recovery. Campaign architecture is solid and extensible. Ready to begin UI development in Phase 2.
+All core systems implemented, tested, and integrated. Data persistence is robust with automatic recovery. Campaign architecture is solid and extensible. **NEW**: FTC-inspired map skin system adds community content support and visual flexibility. Ready to begin UI development in Phase 2.

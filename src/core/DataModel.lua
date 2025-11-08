@@ -347,7 +347,15 @@ function createHexMapConfig(width, height)
             height = height
         },
         hexes = {}, -- Keyed by coordinate string "q,r"
-        hexTokens = {} -- Mapping of coordinate to TTS object GUID
+        hexTokens = {}, -- Mapping of coordinate to TTS object GUID
+
+        -- Map Skin System (FTC-inspired)
+        currentMapSkin = nil, -- Current loaded map skin key or custom name
+        customMapSkinName = nil, -- If using custom skin, store saved object name
+        mapSkinPosition = nil, -- Saved position of map skin
+        showHexGuides = false, -- Show hex alignment guides
+        showDormantOverlays = false, -- Show overlays for dormant hexes
+        showNeutralOverlays = false -- Show overlays for neutral/unclaimed hexes
     }
 end
 
