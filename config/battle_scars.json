@@ -1,0 +1,61 @@
+{
+  "edition": "10th",
+  "version": "1.0.0",
+  "description": "10th Edition Battle Scars (6 types)",
+
+  "battleScars": [
+    {
+      "id": 1,
+      "name": "Crippling Damage",
+      "effect": "This unit cannot Advance. Reduce this unit's Move characteristic by 1\" (to a minimum of 1\").",
+      "category": "Movement",
+      "severity": "moderate"
+    },
+    {
+      "id": 2,
+      "name": "Battle-Weary",
+      "effect": "Subtract 1 from this unit's Leadership characteristic, Battle-shock tests, Desperate Escape tests and Out of Action tests.",
+      "category": "Leadership",
+      "severity": "moderate"
+    },
+    {
+      "id": 3,
+      "name": "Fatigued",
+      "effect": "Subtract 1 from this unit's Objective Control characteristic (to a minimum of 1). This unit does not gain the bonus to its Move characteristic for making a Charge move.",
+      "category": "Objective",
+      "severity": "moderate"
+    },
+    {
+      "id": 4,
+      "name": "Disgraced",
+      "effect": "You cannot use Stratagems to affect this unit. This unit cannot be selected for the Marked for Greatness Agenda.",
+      "category": "Restrictions",
+      "severity": "high",
+      "restrictionsApplied": ["noStratagems", "noMarkedForGreatness"]
+    },
+    {
+      "id": 5,
+      "name": "Mark of Shame",
+      "effect": "If this unit has the LEADER keyword, it cannot be attached to any Bodyguard units. This unit is not affected by any Aura abilities from friendly units. This unit cannot be selected for the Marked for Greatness Agenda.",
+      "category": "Restrictions",
+      "severity": "high",
+      "restrictionsApplied": ["noAttach", "noAuras", "noMarkedForGreatness"]
+    },
+    {
+      "id": 6,
+      "name": "Deep Scars",
+      "effect": "Each time a Critical Hit is scored against this unit, that attack automatically wounds the target.",
+      "category": "Combat",
+      "severity": "high"
+    }
+  ],
+
+  "maxBattleScarsPerUnit": 3,
+
+  "notes": [
+    "When a unit fails an Out of Action test, it must gain a Battle Scar OR lose a Battle Honour",
+    "If a unit has 3 Battle Scars, it MUST choose Devastating Blow (lose honour) on next Out of Action failure",
+    "If a unit has no Battle Honours remaining and chooses Devastating Blow, it is permanently destroyed",
+    "Battle Scars reduce Crusade Points by 1 each"
+  ]
+}

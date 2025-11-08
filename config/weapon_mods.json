@@ -1,0 +1,56 @@
+{
+  "edition": "10th",
+  "version": "1.0.0",
+  "description": "10th Edition Weapon Modifications (6 types, roll TWO different)",
+
+  "weaponModifications": [
+    {
+      "id": 1,
+      "name": "Finely Balanced",
+      "effect": "Improve the Ballistic Skill or Weapon Skill characteristic of this weapon by 1 (e.g., a BS of 3+ would become 2+)."
+    },
+    {
+      "id": 2,
+      "name": "Brutal",
+      "effect": "Add 1 to the Strength characteristic of this weapon."
+    },
+    {
+      "id": 3,
+      "name": "Armour Piercing",
+      "effect": "Improve the Armour Penetration characteristic of this weapon by 1 (e.g., an AP of -1 would become -2)."
+    },
+    {
+      "id": 4,
+      "name": "Master-Worked",
+      "effect": "Add 1 to the Damage characteristic of this weapon."
+    },
+    {
+      "id": 5,
+      "name": "Heirloom",
+      "effect": "Add 1 to the Attacks characteristic of this weapon."
+    },
+    {
+      "id": 6,
+      "name": "Precise",
+      "effect": "Each time a Critical Wound is scored with this weapon, the attack gains the [PRECISION] ability."
+    }
+  ],
+
+  "rules": [
+    "When a unit gains a Weapon Enhancement Battle Honour, select ONE weapon",
+    "Roll 2D6 for TWO different weapon modifications",
+    "If you roll the same result twice, re-roll until you get two different results",
+    "Apply BOTH modifications to the selected weapon",
+    "Must select CHARACTER model's weapon if unit is CHARACTER",
+    "Must select Unit Champion's weapon if unit has one and is not CHARACTER",
+    "Cannot modify weapons that are Enhancements or Crusade Relics",
+    "Cannot modify a weapon that already has weapon modifications",
+    "Weapon modifications are lost if the weapon is replaced via Enhancements or Rearm and Resupply"
+  ],
+
+  "notes": [
+    "Weapon Modifications count as ONE Battle Honour",
+    "Contributes +1 CP (or +2 if TITANIC) like any other honour",
+    "Two modifications per weapon is mandatory, not optional"
+  ]
+}

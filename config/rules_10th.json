@@ -1,0 +1,120 @@
+{
+  "edition": "10th",
+  "version": "1.0.0",
+  "description": "Warhammer 40,000 10th Edition Crusade Rules Configuration",
+
+  "rankThresholds": [
+    {
+      "rank": 1,
+      "name": "Battle-Ready",
+      "minXP": 0,
+      "characterOnly": false
+    },
+    {
+      "rank": 2,
+      "name": "Blooded",
+      "minXP": 6,
+      "characterOnly": false
+    },
+    {
+      "rank": 3,
+      "name": "Battle-Hardened",
+      "minXP": 16,
+      "characterOnly": false
+    },
+    {
+      "rank": 4,
+      "name": "Heroic",
+      "minXP": 31,
+      "characterOnly": true
+    },
+    {
+      "rank": 5,
+      "name": "Legendary",
+      "minXP": 51,
+      "characterOnly": true
+    }
+  ],
+
+  "nonCharacterMaxXP": 30,
+
+  "requisitions": {
+    "Increase Supply Limit": {
+      "baseCost": 1,
+      "maxCost": 1,
+      "timing": "any time",
+      "effect": "Increase Supply Limit by 200 points"
+    },
+    "Renowned Heroes": {
+      "baseCost": 1,
+      "maxCost": 3,
+      "timing": "on unit creation OR on rank up",
+      "characterOnly": true,
+      "costCalculation": "1 + (number of Enhancements in Order of Battle)",
+      "effect": "Add Enhancement to CHARACTER unit"
+    },
+    "Legendary Veterans": {
+      "baseCost": 3,
+      "maxCost": 3,
+      "timing": "when unit reaches 30 XP",
+      "nonCharacterOnly": true,
+      "effect": "Remove XP cap, allow Heroic/Legendary ranks, max honours = 6"
+    },
+    "Rearm and Resupply": {
+      "baseCost": 1,
+      "maxCost": 1,
+      "timing": "before a battle",
+      "effect": "Change unit wargear (lose Relics/Mods if weapon replaced)"
+    },
+    "Repair and Recuperate": {
+      "baseCost": 1,
+      "maxCost": 5,
+      "timing": "after a battle",
+      "costCalculation": "1 + (number of Battle Honours on unit)",
+      "effect": "Remove one Battle Scar"
+    },
+    "Fresh Recruits": {
+      "baseCost": 1,
+      "maxCost": 4,
+      "timing": "any time",
+      "costCalculation": "1 + ceil(Battle Honours / 2)",
+      "effect": "Add models to unit up to datasheet maximum"
+    }
+  },
+
+  "crusadePointsFormula": "floor(XP / 5) + Battle Honours - Battle Scars",
+  "crusadePointsNotes": [
+    "Battle Honours: +1 each (or +2 if TITANIC)",
+    "Crusade Relics: +1 (Artificer), +2 (Antiquity), +3 (Legendary)",
+    "Battle Scars: -1 each",
+    "Can result in negative Crusade Points"
+  ],
+
+  "xpAwardTypes": {
+    "Battle Experience": {
+      "amount": 1,
+      "recipients": "all participating units",
+      "automatic": true
+    },
+    "Every Third Kill": {
+      "amount": 1,
+      "calculation": "Per third enemy unit destroyed (3rd, 6th, 9th, etc.)",
+      "automatic": false
+    },
+    "Marked for Greatness": {
+      "amount": 3,
+      "recipients": "ONE unit per player per battle",
+      "restrictions": ["Cannot have Disgraced or Mark of Shame Battle Scars"],
+      "automatic": false
+    }
+  },
+
+  "maxValues": {
+    "requisitionPoints": 10,
+    "battleHonoursNonCharacter": 3,
+    "battleHonoursCharacter": 6,
+    "battleScars": 3,
+    "supplyLimitDefault": 1000,
+    "supplyLimitIncrease": 200
+  }
+}
