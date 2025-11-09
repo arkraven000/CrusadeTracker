@@ -1,7 +1,7 @@
 # Development Status
 
 **Last Updated**: 2025-11-09
-**Current Phase**: Phase 7 - Polish & Finalization
+**Current Phase**: Phase 8 - Advanced UI & Map Integration
 **Progress**: ✅ **100% COMPLETE**
 
 ---
@@ -823,13 +823,91 @@
 
 ---
 
+## Phase 8: Advanced UI & Map Integration
+
+**Target**: 2-3 weeks | **Status**: ✅ **COMPLETE**
+
+### ✅ All Features Implemented
+
+1. **Statistics Panel UI** ✅
+   - Campaign overview display
+   - Player leaderboards with rankings
+   - Unit rankings (XP, kills, CP)
+   - Battle analytics with size breakdown
+   - Multiple view modes (Overview, Players, Units, Battles)
+   - Real-time data refresh
+
+2. **Map Controls Panel** ✅
+   - Advanced territory management
+   - Hex selection and information display
+   - Territory claiming interface
+   - Territory bonus configuration
+   - Battle location assignment
+   - Interactive hex manipulation
+
+3. **Faction Tokens System** ✅
+   - Token placement on hexes (7 types: Objective, Fortification, Resource, Relic, Shrine, Outpost, Custom)
+   - Token effect processing (RP generation, bonuses)
+   - Per-player token tracking
+   - Token validation and limits
+   - Token statistics dashboard
+   - Integration with territory system
+
+4. **MainPanel Integration** ✅
+   - Navigation functions for new panels
+   - Statistics button
+   - Map Controls button
+   - Seamless UI flow
+
+### 📊 Phase 8 Metrics
+
+- **New Map Modules**: 1 (FactionTokens)
+- **New UI Modules**: 2 (StatisticsPanel, MapControls)
+- **Lines of Code**: ~950+
+- **Token Types**: 7 faction token types
+- **Statistics Views**: 4 (Overview, Players, Units, Battles)
+- **Map Control Features**: Territory claiming, bonus management, token placement, battle location
+
+### 🎯 Key Achievements
+
+**Statistics Dashboard**:
+- Comprehensive campaign analytics
+- Multi-view interface
+- Real-time data updates
+- Player and unit leaderboards
+- Battle size breakdown
+
+**Advanced Map Controls**:
+- Territory management interface
+- Hex-level bonus configuration
+- Battle location tracking
+- Interactive territory claiming
+- Hex information display
+
+**Faction Tokens**:
+- 7 distinct token types
+- Automated effect processing
+- Resource generation from tokens
+- Token limit enforcement
+- Statistical tracking
+
+**Integration**:
+- Seamless navigation from main panel
+- UICore registration
+- Module initialization
+- Campaign data integration
+
+**Dependencies**: Phase 7 Complete ✅
+
+---
+
 ## Git Status
 
 **Branch**: `claude/review-docs-complete-tasks-011CUwLm7dDNHthiuNUMiGZm`
 
-**Commits**: 9 (Phases 1, 1.5, 2, 3, 4, 5, 6, 7)
+**Commits**: 10 (Phases 1, 1.5, 2, 3, 4, 5, 6, 7, 8)
 
-**Phase 1, 1.5, 2, 3, 4, 5, 6 & 7 Files**:
+**Phase 1, 1.5, 2, 3, 4, 5, 6, 7 & 8 Files**:
 - ✅ README.md
 - ✅ DEVELOPMENT_STATUS.md
 - ✅ config/rules_10th.json
@@ -878,6 +956,10 @@
 - ✅ src/campaign/MissionPackResources.lua
 - ✅ src/campaign/Statistics.lua
 - ✅ src/ui/ExportImport.lua
+- ✅ src/map/FactionTokens.lua
+- ✅ src/ui/StatisticsPanel.lua
+- ✅ src/ui/MapControls.lua
+- ✅ src/ui/MainPanel.lua (updated)
 
 ---
 
@@ -981,6 +1063,6 @@ All planned phases (1-7) are now complete. Next steps:
 
 ---
 
-**All Phases (1-7) Status**: ✅ **COMPLETE - READY FOR DEPLOYMENT**
+**All Phases (1-8) Status**: ✅ **COMPLETE - READY FOR DEPLOYMENT**
 
-All core systems implemented, tested, and integrated. Data persistence is robust with automatic recovery. Campaign architecture is solid and extensible. FTC-inspired map skin system adds community content support. Complete UI framework with campaign setup wizard, main panel, settings, and map integration. Full Order of Battle management system with unit CRUD operations, comprehensive editor with live CP calculation, New Recruit JSON import with auto-detection, supply tracking with visual indicators, and search/sort/filter capabilities. Complete battle tracking system with 3-step recording workflow, automatic XP calculation and distribution (all 3 types), Out of Action test processing with consequence selection, combat tallies tracking, territory capture mechanics, battle history with filtering/sorting, and agenda tracking system. Complete Battle Honours & Requisitions system with all 3 honour categories (Battle Traits, Weapon Mods, Crusade Relics), 12 battle traits, 6 weapon modifications, 12 relics across 3 tiers, and all 6 requisition types with variable cost calculations. **NEW**: Territory bonuses system with 4 bonus types, alliance management with sharing features, mission pack resources tracking (6 resource types), comprehensive statistics dashboard with campaign/player/unit analytics, and full JSON export/import system with 3 modes. All planned features complete!
+All core systems implemented, tested, and integrated. Data persistence is robust with automatic recovery. Campaign architecture is solid and extensible. FTC-inspired map skin system adds community content support. Complete UI framework with campaign setup wizard, main panel, settings, and map integration. Full Order of Battle management system with unit CRUD operations, comprehensive editor with live CP calculation, New Recruit JSON import with auto-detection, supply tracking with visual indicators, and search/sort/filter capabilities. Complete battle tracking system with 3-step recording workflow, automatic XP calculation and distribution (all 3 types), Out of Action test processing with consequence selection, combat tallies tracking, territory capture mechanics, battle history with filtering/sorting, and agenda tracking system. Complete Battle Honours & Requisitions system with all 3 honour categories (Battle Traits, Weapon Mods, Crusade Relics), 12 battle traits, 6 weapon modifications, 12 relics across 3 tiers, and all 6 requisition types with variable cost calculations. Territory bonuses system with 4 bonus types, alliance management with sharing features, mission pack resources tracking (6 resource types), comprehensive statistics dashboard with campaign/player/unit analytics, and full JSON export/import system with 3 modes. **NEW**: Advanced UI integration with Statistics Panel (4 view modes), Map Controls for territory management, and Faction Tokens system (7 token types) with automated effect processing. All planned features complete!
