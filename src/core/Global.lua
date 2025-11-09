@@ -72,6 +72,18 @@ local Statistics = require("src/campaign/Statistics")
 -- UI Modules (Phase 7)
 local ExportImport = require("src/ui/ExportImport")
 
+-- Map Modules (Phase 8)
+local FactionTokens = require("src/map/FactionTokens")
+
+-- UI Modules (Phase 8)
+local StatisticsPanel = require("src/ui/StatisticsPanel")
+local MapControls = require("src/ui/MapControls")
+
+-- Testing Modules (Phase 9)
+local DataValidator = require("src/testing/DataValidator")
+local PerformanceMonitor = require("src/testing/PerformanceMonitor")
+local ErrorHandler = require("src/testing/ErrorHandler")
+
 -- ============================================================================
 -- GLOBAL STATE
 -- ============================================================================
@@ -459,6 +471,8 @@ function createMainUI()
     UICore.registerModule("battleHonours", BattleHonours)
     UICore.registerModule("requisitionsMenu", RequisitionsMenu)
     UICore.registerModule("exportImport", ExportImport)
+    UICore.registerModule("statisticsPanel", StatisticsPanel)
+    UICore.registerModule("mapControls", MapControls)
 
     -- Initialize modules with campaign data
     if CrusadeCampaign then
@@ -492,6 +506,23 @@ function createMainUI()
         MissionPackResources.initialize(CrusadeCampaign)
         Statistics.initialize(CrusadeCampaign)
         ExportImport.initialize(CrusadeCampaign)
+
+        -- Initialize Phase 8 modules (Advanced UI & Map Integration)
+        FactionTokens.initialize(CrusadeCampaign)
+        StatisticsPanel.initialize(CrusadeCampaign)
+        MapControls.initialize(CrusadeCampaign)
+
+        -- Initialize Phase 9 modules (Testing & Quality Assurance)
+        ErrorHandler.initialize()
+        PerformanceMonitor.initialize()
+        -- Run initial validation
+        local isValid, validationReport = DataValidator.validateCampaign(CrusadeCampaign)
+        if not isValid then
+            Utils.logWarning("Campaign validation found issues")
+            if validationReport and #validationReport.errors > 0 then
+                Utils.logWarning(string.format("Validation errors: %d", #validationReport.errors))
+            end
+        end
 
         -- Initialize map view if map config exists
         if CrusadeCampaign.mapConfig then

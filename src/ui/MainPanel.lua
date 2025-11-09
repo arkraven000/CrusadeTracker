@@ -139,6 +139,18 @@ function MainPanel.openRequisitionsMenu()
     log("Opening requisitions menu")
 end
 
+--- Open statistics panel
+function MainPanel.openStatistics()
+    -- UICore.showPanel("statisticsPanel")
+    log("Opening statistics panel")
+end
+
+--- Open map controls
+function MainPanel.openMapControls()
+    -- UICore.showPanel("mapControls")
+    log("Opening map controls")
+end
+
 --- Save campaign
 function MainPanel.saveCampaign()
     -- Call SaveLoad module
