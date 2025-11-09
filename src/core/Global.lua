@@ -49,6 +49,18 @@ local Agendas = require("src/battle/Agendas")
 local RecordBattle = require("src/ui/RecordBattle")
 local BattleLog = require("src/ui/BattleLog")
 
+-- Battle Honours Modules (Phase 5)
+local BattleTraits = require("src/honours/BattleTraits")
+local WeaponMods = require("src/honours/WeaponMods")
+local CrusadeRelics = require("src/honours/CrusadeRelics")
+
+-- Requisitions Module (Phase 5)
+local Requisitions = require("src/requisitions/Requisitions")
+
+-- UI Modules (Phase 5)
+local BattleHonours = require("src/ui/BattleHonours")
+local RequisitionsMenu = require("src/ui/RequisitionsMenu")
+
 -- ============================================================================
 -- GLOBAL STATE
 -- ============================================================================
@@ -433,6 +445,8 @@ function createMainUI()
     UICore.registerModule("unitDetails", UnitDetails)
     UICore.registerModule("recordBattle", RecordBattle)
     UICore.registerModule("battleLog", BattleLog)
+    UICore.registerModule("battleHonours", BattleHonours)
+    UICore.registerModule("requisitionsMenu", RequisitionsMenu)
 
     -- Initialize modules with campaign data
     if CrusadeCampaign then
@@ -453,6 +467,10 @@ function createMainUI()
         -- Initialize Phase 4 modules (Battle Tracking)
         RecordBattle.initialize(CrusadeCampaign)
         BattleLog.initialize(CrusadeCampaign)
+
+        -- Initialize Phase 5 modules (Battle Honours & Requisitions)
+        BattleHonours.initialize(CrusadeCampaign)
+        RequisitionsMenu.initialize(CrusadeCampaign)
 
         -- Initialize map view if map config exists
         if CrusadeCampaign.mapConfig then
