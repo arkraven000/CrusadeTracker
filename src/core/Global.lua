@@ -79,6 +79,11 @@ local FactionTokens = require("src/map/FactionTokens")
 local StatisticsPanel = require("src/ui/StatisticsPanel")
 local MapControls = require("src/ui/MapControls")
 
+-- Testing Modules (Phase 9)
+local DataValidator = require("src/testing/DataValidator")
+local PerformanceMonitor = require("src/testing/PerformanceMonitor")
+local ErrorHandler = require("src/testing/ErrorHandler")
+
 -- ============================================================================
 -- GLOBAL STATE
 -- ============================================================================
@@ -506,6 +511,18 @@ function createMainUI()
         FactionTokens.initialize(CrusadeCampaign)
         StatisticsPanel.initialize(CrusadeCampaign)
         MapControls.initialize(CrusadeCampaign)
+
+        -- Initialize Phase 9 modules (Testing & Quality Assurance)
+        ErrorHandler.initialize()
+        PerformanceMonitor.initialize()
+        -- Run initial validation
+        local isValid, validationReport = DataValidator.validateCampaign(CrusadeCampaign)
+        if not isValid then
+            Utils.logWarning("Campaign validation found issues")
+            if validationReport and #validationReport.errors > 0 then
+                Utils.logWarning(string.format("Validation errors: %d", #validationReport.errors))
+            end
+        end
 
         -- Initialize map view if map config exists
         if CrusadeCampaign.mapConfig then
