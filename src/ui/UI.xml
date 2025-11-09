@@ -163,6 +163,19 @@
                     Campaign Log
                 </Button>
 
+                <Button id="mainPanel_recordBattle"
+                        height="45"
+                        color="#FF8800"
+                        onClick="UICore.onButtonClick">
+                    Record Battle
+                </Button>
+
+                <Button id="mainPanel_battleLog"
+                        height="45"
+                        onClick="UICore.onButtonClick">
+                    Battle History
+                </Button>
+
                 <Button id="mainPanel_settings"
                         height="45"
                         onClick="UICore.onButtonClick">
@@ -509,6 +522,296 @@
                     Import Units
                 </Button>
             </HorizontalLayout>
+        </VerticalLayout>
+    </Panel>
+
+    <!-- Record Battle Panel (3-Step Workflow) -->
+    <Panel id="recordBattlePanel"
+           width="100%"
+           height="100%"
+           active="false">
+
+        <VerticalLayout spacing="10" padding="15">
+            <Text fontSize="20" alignment="MiddleCenter">
+                Record Battle
+            </Text>
+
+            <!-- Step Indicator -->
+            <HorizontalLayout spacing="5" height="30">
+                <Panel id="recordBattleStep1Indicator" width="33%" height="100%" color="#FFFF00" />
+                <Panel id="recordBattleStep2Indicator" width="33%" height="100%" color="#CCCCCC" />
+                <Panel id="recordBattleStep3Indicator" width="33%" height="100%" color="#CCCCCC" />
+            </HorizontalLayout>
+
+            <HorizontalLayout spacing="10" height="20">
+                <Text width="33%" alignment="MiddleCenter" fontSize="10">Setup</Text>
+                <Text width="33%" alignment="MiddleCenter" fontSize="10">Results</Text>
+                <Text width="33%" alignment="MiddleCenter" fontSize="10">Post-Battle</Text>
+            </HorizontalLayout>
+
+            <!-- Step 1: Battle Setup -->
+            <Panel id="recordBattleStep1Panel"
+                   width="100%"
+                   height="400"
+                   active="true">
+
+                <VerticalLayout spacing="10">
+                    <Text fontSize="16">Battle Setup</Text>
+
+                    <!-- Battle Size -->
+                    <HorizontalLayout spacing="10" height="30">
+                        <Text width="30%">Battle Size:</Text>
+                        <Dropdown id="recordBattle_battleSize"
+                                  width="70%"
+                                  onValueChanged="RecordBattle.onDropdownChange">
+                            <Option>Incursion</Option>
+                            <Option selected="true">Strike Force</Option>
+                            <Option>Onslaught</Option>
+                        </Dropdown>
+                    </HorizontalLayout>
+
+                    <!-- Mission Type -->
+                    <HorizontalLayout spacing="10" height="30">
+                        <Text width="30%">Mission:</Text>
+                        <InputField id="recordBattle_missionType"
+                                    width="70%"
+                                    placeholder="Mission name"
+                                    onValueChanged="RecordBattle.onInputChange" />
+                    </HorizontalLayout>
+
+                    <!-- Mission Pack -->
+                    <HorizontalLayout spacing="10" height="30">
+                        <Text width="30%">Mission Pack:</Text>
+                        <InputField id="recordBattle_missionPack"
+                                    width="70%"
+                                    placeholder="Optional"
+                                    onValueChanged="RecordBattle.onInputChange" />
+                    </HorizontalLayout>
+
+                    <!-- Hex Location -->
+                    <HorizontalLayout spacing="10" height="30">
+                        <Text width="30%">Hex Location:</Text>
+                        <InputField id="recordBattle_hexLocation"
+                                    width="70%"
+                                    placeholder="e.g., 0,0"
+                                    onValueChanged="RecordBattle.onInputChange" />
+                    </HorizontalLayout>
+
+                    <Panel height="10" />
+                    <Text fontSize="14">Participants (will be populated dynamically)</Text>
+                    <Panel id="recordBattle_participantsContainer" height="150" />
+                </VerticalLayout>
+            </Panel>
+
+            <!-- Step 2: Battle Results -->
+            <Panel id="recordBattleStep2Panel"
+                   width="100%"
+                   height="400"
+                   active="false">
+
+                <VerticalLayout spacing="10">
+                    <Text fontSize="16">Battle Results</Text>
+
+                    <Text fontSize="12" color="#AAAAAA">
+                        Enter battle outcome, victory points, and casualties
+                    </Text>
+
+                    <Panel height="10" />
+                    <Text fontSize="14">Winner Selection (will be populated dynamically)</Text>
+                    <Panel id="recordBattle_winnerContainer" height="80" />
+
+                    <Panel height="10" />
+                    <Text fontSize="14">Destroyed Units (will be populated dynamically)</Text>
+                    <Panel id="recordBattle_destroyedContainer" height="150" />
+
+                    <Panel height="10" />
+                    <Text fontSize="14">Combat Tallies (will be populated dynamically)</Text>
+                    <Panel id="recordBattle_talliesContainer" height="100" />
+                </VerticalLayout>
+            </Panel>
+
+            <!-- Step 3: Post-Battle -->
+            <Panel id="recordBattleStep3Panel"
+                   width="100%"
+                   height="400"
+                   active="false">
+
+                <VerticalLayout spacing="10">
+                    <Text fontSize="16">Post-Battle</Text>
+
+                    <Text fontSize="12" color="#AAAAAA">
+                        XP awards, Out of Action tests, and agendas
+                    </Text>
+
+                    <Panel height="10" />
+                    <Text fontSize="14">Marked for Greatness (will be populated dynamically)</Text>
+                    <Panel id="recordBattle_markedContainer" height="100" />
+
+                    <Panel height="10" />
+                    <Text fontSize="14">Out of Action Tests (will be populated dynamically)</Text>
+                    <Panel id="recordBattle_outOfActionContainer" height="150" />
+
+                    <Panel height="10" />
+                    <Text fontSize="14">Battle Summary</Text>
+                    <Text id="recordBattle_summary" fontSize="12" color="#00FF00">
+                        XP and Out of Action results will appear here
+                    </Text>
+                </VerticalLayout>
+            </Panel>
+
+            <!-- Navigation Buttons -->
+            <HorizontalLayout spacing="10" height="40">
+                <Button id="recordBattle_cancel"
+                        width="30%"
+                        onClick="RecordBattle.onButtonClick">
+                    Cancel
+                </Button>
+
+                <Button id="recordBattle_previous"
+                        width="30%"
+                        onClick="RecordBattle.onButtonClick">
+                    Previous
+                </Button>
+
+                <Button id="recordBattle_next"
+                        width="40%"
+                        onClick="RecordBattle.onButtonClick">
+                    Next
+                </Button>
+            </HorizontalLayout>
+        </VerticalLayout>
+    </Panel>
+
+    <!-- Battle Log Panel -->
+    <Panel id="battleLogPanel"
+           width="100%"
+           height="100%"
+           active="false">
+
+        <VerticalLayout spacing="10" padding="15">
+            <Text fontSize="20" alignment="MiddleCenter">
+                Battle History
+            </Text>
+
+            <!-- Filters -->
+            <HorizontalLayout spacing="10" height="30">
+                <Text width="20%">Filter:</Text>
+                <Dropdown id="battleLog_filterPlayer"
+                          width="40%"
+                          onValueChanged="BattleLog.onDropdownChange">
+                    <Option selected="true">All Players</Option>
+                </Dropdown>
+
+                <Dropdown id="battleLog_filterBattleSize"
+                          width="40%"
+                          onValueChanged="BattleLog.onDropdownChange">
+                    <Option selected="true">All Sizes</Option>
+                    <Option>Incursion</Option>
+                    <Option>Strike Force</Option>
+                    <Option>Onslaught</Option>
+                </Dropdown>
+            </HorizontalLayout>
+
+            <!-- Sort -->
+            <HorizontalLayout spacing="10" height="30">
+                <Text width="20%">Sort by:</Text>
+                <Dropdown id="battleLog_sortBy"
+                          width="50%"
+                          onValueChanged="BattleLog.onDropdownChange">
+                    <Option selected="true">Newest First</Option>
+                    <Option>Oldest First</Option>
+                    <Option>Most Participants</Option>
+                    <Option>Battle Size</Option>
+                </Dropdown>
+
+                <Button id="battleLog_clearFilters"
+                        width="30%"
+                        onClick="BattleLog.onButtonClick">
+                    Clear Filters
+                </Button>
+            </HorizontalLayout>
+
+            <!-- Stats -->
+            <HorizontalLayout spacing="5" height="40">
+                <Text id="battleLog_battleCount" width="50%" fontSize="12">
+                    Total Battles: 0
+                </Text>
+                <Text id="battleLog_filterIndicator" width="50%" fontSize="12" color="#AAAAAA">
+                    Filters: None
+                </Text>
+            </HorizontalLayout>
+
+            <Panel height="5" />
+
+            <!-- Battle List Panel -->
+            <Panel id="battleListPanel"
+                   width="100%"
+                   height="350"
+                   active="true">
+
+                <VerticalLayout spacing="5">
+                    <Text fontSize="14">Battle List (will be populated dynamically)</Text>
+                    <Panel id="battleLog_battleListContainer" height="300" />
+                </VerticalLayout>
+            </Panel>
+
+            <!-- Battle Details Panel -->
+            <Panel id="battleDetailsPanel"
+                   width="100%"
+                   height="350"
+                   active="false">
+
+                <VerticalLayout spacing="10">
+                    <HorizontalLayout spacing="10" height="30">
+                        <Text id="battleDetails_missionType" width="70%" fontSize="16">
+                            Mission Name
+                        </Text>
+                        <Button id="battleLog_closeBattleDetails"
+                                width="30%"
+                                onClick="BattleLog.onButtonClick">
+                            Back to List
+                        </Button>
+                    </HorizontalLayout>
+
+                    <Text id="battleDetails_battleSize" fontSize="12">Battle Size</Text>
+                    <Text id="battleDetails_timestamp" fontSize="12" color="#AAAAAA">Timestamp</Text>
+                    <Text id="battleDetails_winner" fontSize="14" color="#00FF00">Winner</Text>
+                    <Text id="battleDetails_participants" fontSize="12">Participants</Text>
+
+                    <Panel height="10" />
+                    <Text fontSize="14">Detailed Information</Text>
+                    <Panel id="battleDetails_detailsContainer" height="150" />
+                </VerticalLayout>
+            </Panel>
+
+            <!-- Pagination -->
+            <HorizontalLayout spacing="10" height="35">
+                <Button id="battleLog_previousPage"
+                        width="25%"
+                        onClick="BattleLog.onButtonClick">
+                    &lt; Prev
+                </Button>
+
+                <Text id="battleLog_pageIndicator"
+                      width="50%"
+                      alignment="MiddleCenter"
+                      fontSize="12">
+                    Page 1 of 1
+                </Text>
+
+                <Button id="battleLog_nextPage"
+                        width="25%"
+                        onClick="BattleLog.onButtonClick">
+                    Next &gt;
+                </Button>
+            </HorizontalLayout>
+
+            <!-- Close Button -->
+            <Button id="battleLog_close"
+                    height="40"
+                    onClick="UICore.onButtonClick">
+                Close
+            </Button>
         </VerticalLayout>
     </Panel>
 

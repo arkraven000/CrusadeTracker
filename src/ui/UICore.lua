@@ -59,7 +59,9 @@ function UICore.initialize()
         mapView = false,
         manageForces = false,
         unitDetails = false,
-        newRecruitImport = false
+        newRecruitImport = false,
+        recordBattle = false,
+        battleLog = false
     }
 
     UICore.initialized = true

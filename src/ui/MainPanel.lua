@@ -115,6 +115,18 @@ function MainPanel.openManageForces()
     log("Opening manage forces")
 end
 
+--- Open record battle panel
+function MainPanel.openRecordBattle()
+    -- UICore.showPanel("recordBattle")
+    log("Opening record battle")
+end
+
+--- Open battle history panel
+function MainPanel.openBattleLog()
+    -- UICore.showPanel("battleLog")
+    log("Opening battle history")
+end
+
 --- Save campaign
 function MainPanel.saveCampaign()
     -- Call SaveLoad module
