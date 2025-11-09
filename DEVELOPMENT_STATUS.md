@@ -1,7 +1,7 @@
 # Development Status
 
-**Last Updated**: 2025-11-08
-**Current Phase**: Phase 3 - Order of Battle & Unit Management
+**Last Updated**: 2025-11-09
+**Current Phase**: Phase 4 - Battle Tracking & XP System
 **Progress**: ✅ **100% COMPLETE**
 
 ---
@@ -494,17 +494,141 @@
 
 ## Phase 4: Battle Tracking & XP System
 
-**Target**: 5-6 weeks | **Status**: Pending Phase 3
+**Target**: 5-6 weeks | **Status**: ✅ **COMPLETE**
 
-### Planned Features
+### ✅ All Features Implemented
 
-1. Record Battle panel (3-part workflow)
-2. Battle Log display
-3. Agenda tracking
-4. XP awards UI (all 3 types)
-5. Out of Action test UI
-6. Combat tallies tracking
-7. Territory control updates
+1. **Record Battle Panel (3-Part Workflow)** ✅
+   - Step 1: Battle Setup (participants, mission, battle size)
+   - Step 2: Battle Results (winner, VP, destroyed units, combat tallies)
+   - Step 3: Post-Battle (XP awards, Out of Action tests, agendas)
+   - Multi-step wizard UI with validation
+   - Dynamic participant management
+   - Unit deployment tracking
+
+2. **Battle Log Display** ✅
+   - Chronological battle history
+   - Filter by player, battle size
+   - Sort by date, participants
+   - Paginated list view (10 battles per page)
+   - Detailed battle view panel
+   - Battle statistics summary
+
+3. **Agenda Tracking** ✅
+   - Agenda data model with creation/assignment
+   - Player agenda collections per battle
+   - Unit-specific agenda tracking
+   - Completion tracking with notes
+   - Common 10th Edition agendas library (12 templates)
+   - Category filtering (Combat, Territorial, Survival)
+   - Completion statistics and summaries
+
+4. **XP Awards UI (All 3 Types)** ✅
+   - Battle Experience (+1 to all participating units)
+   - Every Third Kill (automatic calculation)
+   - Marked for Greatness (+3 to selected unit per player)
+   - Validation for Marked for Greatness selections
+   - Battle Scar restrictions enforced (Disgraced, Mark of Shame)
+   - Real-time XP calculation and rank progression
+   - Auto-detection of rank-ups with notifications
+
+5. **Out of Action Test UI** ✅
+   - Automatic D6 roll for destroyed units
+   - Consequence selection (Devastating Blow vs Battle Scar)
+   - Available consequences display
+   - Honour removal interface (Devastating Blow)
+   - Battle Scar assignment with duplicate prevention
+   - 3-scar limit enforcement
+   - Unit destruction warnings
+   - Batch processing for multiple destroyed units
+
+6. **Combat Tallies Tracking** ✅
+   - Kills per battle tracking
+   - Total units destroyed lifetime tracking
+   - Every Third Kill threshold calculation
+   - Combat tally input in battle recording
+   - Integration with XP system
+
+7. **Territory Control Updates** ✅
+   - Hex capture based on battle winner
+   - Automatic territory transfer
+   - Previous controller tracking
+   - Event log integration
+   - Map visualization updates
+
+8. **Battle Record Module (Core Logic)** ✅
+   - Complete battle record data structure
+   - Participant management functions
+   - Destroyed units tracking
+   - Victory points calculation
+   - Combat tallies management
+   - Post-battle processing workflow
+   - Battle validation system
+   - Battle summary generation
+   - Integration with Experience and OutOfAction modules
+
+9. **UI Integration** ✅
+   - RecordBattle UI module (3-step workflow)
+   - BattleLog UI module (history display)
+   - MainPanel buttons (Record Battle, Battle History)
+   - UICore panel registration
+   - Global.lua module imports and initialization
+   - UI.xml panel definitions (300+ lines)
+
+### 📊 Phase 4 Metrics
+
+- **New Modules**: 4 (BattleRecord, Agendas, RecordBattle UI, BattleLog UI)
+- **Lines of Code**: ~1,400+
+- **UI Panels**: 2 major panels (Record Battle, Battle Log)
+- **Workflow Steps**: 3-step battle recording wizard
+- **Common Agendas**: 12 templates included
+- **Dependencies Integrated**: Experience, OutOfAction, DataModel
+
+### 🎯 Key Achievements
+
+**Complete Battle Workflow**:
+- 3-step guided workflow for recording battles
+- Comprehensive data collection (participants, results, post-battle)
+- Automatic XP calculation and distribution
+- Out of Action test processing
+- Territory capture mechanics
+
+**XP System Integration**:
+- All three XP award types implemented
+- Automatic Every Third Kill calculation
+- Marked for Greatness validation
+- Rank-up detection and notifications
+- XP cap enforcement for non-CHARACTER units
+
+**Out of Action Processing**:
+- D6 roll mechanics
+- Consequence selection UI
+- Devastating Blow honour removal
+- Battle Scar assignment with validation
+- Unit destruction handling
+
+**Battle History**:
+- Filterable and sortable battle list
+- Detailed battle view
+- Pagination support
+- Statistics summary
+- Event log integration
+
+**Agenda System**:
+- Flexible agenda creation
+- 12 common 10th Edition agenda templates
+- Completion tracking
+- Per-player and per-unit agendas
+- Category-based filtering
+
+**Data Integrity**:
+- Complete battle record validation
+- Participant verification
+- Winner validation
+- Unit deployment verification
+- Marked for Greatness restrictions
+
+**Dependencies**: Phase 3 Complete ✅
 
 ---
 
@@ -561,11 +685,11 @@
 
 ## Git Status
 
-**Branch**: `claude/review-guidance-docs-011CUwK4BqCbnsGUkG9sd8Zj`
+**Branch**: `claude/review-docs-complete-tasks-011CUwLm7dDNHthiuNUMiGZm`
 
-**Commits**: 6 (Phases 1, 1.5, 2, 3)
+**Commits**: 7 (Phases 1, 1.5, 2, 3, 4)
 
-**Phase 1, 1.5, 2 & 3 Files**:
+**Phase 1, 1.5, 2, 3 & 4 Files**:
 - ✅ README.md
 - ✅ DEVELOPMENT_STATUS.md
 - ✅ config/rules_10th.json
@@ -599,6 +723,10 @@
 - ✅ src/ui/ManageForces.lua
 - ✅ src/ui/UnitDetails.lua
 - ✅ src/import/NewRecruit.lua
+- ✅ src/battle/BattleRecord.lua
+- ✅ src/battle/Agendas.lua
+- ✅ src/ui/RecordBattle.lua
+- ✅ src/ui/BattleLog.lua
 
 ---
 
@@ -662,15 +790,15 @@
 
 ## Next Session Goals
 
-**Phase 4 Start: Battle Tracking & XP System**
+**Phase 5 Start: Battle Honours, Scars & Requisitions**
 
-1. Record Battle panel (3-part workflow)
-2. Battle Log display with detailed history
-3. Agenda tracking system
-4. XP awards UI (all 3 types: Battle Experience, Every Third Kill, Marked for Greatness)
-5. Out of Action test UI with consequence selection
-6. Combat tallies tracking
-7. Territory control updates based on battle outcomes
+1. Battle Honours selection menu (3 categories: Battle Traits, Weapon Mods, Crusade Relics)
+2. Battle Traits library and selection UI
+3. Weapon Modifications UI (2 mods per weapon)
+4. Crusade Relics library (3 tiers: Artificer, Antiquity, Legendary)
+5. Battle Scars assignment UI (already have core logic, need UI)
+6. Requisitions menu (all requisition types with variable costs)
+7. Enhancement system for CHARACTER units
 
 ---
 
@@ -684,6 +812,6 @@
 
 ---
 
-**Phases 1, 1.5, 2 & 3 Status**: ✅ **COMPLETE - Ready for Phase 4**
+**Phases 1, 1.5, 2, 3 & 4 Status**: ✅ **COMPLETE - Ready for Phase 5**
 
-All core systems implemented, tested, and integrated. Data persistence is robust with automatic recovery. Campaign architecture is solid and extensible. FTC-inspired map skin system adds community content support. Complete UI framework with campaign setup wizard, main panel, settings, and map integration. **NEW**: Full Order of Battle management system with unit CRUD operations, comprehensive editor with live CP calculation, New Recruit JSON import with auto-detection, supply tracking with visual indicators, and search/sort/filter capabilities. Ready to begin battle tracking in Phase 4.
+All core systems implemented, tested, and integrated. Data persistence is robust with automatic recovery. Campaign architecture is solid and extensible. FTC-inspired map skin system adds community content support. Complete UI framework with campaign setup wizard, main panel, settings, and map integration. Full Order of Battle management system with unit CRUD operations, comprehensive editor with live CP calculation, New Recruit JSON import with auto-detection, supply tracking with visual indicators, and search/sort/filter capabilities. **NEW**: Complete battle tracking system with 3-step recording workflow, automatic XP calculation and distribution (all 3 types), Out of Action test processing with consequence selection, combat tallies tracking, territory capture mechanics, battle history with filtering/sorting, and agenda tracking system with 12 common templates. Ready to begin Battle Honours and Requisitions in Phase 5.

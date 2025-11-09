@@ -41,6 +41,14 @@ local UnitDetails = require("src/ui/UnitDetails")
 -- Import Modules (Phase 3)
 local NewRecruit = require("src/import/NewRecruit")
 
+-- Battle Tracking Modules (Phase 4)
+local BattleRecord = require("src/battle/BattleRecord")
+local Agendas = require("src/battle/Agendas")
+
+-- UI Modules (Phase 4)
+local RecordBattle = require("src/ui/RecordBattle")
+local BattleLog = require("src/ui/BattleLog")
+
 -- ============================================================================
 -- GLOBAL STATE
 -- ============================================================================
@@ -423,6 +431,8 @@ function createMainUI()
     UICore.registerModule("campaignLog", CampaignLog)
     UICore.registerModule("manageForces", ManageForces)
     UICore.registerModule("unitDetails", UnitDetails)
+    UICore.registerModule("recordBattle", RecordBattle)
+    UICore.registerModule("battleLog", BattleLog)
 
     -- Initialize modules with campaign data
     if CrusadeCampaign then
@@ -439,6 +449,10 @@ function createMainUI()
         UnitDetails.setDependencies(CrusadePoints, Experience, OutOfAction)
 
         NewRecruit.campaign = CrusadeCampaign
+
+        -- Initialize Phase 4 modules (Battle Tracking)
+        RecordBattle.initialize(CrusadeCampaign)
+        BattleLog.initialize(CrusadeCampaign)
 
         -- Initialize map view if map config exists
         if CrusadeCampaign.mapConfig then
