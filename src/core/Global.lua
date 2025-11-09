@@ -61,6 +61,17 @@ local Requisitions = require("src/requisitions/Requisitions")
 local BattleHonours = require("src/ui/BattleHonours")
 local RequisitionsMenu = require("src/ui/RequisitionsMenu")
 
+-- Map/Territory Modules (Phase 6)
+local TerritoryBonuses = require("src/map/TerritoryBonuses")
+local Alliances = require("src/map/Alliances")
+
+-- Campaign Modules (Phase 7)
+local MissionPackResources = require("src/campaign/MissionPackResources")
+local Statistics = require("src/campaign/Statistics")
+
+-- UI Modules (Phase 7)
+local ExportImport = require("src/ui/ExportImport")
+
 -- ============================================================================
 -- GLOBAL STATE
 -- ============================================================================
@@ -447,6 +458,7 @@ function createMainUI()
     UICore.registerModule("battleLog", BattleLog)
     UICore.registerModule("battleHonours", BattleHonours)
     UICore.registerModule("requisitionsMenu", RequisitionsMenu)
+    UICore.registerModule("exportImport", ExportImport)
 
     -- Initialize modules with campaign data
     if CrusadeCampaign then
@@ -471,6 +483,15 @@ function createMainUI()
         -- Initialize Phase 5 modules (Battle Honours & Requisitions)
         BattleHonours.initialize(CrusadeCampaign)
         RequisitionsMenu.initialize(CrusadeCampaign)
+
+        -- Initialize Phase 6 modules (Territory System)
+        TerritoryBonuses.initialize(CrusadeCampaign)
+        Alliances.initialize(CrusadeCampaign)
+
+        -- Initialize Phase 7 modules (Polish & Finalization)
+        MissionPackResources.initialize(CrusadeCampaign)
+        Statistics.initialize(CrusadeCampaign)
+        ExportImport.initialize(CrusadeCampaign)
 
         -- Initialize map view if map config exists
         if CrusadeCampaign.mapConfig then
