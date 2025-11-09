@@ -127,6 +127,18 @@ function MainPanel.openBattleLog()
     log("Opening battle history")
 end
 
+--- Open battle honours panel
+function MainPanel.openBattleHonours()
+    -- UICore.showPanel("battleHonours")
+    log("Opening battle honours")
+end
+
+--- Open requisitions menu
+function MainPanel.openRequisitionsMenu()
+    -- UICore.showPanel("requisitionsMenu")
+    log("Opening requisitions menu")
+end
+
 --- Save campaign
 function MainPanel.saveCampaign()
     -- Call SaveLoad module

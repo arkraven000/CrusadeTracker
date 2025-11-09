@@ -61,7 +61,9 @@ function UICore.initialize()
         unitDetails = false,
         newRecruitImport = false,
         recordBattle = false,
-        battleLog = false
+        battleLog = false,
+        battleHonours = false,
+        requisitionsMenu = false
     }
 
     UICore.initialized = true
