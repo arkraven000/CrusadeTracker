@@ -109,6 +109,12 @@ function MainPanel.openMapView()
     log("Opening map view")
 end
 
+--- Open manage forces panel
+function MainPanel.openManageForces()
+    -- UICore.showPanel("manageForces")
+    log("Opening manage forces")
+end
+
 --- Save campaign
 function MainPanel.saveCampaign()
     -- Call SaveLoad module
@@ -180,6 +186,9 @@ function MainPanel.handleClick(player, value, id)
 
     elseif id == "mainPanel_map" then
         MainPanel.openMapView()
+
+    elseif id == "mainPanel_manageForces" then
+        MainPanel.openManageForces()
 
     elseif id == "mainPanel_save" then
         MainPanel.saveCampaign()

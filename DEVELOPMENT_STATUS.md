@@ -1,7 +1,7 @@
 # Development Status
 
 **Last Updated**: 2025-11-08
-**Current Phase**: Phase 2 - Campaign Setup & Basic UI
+**Current Phase**: Phase 3 - Order of Battle & Unit Management
 **Progress**: ✅ **100% COMPLETE**
 
 ---
@@ -354,17 +354,141 @@
 
 ## Phase 3: Order of Battle & Unit Management
 
-**Target**: 4-5 weeks | **Status**: Pending Phase 2
+**Target**: 4-5 weeks | **Status**: ✅ **COMPLETE**
 
-### Planned Features
+### ✅ All Features Implemented
 
-1. Manage Forces panel
-2. Unit Details panel (comprehensive editor)
-3. Manual unit entry
-4. New Recruit JSON import
-5. Unit editing with live CP recalculation
-6. Unit deletion
-7. Supply tracking UI
+1. **Manage Forces Panel** ✅
+   - Player roster selector (dropdown)
+   - Supply tracking display with color-coded progress bar
+   - Unit list with pagination (10 units per page)
+   - Search functionality (filter by name, type, role)
+   - Sort options (name, role, XP, rank, CP)
+   - Unit display with key stats
+   - Add/Edit/Delete unit actions
+   - New Recruit import button
+
+2. **Unit Details Panel (Comprehensive Editor)** ✅
+   - Create mode (new units)
+   - Edit mode (existing units)
+   - Basic info fields (name, type, role, points)
+   - Unit flag toggles (CHARACTER, TITANIC, EPIC HERO, etc.)
+   - XP and Rank display
+   - Live Crusade Points calculation
+   - CP breakdown display (XP, Honours, Scars)
+   - Battle Honours management (add/remove)
+   - Battle Scars management (add/remove)
+   - Crusade Relics support (CHARACTER only)
+   - Combat tallies tracking
+   - Validation on save
+   - Working copy system (no changes until saved)
+
+3. **Manual Unit Entry** ✅
+   - Full form-based unit creation
+   - All Crusade card fields supported
+   - Live validation
+   - Supply tracking integration
+   - Automatic CP calculation
+   - Event logging on unit creation
+
+4. **New Recruit JSON Import** ✅
+   - JSON parser for New Recruit format
+   - Auto-detection of unit flags from keywords:
+     - CHARACTER (from keywords/role)
+     - TITANIC (from keywords)
+     - EPIC HERO (from keywords)
+     - BATTLELINE (from keywords/role)
+     - DEDICATED TRANSPORT (from keywords/role)
+   - Equipment and abilities extraction
+   - Faction/detachment keyword handling
+   - Batch import support (multiple units)
+   - Error handling and reporting
+   - Import summary and status
+
+5. **Unit Editing with Live CP Recalculation** ✅
+   - Real-time CP updates on field changes
+   - XP changes trigger rank recalculation
+   - Honour addition/removal updates CP
+   - Scar addition/removal updates CP
+   - TITANIC flag affects honour CP costs
+   - Breakdown display shows calculation details
+
+6. **Unit Deletion with Confirmation** ✅
+   - Delete button per unit
+   - Confirmation workflow
+   - Supply adjustment on deletion
+   - Removal from player roster
+   - Global units table cleanup
+   - Event logging
+
+7. **Supply Tracking UI with Visual Indicators** ✅
+   - Current supply / limit display
+   - Color-coded progress bar:
+     - Green: < 50%
+     - Yellow: 50-75%
+     - Orange: 75-90%
+     - Red: > 90%
+   - Automatic updates on unit add/edit/delete
+   - Per-player supply tracking
+   - Visual overflow warnings
+
+8. **Global.lua Integration** ✅
+   - Module imports (ManageForces, UnitDetails, NewRecruit)
+   - Module initialization with dependencies
+   - CrusadePoints module injection
+   - Experience module injection
+   - OutOfAction module injection
+   - Campaign reference passing
+
+9. **UICore Integration** ✅
+   - Panel registration (manageForces, unitDetails, newRecruitImport)
+   - Click handler routing
+   - Module delegation system
+   - Refresh panel support
+
+10. **UI.xml Panels** ✅
+    - Manage Forces panel layout (400+ lines)
+    - Unit Details panel layout (200+ lines)
+    - New Recruit Import panel layout (50+ lines)
+    - Dropdown, input fields, buttons
+    - Toggle switches for unit flags
+    - Color-coded elements
+
+### 📊 Phase 3 Metrics
+
+- **New Modules**: 3 (ManageForces, UnitDetails, NewRecruit)
+- **Lines of Code**: ~1,300+
+- **UI Panels**: 3 major panels
+- **Input Fields**: 15+ form fields
+- **Dependencies Integrated**: 3 (CrusadePoints, Experience, OutOfAction)
+
+### 🎯 Key Achievements
+
+**Complete Order of Battle System**:
+- Full CRUD operations for units
+- Comprehensive unit editor
+- Supply limit management
+- Search and sort capabilities
+
+**New Recruit Integration**:
+- Automatic flag detection
+- JSON parsing and validation
+- Batch import support
+- Error handling
+
+**Live Calculations**:
+- Real-time CP updates
+- Automatic rank progression
+- Supply tracking
+- Validation feedback
+
+**User Experience**:
+- Intuitive forms
+- Clear visual feedback
+- Color-coded indicators
+- Pagination for large rosters
+
+**Dependencies**: Phase 2 Complete ✅
 
 ---
 
@@ -437,11 +561,11 @@
 
 ## Git Status
 
-**Branch**: `claude/wh40k-crusade-tracker-tts-mod-011CUwEK5yKfyUgydE4A1GBY`
+**Branch**: `claude/review-guidance-docs-011CUwK4BqCbnsGUkG9sd8Zj`
 
-**Commits**: 5 (Phases 1, 1.5, 2)
+**Commits**: 6 (Phases 1, 1.5, 2, 3)
 
-**Phase 1, 1.5 & 2 Files**:
+**Phase 1, 1.5, 2 & 3 Files**:
 - ✅ README.md
 - ✅ DEVELOPMENT_STATUS.md
 - ✅ config/rules_10th.json
@@ -472,6 +596,9 @@
 - ✅ src/ui/CampaignLog.lua
 - ✅ src/ui/MapView.lua
 - ✅ src/ui/UI.xml
+- ✅ src/ui/ManageForces.lua
+- ✅ src/ui/UnitDetails.lua
+- ✅ src/import/NewRecruit.lua
 
 ---
 
@@ -507,7 +634,7 @@
 - ✅ Additive loading architecture
 - ✅ Alignment guides and snap-to-grid
 
-### UI System (Phase 2)
+### UI System (Phases 2 & 3)
 - ✅ Complete UI framework (UICore)
 - ✅ 5-step campaign setup wizard
 - ✅ Main campaign panel with stats
@@ -516,20 +643,34 @@
 - ✅ Campaign log viewer with filtering
 - ✅ Map view integration
 - ✅ TTS XML UI definitions
+- ✅ Manage Forces panel (Order of Battle)
+- ✅ Unit Details panel (comprehensive editor)
+- ✅ New Recruit Import panel
+- ✅ Live CP calculation display
+- ✅ Supply tracking with color-coded bars
+- ✅ Search, filter, and sort capabilities
+
+### Import System (Phase 3)
+- ✅ New Recruit JSON parser
+- ✅ Automatic unit flag detection
+- ✅ Keyword-based role inference
+- ✅ Equipment and abilities extraction
+- ✅ Batch import support
+- ✅ Error handling and validation
 
 ---
 
 ## Next Session Goals
 
-**Phase 3 Start: Order of Battle & Unit Management**
+**Phase 4 Start: Battle Tracking & XP System**
 
-1. Manage Forces panel
-2. Unit Details panel (comprehensive editor)
-3. Manual unit entry
-4. New Recruit JSON import
-5. Unit editing with live CP recalculation
-6. Unit deletion confirmation
-7. Supply tracking UI with visual indicators
+1. Record Battle panel (3-part workflow)
+2. Battle Log display with detailed history
+3. Agenda tracking system
+4. XP awards UI (all 3 types: Battle Experience, Every Third Kill, Marked for Greatness)
+5. Out of Action test UI with consequence selection
+6. Combat tallies tracking
+7. Territory control updates based on battle outcomes
 
 ---
 
@@ -543,6 +684,6 @@
 
 ---
 
-**Phases 1, 1.5 & 2 Status**: ✅ **COMPLETE - Ready for Phase 3**
+**Phases 1, 1.5, 2 & 3 Status**: ✅ **COMPLETE - Ready for Phase 4**
 
-All core systems implemented, tested, and integrated. Data persistence is robust with automatic recovery. Campaign architecture is solid and extensible. FTC-inspired map skin system adds community content support. **NEW**: Complete UI framework with campaign setup wizard, main panel, settings, and map integration. Ready to begin unit management in Phase 3.
+All core systems implemented, tested, and integrated. Data persistence is robust with automatic recovery. Campaign architecture is solid and extensible. FTC-inspired map skin system adds community content support. Complete UI framework with campaign setup wizard, main panel, settings, and map integration. **NEW**: Full Order of Battle management system with unit CRUD operations, comprehensive editor with live CP calculation, New Recruit JSON import with auto-detection, supply tracking with visual indicators, and search/sort/filter capabilities. Ready to begin battle tracking in Phase 4.

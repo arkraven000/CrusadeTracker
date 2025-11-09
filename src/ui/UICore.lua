@@ -56,7 +56,10 @@ function UICore.initialize()
         playerManagement = false,
         settings = false,
         campaignLog = false,
-        mapView = false
+        mapView = false,
+        manageForces = false,
+        unitDetails = false,
+        newRecruitImport = false
     }
 
     UICore.initialized = true
@@ -202,6 +205,12 @@ function UICore.onButtonClick(player, value, id)
         UICore.handlePlayerManagementClick(player, value, id)
     elseif string.match(id, "^settings_") then
         UICore.handleSettingsClick(player, value, id)
+    elseif string.match(id, "^manageForces_") then
+        UICore.handleManageForcesClick(player, value, id)
+    elseif string.match(id, "^unitDetails_") then
+        UICore.handleUnitDetailsClick(player, value, id)
+    elseif string.match(id, "^newRecruit_") then
+        UICore.handleNewRecruitClick(player, value, id)
     else
         log("WARNING: Unhandled button click: " .. id)
     end
@@ -258,6 +267,39 @@ function UICore.handleSettingsClick(player, value, id)
     end
 end
 
+--- Handle manage forces clicks
+-- @param player object Player who clicked
+-- @param value string Button value
+-- @param id string Button ID
+function UICore.handleManageForcesClick(player, value, id)
+    -- Delegated to ManageForces.lua module
+    if UICore.manageForcesModule then
+        UICore.manageForcesModule.handleClick(player, value, id)
+    end
+end
+
+--- Handle unit details clicks
+-- @param player object Player who clicked
+-- @param value string Button value
+-- @param id string Button ID
+function UICore.handleUnitDetailsClick(player, value, id)
+    -- Delegated to UnitDetails.lua module
+    if UICore.unitDetailsModule then
+        UICore.unitDetailsModule.handleClick(player, value, id)
+    end
+end
+
+--- Handle new recruit import clicks
+-- @param player object Player who clicked
+-- @param value string Button value
+-- @param id string Button ID
+function UICore.handleNewRecruitClick(player, value, id)
+    -- Delegated to NewRecruit.lua module
+    if UICore.newRecruitModule then
+        UICore.newRecruitModule.handleClick(player, value, id)
+    end
+end
+
 -- ============================================================================
 -- UI UPDATE HELPERS
 -- ============================================================================
@@ -286,6 +328,10 @@ function UICore.refreshPanel(panelName)
         UICore.campaignLogModule.refresh()
     elseif panelName == "settings" and UICore.settingsModule then
         UICore.settingsModule.refresh()
+    elseif panelName == "manageForces" and UICore.manageForcesModule then
+        UICore.manageForcesModule.refresh()
+    elseif panelName == "unitDetails" and UICore.unitDetailsModule then
+        UICore.unitDetailsModule.refresh()
     end
 end
 
@@ -350,6 +396,12 @@ function UICore.registerModule(moduleName, moduleRef)
         UICore.settingsModule = moduleRef
     elseif moduleName == "campaignLog" then
         UICore.campaignLogModule = moduleRef
+    elseif moduleName == "manageForces" then
+        UICore.manageForcesModule = moduleRef
+    elseif moduleName == "unitDetails" then
+        UICore.unitDetailsModule = moduleRef
+    elseif moduleName == "newRecruit" then
+        UICore.newRecruitModule = moduleRef
     end
 
     log("UI module registered: " .. moduleName)

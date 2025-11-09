@@ -259,4 +259,257 @@
         </VerticalLayout>
     </Panel>
 
+    <!-- Manage Forces Panel (Phase 3) -->
+    <Panel id="manageForcesPanel"
+           width="100%"
+           height="100%"
+           active="false">
+
+        <VerticalLayout spacing="10" padding="15">
+            <Text fontSize="18">Manage Forces - Order of Battle</Text>
+
+            <!-- Player Selector -->
+            <HorizontalLayout spacing="10" height="40">
+                <Text width="25%">Player:</Text>
+                <Dropdown id="manageForces_playerSelect"
+                         width="75%"
+                         onChange="UICore.onButtonClick">
+                </Dropdown>
+            </HorizontalLayout>
+
+            <!-- Supply Display -->
+            <Panel id="manageForces_supplyPanel"
+                   width="100%"
+                   height="50"
+                   color="rgba(20,20,20,0.9)"
+                   padding="10">
+                <VerticalLayout spacing="5">
+                    <Text id="manageForces_supplyText" fontSize="14">
+                        Supply: 0 / 50 PL
+                    </Text>
+                    <Panel id="manageForces_supplyBar"
+                           width="100%"
+                           height="10"
+                           color="#00FF00" />
+                </VerticalLayout>
+            </Panel>
+
+            <!-- Search and Sort -->
+            <HorizontalLayout spacing="10" height="35">
+                <InputField id="manageForces_search"
+                           width="60%"
+                           placeholder="Search units..."
+                           onValueChanged="UICore.onButtonClick" />
+                <Dropdown id="manageForces_sortBy"
+                         width="40%"
+                         onChange="UICore.onButtonClick">
+                    <Option value="name">Name</Option>
+                    <Option value="role">Role</Option>
+                    <Option value="xp">XP</Option>
+                    <Option value="rank">Rank</Option>
+                    <Option value="cp">CP</Option>
+                </Dropdown>
+            </HorizontalLayout>
+
+            <!-- Unit List Area -->
+            <Panel id="manageForces_unitList"
+                   width="100%"
+                   height="300"
+                   color="rgba(20,20,20,0.9)">
+                <Text fontSize="12" color="#AAAAAA">
+                    No units in roster. Click "Add Unit" to begin.
+                </Text>
+            </Panel>
+
+            <!-- Pagination -->
+            <HorizontalLayout spacing="10" height="30">
+                <Button id="manageForces_prevPage"
+                        width="30%"
+                        onClick="UICore.onButtonClick">
+                    Previous
+                </Button>
+                <Text id="manageForces_pageInfo" width="40%" alignment="MiddleCenter">
+                    Page 1 / 1 (0 units)
+                </Text>
+                <Button id="manageForces_nextPage"
+                        width="30%"
+                        onClick="UICore.onButtonClick">
+                    Next
+                </Button>
+            </HorizontalLayout>
+
+            <!-- Action Buttons -->
+            <HorizontalLayout spacing="10" height="40">
+                <Button id="manageForces_addUnit"
+                        width="33%"
+                        onClick="UICore.onButtonClick">
+                    Add Unit
+                </Button>
+                <Button id="manageForces_import"
+                        width="33%"
+                        onClick="UICore.onButtonClick">
+                    Import
+                </Button>
+                <Button id="manageForces_close"
+                        width="33%"
+                        onClick="UICore.onButtonClick">
+                    Close
+                </Button>
+            </HorizontalLayout>
+        </VerticalLayout>
+    </Panel>
+
+    <!-- Unit Details Panel (Phase 3) -->
+    <Panel id="unitDetailsPanel"
+           width="100%"
+           height="100%"
+           active="false">
+
+        <VerticalLayout spacing="10" padding="15">
+            <Text id="unitDetails_title" fontSize="18">Unit Editor</Text>
+
+            <!-- Basic Info Section -->
+            <Panel width="100%" height="200" color="rgba(20,20,20,0.9)" padding="10">
+                <VerticalLayout spacing="8">
+                    <Text fontSize="14" color="#FFFF00">Basic Information</Text>
+
+                    <HorizontalLayout spacing="5" height="30">
+                        <Text width="30%">Unit Name:</Text>
+                        <InputField id="unitDetails_name"
+                                   width="70%"
+                                   placeholder="Enter unit name..."
+                                   onValueChanged="UICore.onButtonClick" />
+                    </HorizontalLayout>
+
+                    <HorizontalLayout spacing="5" height="30">
+                        <Text width="30%">Unit Type:</Text>
+                        <InputField id="unitDetails_unitType"
+                                   width="70%"
+                                   placeholder="e.g., Intercessor Squad"
+                                   onValueChanged="UICore.onButtonClick" />
+                    </HorizontalLayout>
+
+                    <HorizontalLayout spacing="5" height="30">
+                        <Text width="30%">Role:</Text>
+                        <InputField id="unitDetails_role"
+                                   width="70%"
+                                   placeholder="Battlefield Role"
+                                   onValueChanged="UICore.onButtonClick" />
+                    </HorizontalLayout>
+
+                    <HorizontalLayout spacing="5" height="30">
+                        <Text width="30%">Points:</Text>
+                        <InputField id="unitDetails_points"
+                                   width="30%"
+                                   characterLimit="4"
+                                   onValueChanged="UICore.onButtonClick" />
+                        <Text width="40%" fontSize="12" color="#CCCCCC">Power Level / Points Cost</Text>
+                    </HorizontalLayout>
+
+                    <HorizontalLayout spacing="10" height="25">
+                        <Toggle id="unitDetails_toggleCharacter" onClick="UICore.onButtonClick">CHARACTER</Toggle>
+                        <Toggle id="unitDetails_toggleTitanic" onClick="UICore.onButtonClick">TITANIC</Toggle>
+                        <Toggle id="unitDetails_toggleEpicHero" onClick="UICore.onButtonClick">EPIC HERO</Toggle>
+                    </HorizontalLayout>
+                </VerticalLayout>
+            </Panel>
+
+            <!-- Progression Section -->
+            <Panel width="100%" height="120" color="rgba(20,20,20,0.9)" padding="10">
+                <VerticalLayout spacing="8">
+                    <Text fontSize="14" color="#FFFF00">Progression</Text>
+
+                    <HorizontalLayout spacing="10" height="25">
+                        <Text id="unitDetails_xpText" width="40%">Experience: 0 XP</Text>
+                        <Text id="unitDetails_rankText" width="60%">Rank: 1 - Battle-Ready</Text>
+                    </HorizontalLayout>
+
+                    <Text id="unitDetails_crusadePoints" fontSize="16" color="#00FF00" alignment="MiddleCenter">
+                        Crusade Points: 0
+                    </Text>
+
+                    <Text id="unitDetails_cpBreakdown" fontSize="10" color="#AAAAAA">
+                        XP: 0 (÷5 = 0 CP) | Honours: 0 CP | Scars: -0 CP
+                    </Text>
+                </VerticalLayout>
+            </Panel>
+
+            <!-- Battle Honours Section -->
+            <Panel width="100%" height="80" color="rgba(20,20,20,0.9)" padding="10">
+                <VerticalLayout spacing="5">
+                    <HorizontalLayout spacing="10" height="30">
+                        <Text id="unitDetails_honoursHeader" width="70%">Battle Honours (0 / 3)</Text>
+                        <Button id="unitDetails_addHonour"
+                                width="30%"
+                                onClick="UICore.onButtonClick">
+                            Add
+                        </Button>
+                    </HorizontalLayout>
+                    <Panel id="unitDetails_honoursList" width="100%" height="40">
+                        <Text fontSize="10" color="#888888">No honours yet</Text>
+                    </Panel>
+                </VerticalLayout>
+            </Panel>
+
+            <!-- Save/Cancel Buttons -->
+            <HorizontalLayout spacing="10" height="40">
+                <Button id="unitDetails_cancel"
+                        width="50%"
+                        onClick="UICore.onButtonClick">
+                    Cancel
+                </Button>
+                <Button id="unitDetails_save"
+                        width="50%"
+                        onClick="UICore.onButtonClick"
+                        color="#00FF00">
+                    Save Unit
+                </Button>
+            </HorizontalLayout>
+        </VerticalLayout>
+    </Panel>
+
+    <!-- New Recruit Import Panel (Phase 3) -->
+    <Panel id="newRecruitImportPanel"
+           width="100%"
+           height="100%"
+           active="false">
+
+        <VerticalLayout spacing="10" padding="15">
+            <Text fontSize="18">Import from New Recruit</Text>
+
+            <Text fontSize="12" color="#CCCCCC">
+                Paste the JSON export from newrecruit.eu below:
+            </Text>
+
+            <!-- JSON Input Area -->
+            <InputField id="newRecruit_jsonInput"
+                       width="100%"
+                       height="400"
+                       characterLimit="10000"
+                       lineType="MultiLine"
+                       placeholder="Paste New Recruit JSON here..."
+                       onValueChanged="UICore.onButtonClick" />
+
+            <!-- Import Status -->
+            <Text id="newRecruit_status" fontSize="12" color="#FFFF00">
+                Ready to import
+            </Text>
+
+            <!-- Action Buttons -->
+            <HorizontalLayout spacing="10" height="40">
+                <Button id="newRecruit_cancel"
+                        width="50%"
+                        onClick="UICore.onButtonClick">
+                    Cancel
+                </Button>
+                <Button id="newRecruit_import"
+                        width="50%"
+                        onClick="UICore.onButtonClick"
+                        color="#00FF00">
+                    Import Units
+                </Button>
+            </HorizontalLayout>
+        </VerticalLayout>
+    </Panel>
+
 </Panel>
