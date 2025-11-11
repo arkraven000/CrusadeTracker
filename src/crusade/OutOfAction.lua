@@ -267,9 +267,35 @@ end
 -- @param unit table The unit object
 -- @param scarId number Scar ID (1-6) or nil for random
 -- @param campaignLog table Campaign event log
+-- @param attempts number Recursion attempt counter (internal use)
 -- @return boolean Success
 -- @return string Message
-function applyBattleScar(unit, scarId, campaignLog)
+function applyBattleScar(unit, scarId, campaignLog, attempts)
+    attempts = attempts or 0
+
+    -- Prevent infinite recursion
+    if attempts > 10 then
+        Utils.logError("Failed to assign unique Battle Scar after 10 attempts for unit: " .. unit.name)
+        -- Fallback: assign first available scar
+        for i = 1, 6 do
+            local hasIt = false
+            for _, scar in ipairs(unit.battleScars) do
+                if scar.name == Constants.BATTLE_SCARS[i].name then
+                    hasIt = true
+                    break
+                end
+            end
+            if not hasIt then
+                scarId = i
+                break
+            end
+        end
+
+        if not scarId then
+            return false, "Maximum recursion attempts exceeded - all scars already present"
+        end
+    end
+
     -- Check if can apply scar
     if #unit.battleScars >= Constants.MAX_BATTLE_SCARS then
         return false, "Unit already has 3 Battle Scars (maximum)"
@@ -290,16 +316,17 @@ function applyBattleScar(unit, scarId, campaignLog)
     for _, scar in ipairs(unit.battleScars) do
         if scar.name == scarDef.name then
             Utils.logWarning(string.format(
-                "Unit %s already has Battle Scar '%s', re-rolling...",
+                "Unit %s already has Battle Scar '%s', re-rolling... (attempt %d)",
                 unit.name,
-                scarDef.name
+                scarDef.name,
+                attempts + 1
             ))
-            -- Re-roll different scar
+            -- Re-roll different scar with recursion limit
             local newScarId = scarId
             while newScarId == scarId do
                 newScarId = Utils.rollDie(6)
             end
-            return applyBattleScar(unit, newScarId, campaignLog)
+            return applyBattleScar(unit, newScarId, campaignLog, attempts + 1)
         end
     end
 

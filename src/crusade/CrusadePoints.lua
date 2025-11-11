@@ -244,16 +244,30 @@ function crusadePointsToSupply_DEPRECATED(crusadePoints)
     return 0
 end
 
---- Calculate Supply Used for a player based on unit points costs
+--- Calculate Supply Used for a player based on unit points costs (P11: Enhanced validation)
 -- @param player table The player object
 -- @param campaignUnits table Campaign's units collection
--- @return number Total supply used
+-- @return number Total supply used (0 on error)
+-- @return string|nil Error message if validation failed
 function calculateSupplyUsed(player, campaignUnits)
-    if not player or not campaignUnits then
-        return 0
+    -- Enhanced input validation (P11)
+    if not player then
+        Utils.logError("calculateSupplyUsed: player parameter is nil")
+        return 0, "ERROR_INVALID_PLAYER"
+    end
+
+    if not campaignUnits then
+        Utils.logError("calculateSupplyUsed: campaignUnits parameter is nil")
+        return 0, "ERROR_INVALID_UNITS"
+    end
+
+    if type(player.orderOfBattle) ~= "table" then
+        Utils.logError("calculateSupplyUsed: player.orderOfBattle is not a table")
+        return 0, "ERROR_INVALID_ORDER_OF_BATTLE"
     end
 
     local totalSupply = 0
+    local unitCount = 0
 
     for _, unitId in ipairs(player.orderOfBattle) do
         local unit = campaignUnits[unitId]
@@ -267,10 +281,18 @@ function calculateSupplyUsed(player, campaignUnits)
             end
 
             totalSupply = totalSupply + unitSupply
+            unitCount = unitCount + 1
+        else
+            Utils.logWarning(string.format(
+                "calculateSupplyUsed: Unit ID '%s' in player %s's Order of Battle not found",
+                tostring(unitId), player.name or "unknown"))
         end
     end
 
-    return totalSupply
+    Utils.logDebug(string.format("Calculated supply for %s: %d points across %d units",
+        player.name or "unknown", totalSupply, unitCount))
+
+    return totalSupply, nil -- nil = no error
 end
 
 --- Check if player is over their supply limit

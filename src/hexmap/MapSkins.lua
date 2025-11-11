@@ -207,34 +207,37 @@ function MapSkins.createSkinPlaceholder(skin)
         }
     }
 
-    local skinObj = spawnObject(spawnParams)
+    -- Use callback for async spawn
+    spawnParams.callback_function = function(skinObj)
+        if skinObj then
+            -- Set color based on theme
+            local themeColors = {
+                industrial = {0.4, 0.4, 0.4, 1}, -- Dark grey
+                jungle = {0.2, 0.5, 0.2, 1}, -- Dark green
+                urban = {0.5, 0.5, 0.5, 1}, -- Grey
+                void = {0.1, 0.1, 0.2, 1}, -- Dark blue
+                ice = {0.7, 0.9, 1, 1}, -- Light blue
+                desert = {0.9, 0.7, 0.4, 1}, -- Sandy yellow
+                custom = {0.6, 0.6, 0.6, 1} -- Medium grey
+            }
 
-    if skinObj then
-        -- Set color based on theme
-        local themeColors = {
-            industrial = {0.4, 0.4, 0.4, 1}, -- Dark grey
-            jungle = {0.2, 0.5, 0.2, 1}, -- Dark green
-            urban = {0.5, 0.5, 0.5, 1}, -- Grey
-            void = {0.1, 0.1, 0.2, 1}, -- Dark blue
-            ice = {0.7, 0.9, 1, 1}, -- Light blue
-            desert = {0.9, 0.7, 0.4, 1}, -- Sandy yellow
-            custom = {0.6, 0.6, 0.6, 1} -- Medium grey
-        }
+            local color = themeColors[skin.theme] or {0.5, 0.5, 0.5, 1}
+            skinObj.setColorTint(color)
+            skinObj.setLock(true)
+            skinObj.setVar("mapSkin", skin.name)
+            skinObj.setVar("mapSkinKey", skinKey)
 
-        local color = themeColors[skin.theme] or {0.5, 0.5, 0.5, 1}
-        skinObj.setColorTint(color)
-        skinObj.setLock(true)
-        skinObj.setVar("mapSkin", skin.name)
-        skinObj.setVar("mapSkinKey", skinKey)
+            -- Add name label
+            skinObj.setName("Map Skin: " .. skin.name)
+            skinObj.setDescription(skin.description)
 
-        -- Add name label
-        skinObj.setName("Map Skin: " .. skin.name)
-        skinObj.setDescription(skin.description)
-
-        return skinObj
+            -- Store reference
+            MapSkins.currentSkin = skinObj
+            MapSkins.currentSkinKey = skinKey
+        end
     end
 
-    return nil
+    spawnObject(spawnParams)
 end
 
 --- Unload current map skin

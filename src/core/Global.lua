@@ -209,49 +209,51 @@ end
 -- CAMPAIGN MANAGEMENT
 -- ============================================================================
 
---- Create a new campaign
+--- Create a new campaign (ASYNC - uses callback for notebook creation)
 -- @param config table Campaign configuration
 function createNewCampaign(config)
     Utils.logInfo("Creating new campaign: " .. config.name)
 
     CrusadeCampaign = DataModel.createCampaign(config.name, config)
 
-    -- Create notebooks for data persistence
-    NotebookGUIDs = Notebook.createCampaignNotebooks(config.name)
+    -- Create notebooks for data persistence (ASYNC)
+    Notebook.createCampaignNotebooks(config.name, function(notebookGUIDs)
+        NotebookGUIDs = notebookGUIDs
 
-    -- Create hex map if configured
-    if config.mapWidth and config.mapHeight then
-        CrusadeCampaign.mapConfig = DataModel.createHexMapConfig(
-            config.mapWidth,
-            config.mapHeight
-        )
-    end
-
-    -- Add initial players if provided
-    if config.players then
-        for _, playerConfig in ipairs(config.players) do
-            addPlayer(playerConfig)
+        -- Create hex map if configured
+        if config.mapWidth and config.mapHeight then
+            CrusadeCampaign.mapConfig = DataModel.createHexMapConfig(
+                config.mapWidth,
+                config.mapHeight
+            )
         end
-    end
 
-    -- Create alliances if provided
-    if config.alliances then
-        for _, allianceConfig in ipairs(config.alliances) do
-            createAlliance(allianceConfig)
+        -- Add initial players if provided
+        if config.players then
+            for _, playerConfig in ipairs(config.players) do
+                addPlayer(playerConfig)
+            end
         end
-    end
 
-    -- Log campaign creation
-    logCampaignEvent("CAMPAIGN_CREATED", {
-        name = config.name,
-        supplyLimit = config.supplyLimit or Constants.DEFAULT_SUPPLY_LIMIT,
-        playerCount = #(config.players or {})
-    })
+        -- Create alliances if provided
+        if config.alliances then
+            for _, allianceConfig in ipairs(config.alliances) do
+                createAlliance(allianceConfig)
+            end
+        end
 
-    -- Initial save to notebooks
-    SaveLoad.saveCampaign(CrusadeCampaign, NotebookGUIDs, true)
+        -- Log campaign creation
+        logCampaignEvent("CAMPAIGN_CREATED", {
+            name = config.name,
+            supplyLimit = config.supplyLimit or Constants.DEFAULT_SUPPLY_LIMIT,
+            playerCount = #(config.players or {})
+        })
 
-    Utils.logInfo("Campaign created successfully")
+        -- Initial save to notebooks
+        SaveLoad.saveCampaign(CrusadeCampaign, NotebookGUIDs, true)
+
+        Utils.logInfo("Campaign created successfully")
+    end)
 end
 
 --- Add a player to the campaign
@@ -431,11 +433,32 @@ end
 -- AUTOSAVE SYSTEM
 -- ============================================================================
 
+-- Global timer ID for autosave
+_autosaveTimerID = nil
+
 --- Start the autosave timer
 function startAutosaveTimer()
-    Wait.time(function()
+    -- Stop existing timer if any
+    if _autosaveTimerID then
+        Wait.stop(_autosaveTimerID)
+        _autosaveTimerID = nil
+    end
+
+    -- Start new timer with ID tracking
+    _autosaveTimerID = Wait.time(function()
         autoSave()
     end, Constants.AUTOSAVE_INTERVAL, -1) -- Repeat every 5 minutes
+
+    Utils.logInfo("Autosave timer started (ID: " .. tostring(_autosaveTimerID) .. ")")
+end
+
+--- Stop autosave timer
+function stopAutosaveTimer()
+    if _autosaveTimerID then
+        Wait.stop(_autosaveTimerID)
+        Utils.logInfo("Autosave timer stopped (ID: " .. tostring(_autosaveTimerID) .. ")")
+        _autosaveTimerID = nil
+    end
 end
 
 --- Perform autosave
@@ -446,6 +469,22 @@ function autoSave()
 
     -- Delegate to SaveLoad module
     SaveLoad.autosave()
+end
+
+--- Called when object is destroyed (cleanup)
+function onDestroy()
+    Utils.logInfo("Crusade Campaign Tracker shutting down...")
+
+    -- Stop autosave timer
+    stopAutosaveTimer()
+
+    -- Final save before shutdown
+    if CrusadeCampaign and NotebookGUIDs then
+        Utils.logInfo("Performing final save before shutdown...")
+        SaveLoad.saveCampaign(CrusadeCampaign, NotebookGUIDs, true)
+    end
+
+    Utils.logInfo("Shutdown complete")
 end
 
 -- ============================================================================
@@ -554,7 +593,7 @@ function showCampaignSetupWizard()
     UICore.showPanel("campaignSetupPanel")
 end
 
---- Complete campaign setup from wizard
+--- Complete campaign setup from wizard (ASYNC - uses callback for notebook creation)
 -- @param wizardData table Data from campaign setup wizard
 function completeCampaignSetup(wizardData)
     Utils.logInfo("Completing campaign setup...")
@@ -565,20 +604,22 @@ function completeCampaignSetup(wizardData)
     if campaign then
         CrusadeCampaign = campaign
 
-        -- Create notebooks
-        NotebookGUIDs = Notebook.createCampaignNotebooks(campaign.name)
+        -- Create notebooks (ASYNC)
+        Notebook.createCampaignNotebooks(campaign.name, function(notebookGUIDs)
+            NotebookGUIDs = notebookGUIDs
 
-        -- Initial save
-        SaveLoad.saveCampaign(CrusadeCampaign, NotebookGUIDs, true)
+            -- Initial save
+            SaveLoad.saveCampaign(CrusadeCampaign, NotebookGUIDs, true)
 
-        -- Initialize UI with new campaign
-        createMainUI()
+            -- Initialize UI with new campaign
+            createMainUI()
 
-        -- Start autosave
-        startAutosaveTimer()
+            -- Start autosave
+            startAutosaveTimer()
 
-        broadcastToAll("Campaign created: " .. campaign.name, {0, 1, 0})
-        Utils.logInfo("Campaign setup completed successfully")
+            broadcastToAll("Campaign created: " .. campaign.name, {0, 1, 0})
+            Utils.logInfo("Campaign setup completed successfully")
+        end)
 
         return true
     else

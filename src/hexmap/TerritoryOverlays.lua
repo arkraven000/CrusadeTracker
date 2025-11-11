@@ -108,32 +108,33 @@ function TerritoryOverlays.createControlledOverlay(q, r, playerColor)
         }
     }
 
-    local overlay = spawnObject(spawnParams)
+    -- Use callback for async spawn
+    spawnParams.callback_function = function(overlay)
+        if overlay then
+            -- Get color RGB values
+            local colorRGB = TerritoryOverlays.getColorRGB(playerColor)
+            colorRGB[4] = 0.4 -- Set alpha for semi-transparency
 
-    if overlay then
-        -- Get color RGB values
-        local colorRGB = TerritoryOverlays.getColorRGB(playerColor)
-        colorRGB[4] = 0.4 -- Set alpha for semi-transparency
+            overlay.setColorTint(colorRGB)
+            overlay.setLock(true)
+            overlay.setVar("hexCoord", {q = q, r = r})
+            overlay.setVar("controlledBy", playerColor)
+            overlay.setName("Territory: " .. playerColor)
 
-        overlay.setColorTint(colorRGB)
-        overlay.setLock(true)
-        overlay.setVar("hexCoord", {q = q, r = r})
-        overlay.setVar("controlledBy", playerColor)
-        overlay.setName("Territory: " .. playerColor)
-
-        TerritoryOverlays.overlays[key] = overlay.getGUID()
-
-        return true
-    else
-        log("ERROR: Failed to create controlled overlay at " .. key)
-        return false
+            TerritoryOverlays.overlays[key] = overlay.getGUID()
+        else
+            log("ERROR: Failed to create controlled overlay at " .. key)
+        end
     end
+
+    spawnObject(spawnParams)
+    return true -- Return immediately as spawn is async
 end
 
---- Create overlay for neutral/unclaimed hex
+--- Create overlay for neutral/unclaimed hex (ASYNC)
 -- @param q number Axial Q coordinate
 -- @param r number Axial R coordinate
--- @return boolean Success status
+-- @return boolean Success status (always true as spawn is async)
 function TerritoryOverlays.createNeutralOverlay(q, r)
     local pos = HexGrid.hexToPixel(q, r, Constants.HEX_SIZE)
     local key = HexGrid.coordToKey(q, r)
@@ -150,30 +151,29 @@ function TerritoryOverlays.createNeutralOverlay(q, r)
             x = Constants.HEX_SIZE * 0.85,
             y = 0.05,
             z = Constants.HEX_SIZE * 0.85
-        }
+        },
+        callback_function = function(overlay)
+            if overlay then
+                overlay.setColorTint({0.7, 0.7, 0.7, 0.2}) -- Light grey, very transparent
+                overlay.setLock(true)
+                overlay.setVar("hexCoord", {q = q, r = r})
+                overlay.setName("Territory: Neutral")
+
+                TerritoryOverlays.overlays[key] = overlay.getGUID()
+            else
+                log("ERROR: Failed to create neutral overlay at " .. key)
+            end
+        end
     }
 
-    local overlay = spawnObject(spawnParams)
-
-    if overlay then
-        overlay.setColorTint({0.7, 0.7, 0.7, 0.2}) -- Light grey, very transparent
-        overlay.setLock(true)
-        overlay.setVar("hexCoord", {q = q, r = r})
-        overlay.setName("Territory: Neutral")
-
-        TerritoryOverlays.overlays[key] = overlay.getGUID()
-
-        return true
-    else
-        log("ERROR: Failed to create neutral overlay at " .. key)
-        return false
-    end
+    spawnObject(spawnParams)
+    return true -- Return immediately as spawn is async
 end
 
---- Create overlay for dormant hex
+--- Create overlay for dormant hex (ASYNC)
 -- @param q number Axial Q coordinate
 -- @param r number Axial R coordinate
--- @return boolean Success status
+-- @return boolean Success status (always true as spawn is async)
 function TerritoryOverlays.createDormantOverlay(q, r)
     local pos = HexGrid.hexToPixel(q, r, Constants.HEX_SIZE)
     local key = HexGrid.coordToKey(q, r)
@@ -190,24 +190,23 @@ function TerritoryOverlays.createDormantOverlay(q, r)
             x = Constants.HEX_SIZE * 0.85,
             y = 0.05,
             z = Constants.HEX_SIZE * 0.85
-        }
+        },
+        callback_function = function(overlay)
+            if overlay then
+                overlay.setColorTint({0.2, 0.2, 0.2, 0.5}) -- Dark grey, semi-transparent
+                overlay.setLock(true)
+                overlay.setVar("hexCoord", {q = q, r = r})
+                overlay.setName("Territory: Dormant")
+
+                TerritoryOverlays.overlays[key] = overlay.getGUID()
+            else
+                log("ERROR: Failed to create dormant overlay at " .. key)
+            end
+        end
     }
 
-    local overlay = spawnObject(spawnParams)
-
-    if overlay then
-        overlay.setColorTint({0.2, 0.2, 0.2, 0.5}) -- Dark grey, semi-transparent
-        overlay.setLock(true)
-        overlay.setVar("hexCoord", {q = q, r = r})
-        overlay.setName("Territory: Dormant")
-
-        TerritoryOverlays.overlays[key] = overlay.getGUID()
-
-        return true
-    else
-        log("ERROR: Failed to create dormant overlay at " .. key)
-        return false
-    end
+    spawnObject(spawnParams)
+    return true -- Return immediately as spawn is async
 end
 
 --- Remove overlay for a hex

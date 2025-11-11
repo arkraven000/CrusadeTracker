@@ -133,7 +133,9 @@ function createUnit(ownerId, unitData)
         -- Special Flags
         hasLegendaryVeterans = false, -- Unlocks Heroic/Legendary for non-CHARACTER
 
-        -- Combat Statistics
+        -- Combat Statistics (P9: Lifetime tallies - distinct from BattleRecord.combatTallies)
+        -- NOTE: This tracks LIFETIME statistics for the unit across all battles
+        -- BattleRecord.combatTallies tracks PER-BATTLE statistics
         combatTallies = {
             battlesParticipated = 0,
             unitsDestroyed = 0,
