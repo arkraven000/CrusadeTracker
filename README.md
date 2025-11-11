@@ -83,68 +83,84 @@ CrusadeTracker/
 ├── docs/                        # Documentation
 │   ├── ARCHITECTURE.md          # Technical architecture
 │   ├── DATA_MODEL.md            # Data structure reference
+│   ├── API_REFERENCE.md         # Lua API documentation
 │   ├── USER_GUIDE.md            # User manual
-│   └── API_REFERENCE.md         # Lua API documentation
-├── tests/                       # Test scenarios
-│   └── test_scenarios.md        # Testing checklist
-└── examples/                    # Sample data
-    └── sample_campaign.json     # Demo campaign
+│   ├── QUICK_START.md           # 5-minute setup guide
+│   ├── DEPLOYMENT.md            # Deployment instructions
+│   ├── MAP_SKIN_SYSTEM.md       # Map skin architecture
+│   └── MAP_SKIN_GUIDE.md        # Map creation guide
+└── DEVELOPMENT_STATUS.md        # Detailed development progress
 
 ```
 
-## Development Phases
+## Development Status
 
-### Phase 1: Data Persistence & Core Architecture (Current)
-- ✅ Project structure setup
-- 🔄 Core data models
-- ⏳ Notebook-based persistence
-- ⏳ JSON serialization
-- ⏳ Autosave & backup system
-- ⏳ Rules configuration system
+**Current Version**: 1.0.0-alpha
+**Status**: ✅ **ALL PHASES COMPLETE - READY FOR DEPLOYMENT**
 
-### Phase 2: Campaign Setup & Basic UI
-- Campaign Setup Wizard
-- Basic hex map visualization
-- Player/faction management
-- Settings panel
+### Completed Features (Phases 1-10)
 
-### Phase 3: Order of Battle & Unit Management
-- Unit CRUD operations
-- New Recruit JSON import
-- Crusade Points calculation
-- XP and rank tracking
+**✅ Phase 1-3: Core Systems & UI Framework**
+- Complete data persistence with 5-notebook system and rolling backups
+- Crusade Points calculation (10th Edition formula)
+- XP and rank progression system
+- Out of Action tests with consequences
+- Campaign Setup Wizard (5 steps)
+- Main UI panel with campaign overview
+- Order of Battle management with live CP calculation
+- New Recruit JSON import with auto-detection
+- Supply tracking with visual indicators
 
-### Phase 4: Battle Tracking & XP System
-- Battle recording workflow
-- XP awards (3 types)
-- Out of Action tests
-- Combat tallies
+**✅ Phase 4-5: Battle Tracking & Honours**
+- 3-step battle recording workflow
+- All XP award types (Battle Experience, Every Third Kill, Marked for Greatness)
+- Combat tallies and agenda tracking
+- Battle Honours system (Battle Traits, Weapon Mods, Crusade Relics)
+- All 6 requisition types with variable costs
+- Battle Scars system with limits
 
-### Phase 5: Battle Honours, Scars & Requisitions
-- 3-category Battle Honours system
-- Battle Scars (6 types)
-- Requisitions with variable costs
-- Enhancement system
+**✅ Phase 6-7: Territory & Campaign Features**
+- FTC-inspired hex map with swappable skins (6 preset themes)
+- Territory control with bonuses
+- Alliance system with resource sharing
+- Mission pack resources (6 types)
+- Statistics dashboard with leaderboards
+- Full JSON export/import system
 
-### Phase 6: Hex Map & Territory System
-- Interactive hex map
-- Territory control
-- Bonuses system
-- Alliance territory sharing
+**✅ Phase 8-10: Advanced Features & Polish**
+- Faction tokens system (7 token types)
+- Advanced map controls
+- Data validation (50+ checks)
+- Performance monitoring
+- Error handling with recovery strategies
+- Complete documentation suite (USER_GUIDE, QUICK_START, DEPLOYMENT)
 
-### Phase 7: Polish, Resources & Final Integration
-- Mission pack resources
-- Statistics dashboard
-- Full JSON export/import
-- Performance optimization
-- Comprehensive testing
+See [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) for detailed phase breakdown.
+
+### Future Enhancement Ideas
+
+These are potential additions for post-1.0 releases:
+- Additional faction-specific content and battle traits
+- More mission pack integrations
+- Advanced analytics and visualizations
+- Enhanced multiplayer synchronization features
+- Community map skin library expansion
 
 ## Installation
 
-1. Subscribe to the mod on Steam Workshop (when published)
-2. Load the mod in Tabletop Simulator
-3. Use the Campaign Setup Wizard to create a new campaign
-4. Invite players and begin your Crusade!
+**Steam Workshop** (Recommended - Coming Soon):
+1. Subscribe to the mod on Steam Workshop
+2. Load Tabletop Simulator
+3. Go to Objects → Saved Objects → Workshop
+4. Spawn the Crusade Campaign Tracker
+5. Use the Campaign Setup Wizard to create a new campaign
+
+**Manual Installation** (For Testing/Development):
+1. Clone this repository
+2. Follow the [DEPLOYMENT.md](docs/DEPLOYMENT.md) guide for manual setup
+3. Load the mod in Tabletop Simulator
+
+See [QUICK_START.md](docs/QUICK_START.md) for a 5-minute setup guide.
 
 ## Usage
 
@@ -185,8 +201,24 @@ This is a fan-made tool for Warhammer 40,000. All Warhammer 40,000 content is ©
 
 ## Contributing
 
-See development phases above. Currently in Phase 1 (Data Persistence & Core Architecture).
+This project has completed all planned development phases and is ready for community testing and feedback.
+
+**How to Contribute:**
+- **Bug Reports**: Submit issues with detailed reproduction steps and campaign export
+- **Feature Requests**: Suggest enhancements for post-1.0 releases
+- **Map Skins**: Create custom map skins following the [MAP_SKIN_GUIDE.md](docs/MAP_SKIN_GUIDE.md)
+- **Testing**: Help test the mod and report any issues
+- **Documentation**: Suggest improvements or corrections to documentation
+
+See [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) for detailed implementation status.
 
 ## Version History
 
-- **1.0.0-alpha**: Initial development - Phase 1 in progress
+- **1.0.0-alpha** (Current): All core features complete, ready for community testing
+  - Complete campaign management system (Phases 1-10)
+  - All 10th Edition Crusade rules implemented
+  - Full UI framework with 15+ panels
+  - FTC-inspired map skin system with 6 preset themes
+  - Comprehensive documentation suite
+  - Data validation and error handling
+  - Performance monitoring and optimization
