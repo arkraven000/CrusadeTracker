@@ -56,55 +56,86 @@ NOTEBOOK_TYPES = {
 -- NOTEBOOK CREATION & MANAGEMENT
 -- ============================================================================
 
---- Create all required notebooks for a new campaign
+--- Create all required notebooks for a new campaign (ASYNC with callback)
 -- @param campaignName string The campaign name
--- @return table Notebook GUIDs {core, map, units, history, resources}
-function createCampaignNotebooks(campaignName)
+-- @param callback function Callback function(notebookGUIDs) called when all notebooks created
+function createCampaignNotebooks(campaignName, callback)
     Utils.logInfo("Creating campaign notebooks for: " .. campaignName)
 
     local notebooks = {}
+    local notebooksToCreate = {}
 
-    -- Create each notebook type
+    -- Build list of notebooks to create
     for key, config in pairs(NOTEBOOK_TYPES) do
-        local notebook = spawnNotebook(config.name, config.description)
-        if notebook then
-            notebooks[key:lower()] = notebook.getGUID()
-
-            -- Create initial tabs
-            for i, tabName in ipairs(config.tabs) do
-                createNotebookTab(notebook, tabName, "")
-            end
-
-            Utils.logInfo("Created notebook: " .. config.name .. " (GUID: " .. notebook.getGUID() .. ")")
-        else
-            Utils.logError("Failed to create notebook: " .. config.name)
-        end
+        table.insert(notebooksToCreate, {
+            key = key:lower(),
+            name = config.name,
+            description = config.description,
+            tabs = config.tabs
+        })
     end
 
-    return notebooks
+    local createdCount = 0
+    local totalCount = #notebooksToCreate
+
+    -- Spawn each notebook with callback
+    for _, notebookConfig in ipairs(notebooksToCreate) do
+        spawnNotebook(notebookConfig.name, notebookConfig.description, function(notebook)
+            if notebook then
+                notebooks[notebookConfig.key] = notebook.getGUID()
+
+                -- Create initial tabs (wait for object to be fully ready)
+                Wait.frames(function()
+                    for _, tabName in ipairs(notebookConfig.tabs) do
+                        createNotebookTab(notebook, tabName, "")
+                    end
+
+                    Utils.logInfo("Created notebook: " .. notebookConfig.name .. " (GUID: " .. notebook.getGUID() .. ")")
+
+                    createdCount = createdCount + 1
+
+                    -- All notebooks created?
+                    if createdCount >= totalCount then
+                        Utils.logInfo("All campaign notebooks created successfully")
+                        if callback then callback(notebooks) end
+                    end
+                end, 2)
+            else
+                Utils.logError("Failed to create notebook: " .. notebookConfig.name)
+                createdCount = createdCount + 1
+
+                -- Still call callback even if some failed
+                if createdCount >= totalCount then
+                    Utils.logWarning("Notebook creation completed with errors")
+                    if callback then callback(notebooks) end
+                end
+            end
+        end)
+    end
 end
 
---- Spawn a new Notebook object
+--- Spawn a new Notebook object (ASYNC with callback)
 -- @param name string Notebook name
 -- @param description string Notebook description
--- @return object TTS Notebook object or nil
-function spawnNotebook(name, description)
-    local notebook = spawnObject({
+-- @param callback function Callback function(notebook) called when ready
+function spawnNotebook(name, description, callback)
+    spawnObject({
         type = "Notebook",
         position = {x = 0, y = 5, z = 0}, -- Will be moved to storage area
         rotation = {x = 0, y = 0, z = 0},
-        scale = {x = 1, y = 1, z = 1}
+        scale = {x = 1, y = 1, z = 1},
+        callback_function = function(obj)
+            if obj then
+                obj.setName(name)
+                obj.setDescription(description)
+                obj.locked = true
+                if callback then callback(obj) end
+            else
+                Utils.logError("spawnObject returned nil for notebook: " .. name)
+                if callback then callback(nil) end
+            end
+        end
     })
-
-    if notebook then
-        notebook.setName(name)
-        notebook.setDescription(description)
-        -- Lock the notebook to prevent accidental movement
-        notebook.locked = true
-        return notebook
-    end
-
-    return nil
 end
 
 --- Create a tab in a notebook
@@ -308,7 +339,7 @@ function saveResourcesData(campaign, notebookGUID)
     return true
 end
 
---- Update a specific tab in a notebook
+--- Update a specific tab in a notebook (with version tracking for data integrity)
 -- @param notebook object TTS Notebook object
 -- @param tabTitle string Tab title to update
 -- @param content string New content
@@ -322,10 +353,15 @@ function updateNotebookTab(notebook, tabTitle, content)
     local tabs = data.tabs or {}
     local found = false
 
+    -- Version tracking for data integrity (P7 fix)
+    local version = data._version or 0
+    local newVersion = version + 1
+
     -- Find and update existing tab
     for i, tab in ipairs(tabs) do
         if tab.title == tabTitle then
             tabs[i].body = content or ""
+            tabs[i]._lastModified = os.time()
             found = true
             break
         end
@@ -336,12 +372,19 @@ function updateNotebookTab(notebook, tabTitle, content)
         table.insert(tabs, {
             title = tabTitle,
             body = content or "",
-            color = "White"
+            color = "White",
+            _lastModified = os.time()
         })
     end
 
-    -- Update notebook
-    notebook.setData({tabs = tabs})
+    -- Update notebook with version tracking (P7 fix)
+    data.tabs = tabs
+    data._version = newVersion
+    data._lastUpdate = os.time()
+    notebook.setData(data)
+
+    Utils.logDebug(string.format("Updated notebook tab '%s' (version %d -> %d)",
+        tabTitle, version, newVersion))
 
     return true
 end

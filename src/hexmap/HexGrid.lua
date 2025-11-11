@@ -204,32 +204,31 @@ function HexGrid.createHexZone(q, r)
         }
     }
 
-    local zone = spawnObject(spawnParams)
+    -- Use callback for async spawn
+    spawnParams.callback_function = function(zone)
+        if zone then
+            zone.setLock(true)
+            zone.setVar("hexCoord", {q = q, r = r})
+            zone.setVar("hexKey", key)
 
-    if zone then
-        zone.setLock(true)
-        zone.setVar("hexCoord", {q = q, r = r})
-        zone.setVar("hexKey", key)
+            -- Store zone GUID
+            HexGrid.hexZones[key] = zone.getGUID()
 
-        -- Store zone GUID
-        HexGrid.hexZones[key] = zone.getGUID()
-
-        -- Create visual marker if guides are enabled
-        if HexGrid.showHexGuides then
-            HexGrid.createHexMarker(q, r)
+            -- Create visual marker if guides are enabled
+            if HexGrid.showHexGuides then
+                HexGrid.createHexMarker(q, r)
+            end
+        else
+            log("ERROR: Failed to spawn hex zone at " .. key)
         end
-
-        return zone.getGUID()
-    else
-        log("ERROR: Failed to spawn hex zone at " .. key)
-        return nil
     end
+
+    spawnObject(spawnParams)
 end
 
---- Create visual hex outline marker (for alignment)
+--- Create visual hex outline marker (for alignment - ASYNC)
 -- @param q number Axial Q coordinate
 -- @param r number Axial R coordinate
--- @return string Marker GUID or nil if failed
 function HexGrid.createHexMarker(q, r)
     local pos = HexGrid.hexToPixel(q, r, Constants.HEX_SIZE)
     local key = HexGrid.coordToKey(q, r)
@@ -246,23 +245,21 @@ function HexGrid.createHexMarker(q, r)
             x = Constants.HEX_SIZE * 0.95,
             y = 0.05,
             z = Constants.HEX_SIZE * 0.95
-        }
+        },
+        callback_function = function(marker)
+            if marker then
+                marker.setColorTint({1, 1, 1, 0.3}) -- White, semi-transparent
+                marker.setLock(true)
+                marker.setVar("hexCoord", {q = q, r = r})
+
+                HexGrid.hexMarkers[key] = marker.getGUID()
+            else
+                log("ERROR: Failed to spawn hex marker at " .. key)
+            end
+        end
     }
 
-    local marker = spawnObject(spawnParams)
-
-    if marker then
-        marker.setColorTint({1, 1, 1, 0.3}) -- White, semi-transparent
-        marker.setLock(true)
-        marker.setVar("hexCoord", {q = q, r = r})
-
-        HexGrid.hexMarkers[key] = marker.getGUID()
-
-        return marker.getGUID()
-    else
-        log("ERROR: Failed to spawn hex marker at " .. key)
-        return nil
-    end
+    spawnObject(spawnParams)
 end
 
 -- ============================================================================

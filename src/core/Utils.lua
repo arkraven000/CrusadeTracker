@@ -10,18 +10,31 @@ Version: 1.0.0-alpha
 -- GUID GENERATION
 -- ============================================================================
 
---- Generates a unique GUID for entities
+-- Global counter for GUID generation to prevent collisions
+_globalGUIDCounter = _globalGUIDCounter or 0
+
+--- Generates a unique GUID for entities (improved algorithm)
 -- @return string Unique identifier
+-- Formula: timestamp_counter_random1_random2 for maximum uniqueness
 function generateGUID()
     local timestamp = os.time()
-    local random = math.random(100000, 999999)
-    return timestamp .. "_" .. random
+    local random1 = math.random(100000, 999999)
+    local random2 = math.random(100000, 999999)
+
+    -- Increment global counter
+    _globalGUIDCounter = _globalGUIDCounter + 1
+
+    -- Format: timestamp_counter_random1_random2
+    return string.format("%d_%d_%06d_%06d",
+        timestamp, _globalGUIDCounter, random1, random2)
 end
 
 --- Generates a short GUID for UI elements
 -- @return string Short unique identifier
 function generateShortGUID()
-    return "ui_" .. math.random(10000, 99999)
+    _globalGUIDCounter = _globalGUIDCounter + 1
+    return string.format("ui_%d_%05d",
+        _globalGUIDCounter, math.random(10000, 99999))
 end
 
 -- ============================================================================

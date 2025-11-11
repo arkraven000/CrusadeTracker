@@ -48,7 +48,7 @@ function MainPanel.refresh()
     -- UICore.setText("mainPanel_campaignName", MainPanel.campaign.name)
 
     -- Update player count
-    local playerCount = Utils.tableCount(MainPanel.campaign.players)
+    local playerCount = Utils.tableSize(MainPanel.campaign.players)
     -- UICore.setText("mainPanel_playerCount", playerCount .. " Players")
 
     -- Update battle count
@@ -178,7 +178,7 @@ function MainPanel.getCampaignStats()
     end
 
     local stats = {
-        players = Utils.tableCount(MainPanel.campaign.players),
+        players = Utils.tableSize(MainPanel.campaign.players),
         battles = #MainPanel.campaign.battles,
         totalUnits = 0,
         averageCP = 0,
