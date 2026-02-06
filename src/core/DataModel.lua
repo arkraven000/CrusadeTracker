@@ -24,6 +24,7 @@ function createCampaign(name, config)
     config = config or {}
 
     return {
+        id = Utils.generateGUID(),
         name = name,
         createdDate = Utils.getUnixTimestamp(),
         version = Constants.CAMPAIGN_VERSION,
@@ -35,7 +36,7 @@ function createCampaign(name, config)
 
         -- Organizational Data
         players = {},            -- Keyed by player ID
-        alliances = {},          -- Array of alliances
+        alliances = {},          -- Keyed by alliance ID
         units = {},              -- Keyed by unit ID
         battles = {},            -- Array of battle records
         log = {},                -- Event log (timestamped)

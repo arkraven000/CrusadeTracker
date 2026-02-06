@@ -71,14 +71,15 @@ CrusadeTracker/
 
 ## Critical Game Rules (MUST NOT break)
 
-### Crusade Points Formula
+### Crusade Points Formula (10th Edition)
 ```
-CP = floor(XP / 5) + Battle Honours CP - Battle Scars count
+CP = Battle Honours CP - Battle Scars count
 ```
 - Battle Traits / Weapon Mods: +1 CP each (+2 if TITANIC)
 - Crusade Relics: +1 (Artificer), +2 (Antiquity), +3 (Legendary)
 - Battle Scars: -1 each
 - **Can be negative** — this is correct behavior
+- **NOTE**: Unlike 9th Edition, XP does NOT contribute to CP in 10th Edition
 
 ### CHARACTER vs Non-CHARACTER
 - Non-CHARACTER: max 3 Battle Honours, max rank Battle-hardened, XP cap 30
@@ -87,7 +88,7 @@ CP = floor(XP / 5) + Battle Honours CP - Battle Scars count
 
 ### XP Award Types
 1. **Battle Experience**: +1 XP to ALL participating units (automatic)
-2. **Every Third Kill**: +1 XP per 3rd kill (3rd, 6th, 9th...)
+2. **Dealers of Death**: +1 XP per 3rd enemy unit destroyed (lifetime tally: 3rd, 6th, 9th...)
 3. **Marked for Greatness**: +3 XP to ONE unit per player per battle
 
 ### Out of Action Tests
@@ -167,7 +168,7 @@ CrusadeCampaign
 │   └── battleScars []
 ├── battles []         (battle records)
 ├── mapConfig {}       (hex grid, territories)
-├── alliances {}
+├── alliances {}       (keyed by alliance ID)
 ├── missionPackResources {}
 └── log []             (event log, max 1000 entries)
 ```
@@ -211,3 +212,6 @@ CrusadeCampaign
 - **Global state**: `CrusadeCampaign` is a global; changes are visible everywhere immediately
 - **Async notebook creation**: `Notebook.createCampaignNotebooks()` uses callbacks, not synchronous returns
 - **CP can be negative**: This is intentional per 10th Edition rules — don't add `math.max(0, ...)` guards
+- **Enhancement is singular**: `unit.enhancement` is a single object or nil, NOT an array. Do not use `unit.enhancements`
+- **Alliances are keyed by ID**: `campaign.alliances[allianceId]`, NOT an indexed array. Use `pairs()` to iterate, not `ipairs()`
+- **RP default max is 5**: Per 10th Edition rules players normally cannot exceed 5 RP (enforced by convention, not hard cap)

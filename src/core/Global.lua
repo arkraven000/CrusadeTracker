@@ -289,7 +289,7 @@ function createAlliance(allianceConfig)
         allianceConfig.settings
     )
 
-    table.insert(CrusadeCampaign.alliances, alliance)
+    CrusadeCampaign.alliances[alliance.id] = alliance
 
     -- Assign alliance ID to members
     for _, playerId in ipairs(alliance.members) do
@@ -512,6 +512,7 @@ function createMainUI()
     UICore.registerModule("exportImport", ExportImport)
     UICore.registerModule("statisticsPanel", StatisticsPanel)
     UICore.registerModule("mapControls", MapControls)
+    UICore.registerModule("mapView", MapView)
 
     -- Initialize modules with campaign data
     if CrusadeCampaign then
@@ -647,7 +648,9 @@ end
 -- ============================================================================
 
 -- Make functions available globally for testing and UI
-_G.CrusadeCampaign = CrusadeCampaign
+-- NOTE: CrusadeCampaign is already a global variable (declared at line 92),
+-- so it does not need _G assignment. Accessing _G.CrusadeCampaign will
+-- always reflect the current value of the global.
 _G.createNewCampaign = createNewCampaign
 _G.addPlayer = addPlayer
 _G.addUnit = addUnit
