@@ -6,6 +6,7 @@
   "scripts": {
     "build": "node scripts/build.js",
     "build:bundle-only": "node scripts/build.js --bundle-only",
+    "generate-map": "node scripts/generate-map.js",
     "lint": "luacheck src/ --no-color"
   },
   "devDependencies": {

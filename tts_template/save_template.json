@@ -4,8 +4,8 @@
   "Gravity": 0.5,
   "PlayArea": 0.5,
   "Date": "",
-  "Table": "Table_None",
-  "TableURL": "",
+  "Table": "Table_Custom",
+  "TableURL": "MAP_IMAGE_URL_HERE",
   "Sky": "Sky_Museum",
   "SkyURL": "",
   "Note": "",
@@ -55,6 +55,26 @@
   },
   "VectorLines": [],
   "ObjectStates": [
+    {
+      "Name": "Custom_Board",
+      "Transform": {
+        "posX": 0, "posY": 1.01, "posZ": 0,
+        "rotX": 0, "rotY": 0, "rotZ": 0,
+        "scaleX": 6, "scaleY": 1, "scaleZ": 6
+      },
+      "Nickname": "Campaign Map",
+      "Description": "Pixel-art campaign map. Replace ImageURL with your hosted map_scene.png URL.",
+      "GUID": "aaa010",
+      "LuaScript": "",
+      "LuaScriptState": "",
+      "XmlUI": "",
+      "Locked": true,
+      "CustomImage": {
+        "ImageURL": "MAP_IMAGE_URL_HERE",
+        "ImageSecondaryURL": "",
+        "WidthScale": 0
+      }
+    },
     {
       "Name": "Notecard",
       "Transform": {
