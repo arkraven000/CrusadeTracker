@@ -1,0 +1,54 @@
+name: Build TTS Mod
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # -----------------------------------------------------------------
+      # Lua lint (optional — uncomment when luacheck is configured)
+      # -----------------------------------------------------------------
+      # - name: Install luacheck
+      #   run: |
+      #     sudo apt-get update -qq
+      #     sudo apt-get install -y -qq luarocks
+      #     sudo luarocks install luacheck
+      #
+      # - name: Lint Lua
+      #   run: npm run lint
+
+      - name: Bundle Lua modules
+        run: npm run build:bundle-only
+
+      - name: Build TTS save
+        run: npm run build
+
+      - name: Upload bundled Lua
+        uses: actions/upload-artifact@v4
+        with:
+          name: Global.bundled.lua
+          path: dist/Global.bundled.lua
+
+      - name: Upload compiled TTS save
+        uses: actions/upload-artifact@v4
+        with:
+          name: CrusadeTracker.json
+          path: dist/CrusadeTracker.json
