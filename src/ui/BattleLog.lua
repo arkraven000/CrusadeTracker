@@ -17,6 +17,7 @@ local Utils = require("src/core/Utils")
 local Constants = require("src/core/Constants")
 local BattleRecord = require("src/battle/BattleRecord")
 local Agendas = require("src/battle/Agendas")
+local UICore = require("src/ui/UICore")
 
 -- ============================================================================
 -- MODULE STATE
@@ -302,19 +303,41 @@ end
 -- UI REFRESH
 -- ============================================================================
 
+--- Render the battle list using dynamic XML table generation
+function BattleLog.renderBattleList()
+    if not BattleLog.campaign then
+        return
+    end
+
+    local battles = BattleLog.getPaginatedBattles()
+    local rows = {}
+
+    if #battles == 0 then
+        table.insert(rows, UICore.createEmptyState("No battles recorded yet."))
+    else
+        for _, battle in ipairs(battles) do
+            table.insert(rows, UICore.createBattleRow(battle, BattleLog.campaign))
+        end
+    end
+
+    UICore.renderList("battleLog_battleListContainer", rows)
+end
+
 --- Refresh battle log UI
 function BattleLog.refreshUI()
     if not BattleLog.campaign then
         return
     end
 
+    local totalPages = BattleLog.getTotalPages()
+
     -- Update page indicator
-    local pageText = string.format("Page %d of %d", BattleLog.currentPage, BattleLog.getTotalPages())
+    local pageText = string.format("Page %d of %d", BattleLog.currentPage, totalPages)
     UI.setAttribute("battleLog_pageIndicator", "text", pageText)
 
     -- Update pagination buttons
     UI.setAttribute("battleLog_previousPage", "interactable", tostring(BattleLog.currentPage > 1))
-    UI.setAttribute("battleLog_nextPage", "interactable", tostring(BattleLog.currentPage < BattleLog.getTotalPages()))
+    UI.setAttribute("battleLog_nextPage", "interactable", tostring(BattleLog.currentPage < totalPages))
 
     -- Update filter indicators
     local filterText = "Filters: "
@@ -333,6 +356,9 @@ function BattleLog.refreshUI()
     -- Update battle count
     local battleCount = #BattleLog.getFilteredBattles()
     UI.setAttribute("battleLog_battleCount", "text", string.format("Total Battles: %d", battleCount))
+
+    -- Render the dynamic battle list
+    BattleLog.renderBattleList()
 end
 
 -- ============================================================================
@@ -385,6 +411,7 @@ end
 return {
     initialize = BattleLog.initialize,
     refreshUI = BattleLog.refreshUI,
+    renderBattleList = BattleLog.renderBattleList,
 
     -- Filtering & sorting
     setFilterPlayer = BattleLog.setFilterPlayer,

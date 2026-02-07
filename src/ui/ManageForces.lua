@@ -11,6 +11,7 @@ Allows players to view, add, edit, and delete units in their roster.
 
 local Utils = require("src/core/Utils")
 local Constants = require("src/core/Constants")
+local UICore = require("src/ui/UICore")
 
 -- Will be imported by Global.lua
 local CrusadePoints = nil
@@ -136,7 +137,7 @@ function ManageForces.updateSupplyDisplay(player)
     -- UICore.setColor("manageForces_supplyBar", color)
 end
 
---- Update unit list display
+--- Update unit list display using dynamic XML table rendering
 -- @param player table Player object
 function ManageForces.updateUnitList(player)
     -- Get all units for this player
@@ -152,21 +153,37 @@ function ManageForces.updateUnitList(player)
 
     -- Calculate pagination
     local totalUnits = #units
-    local totalPages = math.ceil(totalUnits / ManageForces.unitsPerPage)
+    local totalPages = math.max(1, math.ceil(totalUnits / ManageForces.unitsPerPage))
     ManageForces.currentPage = math.min(ManageForces.currentPage, math.max(1, totalPages))
 
     -- Get units for current page
     local startIndex = (ManageForces.currentPage - 1) * ManageForces.unitsPerPage + 1
     local endIndex = math.min(startIndex + ManageForces.unitsPerPage - 1, totalUnits)
 
-    -- Update pagination display
+    -- Update pagination text and button states
     local pageText = string.format("Page %d / %d (%d units)",
         ManageForces.currentPage, totalPages, totalUnits)
-    -- UICore.setText("manageForces_pageInfo", pageText)
+    UI.setAttribute("manageForces_pageInfo", "text", pageText)
+    UI.setAttribute("manageForces_prevPage", "interactable", tostring(ManageForces.currentPage > 1))
+    UI.setAttribute("manageForces_nextPage", "interactable", tostring(ManageForces.currentPage < totalPages))
 
-    -- Build unit list display
-    -- This would populate a scrollable list with unit rows
-    -- Each row shows: Name, Role, XP, Rank, CP, Edit/Delete buttons
+    -- Build XML table rows using factory functions
+    local rows = {}
+
+    if totalUnits == 0 then
+        table.insert(rows, UICore.createEmptyState('No units in roster. Click "Add Unit" to begin.'))
+    else
+        for i = startIndex, endIndex do
+            local unit = units[i]
+            if unit then
+                local displayInfo = ManageForces.getUnitDisplayInfo(unit)
+                table.insert(rows, UICore.createUnitRow(displayInfo))
+            end
+        end
+    end
+
+    -- Render into the unit list panel
+    UICore.renderList("manageForces_unitList", rows)
 
     log(string.format("Displaying %d units (page %d/%d)",
         endIndex - startIndex + 1, ManageForces.currentPage, totalPages))
