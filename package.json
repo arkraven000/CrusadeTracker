@@ -1,0 +1,15 @@
+{
+  "name": "crusade-tracker",
+  "version": "1.0.0-alpha",
+  "description": "Warhammer 40K 10th Edition Crusade Campaign Tracker for Tabletop Simulator",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.js",
+    "build:bundle-only": "node scripts/build.js --bundle-only",
+    "generate-map": "node scripts/generate-map.js",
+    "lint": "luacheck src/ --no-color"
+  },
+  "devDependencies": {
+    "luabundler": "^0.5.0"
+  }
+}
