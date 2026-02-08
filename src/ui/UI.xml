@@ -718,6 +718,158 @@
         </VerticalLayout>
     </Panel>
 
+    <!-- Map View Panel -->
+    <Panel id="mapViewPanel"
+           width="100%"
+           height="100%"
+           active="false">
+
+        <VerticalLayout spacing="10" padding="15">
+            <Text fontSize="20" alignment="MiddleCenter">
+                Campaign Map
+            </Text>
+
+            <!-- Hex Info Display -->
+            <Panel width="100%" height="120" color="rgba(20,20,20,0.9)" padding="10">
+                <VerticalLayout spacing="5">
+                    <Text fontSize="14" color="#FFFF00">Selected Hex</Text>
+                    <Text id="mapHexInfo" fontSize="12" color="#CCCCCC">
+                        Click a hex on the map to view details.
+                    </Text>
+                    <Text id="mapHexBonuses" fontSize="11" color="#AAAAAA">
+                    </Text>
+                </VerticalLayout>
+            </Panel>
+
+            <!-- Map Display Options -->
+            <Panel width="100%" height="80" color="rgba(20,20,20,0.9)" padding="10">
+                <VerticalLayout spacing="5">
+                    <Text fontSize="14" color="#FFFF00">Display Options</Text>
+                    <HorizontalLayout spacing="10" height="25">
+                        <Toggle id="mapView_toggleHexGuides"
+                                onValueChanged="onUIButtonClick">
+                            Hex Guides
+                        </Toggle>
+                        <Toggle id="mapView_toggleDormant"
+                                onValueChanged="onUIButtonClick">
+                            Dormant Hexes
+                        </Toggle>
+                        <Toggle id="mapView_toggleNeutral"
+                                onValueChanged="onUIButtonClick">
+                            Neutral Hexes
+                        </Toggle>
+                    </HorizontalLayout>
+                </VerticalLayout>
+            </Panel>
+
+            <!-- Map Actions -->
+            <HorizontalLayout spacing="10" height="40">
+                <Button id="mapView_openControls"
+                        width="50%"
+                        onClick="onUIButtonClick">
+                    Territory Controls
+                </Button>
+                <Button id="mapView_changeSkin"
+                        width="50%"
+                        onClick="onUIButtonClick">
+                    Change Map Skin
+                </Button>
+            </HorizontalLayout>
+
+            <Button id="mapView_close"
+                    height="40"
+                    onClick="onUIButtonClick">
+                Close
+            </Button>
+        </VerticalLayout>
+    </Panel>
+
+    <!-- Map Controls Panel -->
+    <Panel id="mapControlsPanel"
+           width="100%"
+           height="100%"
+           active="false">
+
+        <VerticalLayout spacing="10" padding="15">
+            <Text fontSize="20" alignment="MiddleCenter">
+                Territory Controls
+            </Text>
+
+            <!-- Selected Hex Info -->
+            <Panel width="100%" height="80" color="rgba(20,20,20,0.9)" padding="10">
+                <VerticalLayout spacing="5">
+                    <Text fontSize="14" color="#FFFF00">Selected Territory</Text>
+                    <Text id="mapControls_hexInfo" fontSize="12" color="#CCCCCC">
+                        No hex selected. Click a hex on the map.
+                    </Text>
+                </VerticalLayout>
+            </Panel>
+
+            <!-- Player Selection -->
+            <HorizontalLayout spacing="10" height="35">
+                <Text width="25%">Player:</Text>
+                <Dropdown id="mapControls_playerSelect"
+                         width="75%"
+                         onValueChanged="onUIButtonClick">
+                </Dropdown>
+            </HorizontalLayout>
+
+            <!-- Territory Actions -->
+            <VerticalLayout spacing="8">
+                <Button id="mapControlsClaim"
+                        height="40"
+                        colors="#FF8800|#FFAA33|#CC6600|#664400"
+                        textColor="#FFFFFF"
+                        onClick="onUIButtonClick">
+                    Claim Territory
+                </Button>
+
+                <Button id="mapControls_toggleActive"
+                        height="35"
+                        onClick="onUIButtonClick">
+                    Toggle Hex Active/Dormant
+                </Button>
+            </VerticalLayout>
+
+            <!-- Territory Bonuses -->
+            <Panel width="100%" height="100" color="rgba(20,20,20,0.9)" padding="10">
+                <VerticalLayout spacing="5">
+                    <Text fontSize="14" color="#FFFF00">Territory Bonuses</Text>
+                    <HorizontalLayout spacing="5" height="30">
+                        <Dropdown id="mapBonusType"
+                                  width="40%"
+                                  onValueChanged="onUIButtonClick">
+                            <Option>RP</Option>
+                            <Option>Resource</Option>
+                            <Option>BattleHonour</Option>
+                            <Option>Custom</Option>
+                        </Dropdown>
+                        <InputField id="mapBonusAmount"
+                                    width="20%"
+                                    characterLimit="5"
+                                    placeholder="Amt"
+                                    onValueChanged="onUIButtonClick" />
+                        <InputField id="mapBonusDesc"
+                                    width="40%"
+                                    placeholder="Description"
+                                    onValueChanged="onUIButtonClick" />
+                    </HorizontalLayout>
+                    <Button id="mapAddBonus"
+                            height="30"
+                            onClick="onUIButtonClick">
+                        Add Bonus
+                    </Button>
+                </VerticalLayout>
+            </Panel>
+
+            <Button id="mapControlsClose"
+                    height="40"
+                    onClick="onUIButtonClick">
+                Close
+            </Button>
+        </VerticalLayout>
+    </Panel>
+
     <!-- Battle Log Panel -->
     <Panel id="battleLogPanel"
            width="100%"

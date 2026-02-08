@@ -567,6 +567,10 @@ function createMainUI()
         -- Initialize map view if map config exists
         if CrusadeCampaign.mapConfig then
             MapView.initialize(CrusadeCampaign)
+            UI.setAttribute("mainPanel_map", "active", "true")
+        else
+            -- Hide "View Map" button when no map is configured
+            UI.setAttribute("mainPanel_map", "active", "false")
         end
 
         -- Show main campaign panel

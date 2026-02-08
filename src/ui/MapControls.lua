@@ -77,8 +77,8 @@ function MapControls.displayHexInfo(hex)
 
     -- Get controller info
     local controller = "Neutral"
-    if hex.controllerId then
-        local player = MapControls.campaign.players[hex.controllerId]
+    if hex.controlledBy then
+        local player = MapControls.campaign.players[hex.controlledBy]
         if player then
             controller = player.name .. " (" .. player.color .. ")"
         end
@@ -131,19 +131,19 @@ function MapControls.claimHex()
     local hex = MapControls.campaign.mapConfig.hexes[hexKey]
 
     if not hex then
-        -- Create new hex
-        hex = {
-            q = MapControls.selectedHex.q,
-            r = MapControls.selectedHex.r,
-            controllerId = MapControls.selectedPlayer,
-            capturedDate = os.date("%Y-%m-%d"),
-            bonuses = {}
-        }
+        -- Create hex using DataModel factory, then set control
+        hex = DataModel.createHex(
+            MapControls.selectedHex.q,
+            MapControls.selectedHex.r,
+            {active = true, name = "Hex " .. hexKey}
+        )
+        hex.controlledBy = MapControls.selectedPlayer
+        hex.capturedDate = os.date("%Y-%m-%d")
         MapControls.campaign.mapConfig.hexes[hexKey] = hex
     else
         -- Transfer control
-        local previousController = hex.controllerId
-        hex.controllerId = MapControls.selectedPlayer
+        local previousController = hex.controlledBy
+        hex.controlledBy = MapControls.selectedPlayer
         hex.capturedDate = os.date("%Y-%m-%d")
 
         -- Log territory transfer
