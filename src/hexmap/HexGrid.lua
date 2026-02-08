@@ -21,6 +21,7 @@ Based on FTC (For the Community) map base design pattern:
 
 local Utils = require("src/core/Utils")
 local Constants = require("src/core/Constants")
+local DataModel = require("src/core/DataModel")
 
 -- ============================================================================
 -- MODULE STATE
@@ -163,12 +164,21 @@ function HexGrid.initialize(mapConfig)
 
     log("Initializing hex grid base: " .. width .. "x" .. height)
 
-    -- Create invisible hex zones for each hex
+    -- Create invisible hex zones and populate hex data for each hex
     for r = 0, height - 1 do
         for q = 0, width - 1 do
             -- Convert offset coordinates to axial
             local axialQ = q - math.floor(r / 2)
             local axialR = r
+
+            -- Create hex data entry in mapConfig if it doesn't already exist
+            local key = HexGrid.coordToKey(axialQ, axialR)
+            if not mapConfig.hexes[key] then
+                mapConfig.hexes[key] = DataModel.createHex(axialQ, axialR, {
+                    active = true,
+                    name = "Hex " .. axialQ .. "," .. axialR
+                })
+            end
 
             HexGrid.createHexZone(axialQ, axialR)
         end

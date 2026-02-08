@@ -58,6 +58,7 @@ function UICore.initialize()
         settings = false,
         campaignLog = false,
         mapView = false,
+        mapControls = false,
         manageForces = false,
         unitDetails = false,
         newRecruitImport = false,
@@ -222,6 +223,10 @@ function UICore.onButtonClick(player, value, id)
         UICore.handleNewRecruitClick(player, value, id)
     elseif string.match(id, "^battleLog_") then
         UICore.handleBattleLogClick(player, value, id)
+    elseif string.match(id, "^mapView_") then
+        UICore.handleMapViewClick(player, value, id)
+    elseif string.match(id, "^mapControl") or id == "mapAddBonus" or id == "mapSelectPlayer" then
+        UICore.handleMapControlsClick(player, value, id)
     else
         log("WARNING: Unhandled button click: " .. id)
     end
@@ -359,6 +364,37 @@ function UICore.handleNewRecruitClick(player, value, id)
     -- Delegated to NewRecruit.lua module
     if UICore.newRecruitModule then
         UICore.newRecruitModule.handleClick(player, value, id)
+    end
+end
+
+--- Handle map view clicks
+-- @param player object Player who clicked
+-- @param value string Button value
+-- @param id string Button ID
+function UICore.handleMapViewClick(player, value, id)
+    if id == "mapView_close" then
+        UICore.hidePanel("mapView")
+        UICore.showPanel("mainCampaign")
+    elseif id == "mapView_openControls" then
+        UICore.showPanel("mapControls")
+    elseif UICore.mapViewModule then
+        -- Delegate display toggle handling to MapView module
+        if UICore.mapViewModule.onButtonClick then
+            UICore.mapViewModule.onButtonClick(player, value, id)
+        end
+    end
+end
+
+--- Handle map controls clicks
+-- @param player object Player who clicked
+-- @param value string Button value
+-- @param id string Button ID
+function UICore.handleMapControlsClick(player, value, id)
+    if id == "mapControlsClose" then
+        UICore.hidePanel("mapControls")
+        UICore.showPanel("mapView")
+    elseif UICore.mapControlsModule then
+        UICore.mapControlsModule.onButtonClick(player, value, id)
     end
 end
 
@@ -676,6 +712,8 @@ function UICore.registerModule(moduleName, moduleRef)
         UICore.newRecruitModule = moduleRef
     elseif moduleName == "mapView" then
         UICore.mapViewModule = moduleRef
+    elseif moduleName == "mapControls" then
+        UICore.mapControlsModule = moduleRef
     elseif moduleName == "battleLog" then
         UICore.battleLogModule = moduleRef
     end

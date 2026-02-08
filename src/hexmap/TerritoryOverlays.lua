@@ -31,7 +31,8 @@ local TerritoryOverlays = {
     overlays = {}, -- Keyed by "q,r" coordinate -> overlay object GUID
     overlayHeight = 1.15, -- Y position (above map skin at 1.05)
     showDormantOverlays = false, -- Toggle for showing dormant hex overlays
-    showNeutralOverlays = false -- Toggle for showing neutral/unclaimed overlays
+    showNeutralOverlays = false, -- Toggle for showing neutral/unclaimed overlays
+    campaign = nil -- Reference to campaign data for player color lookups
 }
 
 -- ============================================================================
@@ -281,21 +282,18 @@ function TerritoryOverlays.getColorRGB(playerColor)
     end
 end
 
---- Get player color from player ID (requires campaign data access)
+--- Get player color from player ID using campaign data
 -- @param playerId string Player ID
 -- @return string TTS player color or "White" as default
 function TerritoryOverlays.getPlayerColorForOverlay(playerId)
-    -- This is a placeholder - in actual implementation, this would query
-    -- the campaign data to get the player's TTS color
-    -- For now, return a default color
+    if TerritoryOverlays.campaign and TerritoryOverlays.campaign.players then
+        local player = TerritoryOverlays.campaign.players[playerId]
+        if player and player.color then
+            return player.color
+        end
+    end
 
-    -- TODO: Integrate with campaign data access
-    -- local player = CrusadeCampaign.getPlayer(playerId)
-    -- if player then
-    --     return player.color
-    -- end
-
-    log("WARNING: Player color lookup not implemented, using White as default")
+    log("WARNING: Could not resolve player color for ID: " .. tostring(playerId) .. ", using White")
     return "White"
 end
 

@@ -40,6 +40,9 @@ function MapView.initialize(campaign)
 
     MapView.campaign = campaign
 
+    -- Set campaign reference on TerritoryOverlays for player color lookups
+    TerritoryOverlays.campaign = campaign
+
     -- Initialize hex grid base
     local hexGridSuccess = HexGrid.initialize(campaign.mapConfig)
     if not hexGridSuccess then
@@ -304,6 +307,27 @@ function MapView.toggleHexActive(hexCoord)
     broadcastToAll("Hex " .. hexData.name .. " is now " .. (hexData.active and "ACTIVE" or "DORMANT"), {0, 1, 1})
 
     return true
+end
+
+-- ============================================================================
+-- UI CALLBACKS
+-- ============================================================================
+
+--- Handle button clicks routed from UICore
+-- @param player object Player who clicked
+-- @param value string Button value
+-- @param id string Button ID
+function MapView.onButtonClick(player, value, id)
+    if id == "mapView_toggleHexGuides" then
+        MapView.toggleHexGuides(value == "True")
+    elseif id == "mapView_toggleDormant" then
+        MapView.toggleDormantOverlays(value == "True")
+    elseif id == "mapView_toggleNeutral" then
+        MapView.toggleNeutralOverlays(value == "True")
+    elseif id == "mapView_changeSkin" then
+        -- Skin change would need a sub-panel or dropdown; log for now
+        log("Map skin change requested")
+    end
 end
 
 -- ============================================================================
