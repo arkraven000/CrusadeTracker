@@ -204,11 +204,9 @@ function canApplyWeaponModifications(unit, weaponName)
         end
     end
 
-    -- Check if weapon is an Enhancement
-    for _, enhancement in ipairs(unit.enhancements) do
-        if enhancement.replacedWeapon == weaponName then
-            return false, "Cannot modify Enhancement weapons"
-        end
+    -- Check if weapon is replaced by an Enhancement
+    if unit.enhancement and unit.enhancement.replacedWeapon == weaponName then
+        return false, "Cannot modify Enhancement weapons"
     end
 
     -- Check if weapon is a Crusade Relic

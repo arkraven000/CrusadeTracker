@@ -35,8 +35,8 @@ function calculateRenownedHeroesCost(campaign, player)
 
     for _, unitId in ipairs(player.orderOfBattle) do
         local unit = campaign.units[unitId]
-        if unit then
-            enhancementCount = enhancementCount + #unit.enhancements
+        if unit and unit.enhancement then
+            enhancementCount = enhancementCount + 1
         end
     end
 
@@ -142,13 +142,15 @@ function getAllRequisitions()
 
                 -- Remove weapon modifications if changing weapons
                 if params.oldWeapon and params.oldWeapon ~= params.newWeapon then
-                    -- Check for weapon mods on old weapon
+                    -- Check for weapon mods on old weapon (match by ID when possible)
                     for i, weaponMod in ipairs(unit.weaponModifications) do
                         if weaponMod.weaponName == params.oldWeapon then
+                            local modId = weaponMod.id
                             table.remove(unit.weaponModifications, i)
-                            -- Remove corresponding honour
+                            -- Remove corresponding honour (match by ID first, then name)
                             for j, honour in ipairs(unit.battleHonours) do
-                                if honour.category == "Weapon Modification" and honour.weaponName == params.oldWeapon then
+                                if honour.category == "Weapon Modification" and
+                                   (honour.id == modId or (modId == nil and honour.weaponName == params.oldWeapon)) then
                                     table.remove(unit.battleHonours, j)
                                     break
                                 end

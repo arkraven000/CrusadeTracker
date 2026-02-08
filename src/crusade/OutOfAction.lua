@@ -30,20 +30,8 @@ local DataModel = require("src/core/DataModel")
 -- @return boolean Passed test
 -- @return number Dice roll result
 function conductOutOfActionTest(unit, campaignLog)
-    -- Units that don't gain XP auto-pass
-    if not unit.canGainXP then
-        if campaignLog then
-            table.insert(campaignLog, {
-                type = "OUT_OF_ACTION_AUTO_PASS",
-                timestamp = Utils.getUnixTimestamp(),
-                details = {
-                    unit = unit.name,
-                    message = "Unit automatically passes Out of Action test (cannot gain XP)"
-                }
-            })
-        end
-        return true, 0
-    end
+    -- All destroyed units must take the Out of Action test per 10th Edition rules.
+    -- Units that cannot gain XP still suffer consequences if they fail.
 
     -- Roll D6
     local roll = Utils.rollDie(6)
@@ -176,17 +164,17 @@ function applyDevastatingBlow(unit, honourIndex, campaignLog)
     -- Remove from battleHonours array
     table.remove(unit.battleHonours, honourIndex)
 
-    -- Remove associated data based on category
+    -- Remove associated data based on category (sync duplicate storage)
     if honourCategory == "Weapon Modification" then
-        -- Find and remove corresponding weapon modification
+        -- Find and remove corresponding weapon modification by ID first, then name fallback
         for i, wmod in ipairs(unit.weaponModifications) do
-            if wmod.weaponName == honour.weaponName then
+            if wmod.id == honour.id or (honour.id == nil and wmod.weaponName == honour.weaponName) then
                 table.remove(unit.weaponModifications, i)
                 break
             end
         end
     elseif honourCategory == "Crusade Relic" then
-        -- Find and remove corresponding Crusade Relic
+        -- Find and remove corresponding Crusade Relic by ID
         for i, relic in ipairs(unit.crusadeRelics) do
             if relic.id == honour.id then
                 table.remove(unit.crusadeRelics, i)

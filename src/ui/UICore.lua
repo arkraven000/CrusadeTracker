@@ -385,6 +385,216 @@ function UICore.showPlayerNotification(playerColor, message, messageType)
 end
 
 -- ============================================================================
+-- XML TABLE FACTORY FUNCTIONS (for UI.setXmlTable dynamic rendering)
+-- ============================================================================
+
+--- Create a text cell element for use in XML table rows
+-- @param text string Text content
+-- @param width string Width (e.g., "30%")
+-- @param attrs table Optional extra attributes (fontSize, color, alignment)
+-- @return table XML table element
+function UICore.createTextCell(text, width, attrs)
+    attrs = attrs or {}
+    return {
+        tag = "Text",
+        attributes = {
+            text = tostring(text),
+            width = width or "100%",
+            fontSize = attrs.fontSize or "12",
+            color = attrs.color or "#FFFFFF",
+            alignment = attrs.alignment or "MiddleLeft"
+        }
+    }
+end
+
+--- Create a button cell element for use in XML table rows
+-- @param id string Button ID (used for click routing)
+-- @param label string Button label text
+-- @param width string Width (e.g., "20%")
+-- @param attrs table Optional extra attributes (colors, textColor, onClick)
+-- @return table XML table element
+function UICore.createButtonCell(id, label, width, attrs)
+    attrs = attrs or {}
+    return {
+        tag = "Button",
+        attributes = {
+            id = id,
+            width = width or "100%",
+            fontSize = attrs.fontSize or "11",
+            colors = attrs.colors or "#DDDDDD|#FFFFFF|#AAAAAA|#555555",
+            textColor = attrs.textColor or "#111111",
+            onClick = attrs.onClick or "UICore.onButtonClick"
+        },
+        value = label
+    }
+end
+
+--- Create a horizontal layout row containing child elements
+-- @param children table Array of child XML table elements
+-- @param attrs table Optional row attributes (spacing, height, color)
+-- @return table XML table element
+function UICore.createRow(children, attrs)
+    attrs = attrs or {}
+    return {
+        tag = "HorizontalLayout",
+        attributes = {
+            spacing = attrs.spacing or "5",
+            height = attrs.height or "30",
+            padding = attrs.padding or "2 5 2 5"
+        },
+        children = children
+    }
+end
+
+--- Create a unit row for the Manage Forces unit list
+-- @param unit table Unit display info (from ManageForces.getUnitDisplayInfo)
+-- @return table XML table element (a row with unit info and action buttons)
+function UICore.createUnitRow(unit)
+    local rankColor = "#FFFFFF"
+    if unit.rank >= 4 then
+        rankColor = "#FFD700" -- Gold for Heroic/Legendary
+    elseif unit.rank >= 3 then
+        rankColor = "#00CCFF" -- Cyan for Blooded
+    elseif unit.rank >= 2 then
+        rankColor = "#AAAAAA" -- Gray for Battle-Hardened
+    end
+
+    local cpColor = "#00FF00"
+    if unit.crusadePoints < 0 then
+        cpColor = "#FF4444"
+    elseif unit.crusadePoints == 0 then
+        cpColor = "#AAAAAA"
+    end
+
+    local nameText = unit.name
+    if unit.isCharacter then
+        nameText = nameText .. " [C]"
+    end
+
+    return {
+        tag = "Panel",
+        attributes = {
+            height = "35",
+            color = "rgba(30,30,30,0.8)",
+            padding = "3 5 3 5"
+        },
+        children = {
+            {
+                tag = "HorizontalLayout",
+                attributes = { spacing = "5" },
+                children = {
+                    UICore.createTextCell(nameText, "30%", { fontSize = "11" }),
+                    UICore.createTextCell(unit.role, "15%", { fontSize = "10", color = "#AAAAAA" }),
+                    UICore.createTextCell(unit.xp .. " XP", "12%", { fontSize = "10", alignment = "MiddleCenter" }),
+                    UICore.createTextCell(unit.rankName, "15%", { fontSize = "10", color = rankColor, alignment = "MiddleCenter" }),
+                    UICore.createTextCell(tostring(unit.crusadePoints) .. " CP", "10%", { fontSize = "10", color = cpColor, alignment = "MiddleCenter" }),
+                    UICore.createButtonCell(
+                        "manageForces_edit_" .. unit.id,
+                        "Edit",
+                        "9%",
+                        { fontSize = "10" }
+                    ),
+                    UICore.createButtonCell(
+                        "manageForces_delete_" .. unit.id,
+                        "X",
+                        "9%",
+                        { fontSize = "10", colors = "#CC4444|#FF6666|#992222|#662222", textColor = "#FFFFFF" }
+                    )
+                }
+            }
+        }
+    }
+end
+
+--- Create a battle row for the Battle Log list
+-- @param battle table Battle record
+-- @param campaign table Campaign (for player name lookups)
+-- @return table XML table element
+function UICore.createBattleRow(battle, campaign)
+    -- Build participant names
+    local participantNames = {}
+    for _, participant in ipairs(battle.participants or {}) do
+        local player = campaign.players[participant.playerId]
+        if player then
+            table.insert(participantNames, player.name)
+        end
+    end
+    local participantsStr = table.concat(participantNames, " vs ")
+
+    -- Winner text
+    local winnerStr = "Draw"
+    if battle.winner then
+        local winner = campaign.players[battle.winner]
+        if winner then
+            winnerStr = winner.name
+        end
+    end
+
+    -- Format timestamp
+    local dateStr = Utils.formatTimestamp and Utils.formatTimestamp(battle.timestamp) or tostring(battle.timestamp or "")
+
+    return {
+        tag = "Panel",
+        attributes = {
+            height = "40",
+            color = "rgba(30,30,30,0.8)",
+            padding = "3 5 3 5"
+        },
+        children = {
+            {
+                tag = "HorizontalLayout",
+                attributes = { spacing = "5" },
+                children = {
+                    UICore.createTextCell(battle.missionType or "Unknown", "25%", { fontSize = "11" }),
+                    UICore.createTextCell(participantsStr, "25%", { fontSize = "10", color = "#CCCCCC" }),
+                    UICore.createTextCell(winnerStr, "15%", { fontSize = "10", color = "#00FF00", alignment = "MiddleCenter" }),
+                    UICore.createTextCell(battle.battleSize or "", "12%", { fontSize = "10", color = "#AAAAAA", alignment = "MiddleCenter" }),
+                    UICore.createTextCell(dateStr, "13%", { fontSize = "9", color = "#888888", alignment = "MiddleCenter" }),
+                    UICore.createButtonCell(
+                        "battleLog_selectBattle_" .. (battle.id or ""),
+                        "View",
+                        "10%",
+                        { fontSize = "10", onClick = "BattleLog.onButtonClick" }
+                    )
+                }
+            }
+        }
+    }
+end
+
+--- Create an empty state message element
+-- @param message string Message to display
+-- @return table XML table element
+function UICore.createEmptyState(message)
+    return {
+        tag = "Text",
+        attributes = {
+            text = message,
+            fontSize = "12",
+            color = "#888888",
+            alignment = "MiddleCenter",
+            height = "60"
+        }
+    }
+end
+
+--- Render a list of XML table elements into a target panel
+-- @param panelId string Target panel element ID
+-- @param elements table Array of XML table elements
+function UICore.renderList(panelId, elements)
+    local container = {
+        tag = "VerticalLayout",
+        attributes = {
+            spacing = "3",
+            padding = "2"
+        },
+        children = elements
+    }
+
+    UI.setXmlTable(panelId, { container })
+end
+
+-- ============================================================================
 -- MODULE REGISTRATION
 -- ============================================================================
 
@@ -406,6 +616,10 @@ function UICore.registerModule(moduleName, moduleRef)
         UICore.unitDetailsModule = moduleRef
     elseif moduleName == "newRecruit" then
         UICore.newRecruitModule = moduleRef
+    elseif moduleName == "mapView" then
+        UICore.mapViewModule = moduleRef
+    elseif moduleName == "battleLog" then
+        UICore.battleLogModule = moduleRef
     end
 
     log("UI module registered: " .. moduleName)

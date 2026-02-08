@@ -347,19 +347,19 @@ function DataValidator.validateAlliances(campaign, report)
         return
     end
 
-    for i, alliance in ipairs(campaign.alliances) do
+    for allianceId, alliance in pairs(campaign.alliances) do
         -- Check required fields
         if not alliance.id or not alliance.name or not alliance.members then
-            table.insert(report.errors, string.format("Alliance #%d missing required fields", i))
+            table.insert(report.errors, string.format("Alliance '%s' missing required fields", tostring(allianceId)))
         end
 
         -- Validate members
         if alliance.members and type(alliance.members) ~= "table" then
-            table.insert(report.errors, string.format("Alliance #%d members must be a table", i))
+            table.insert(report.errors, string.format("Alliance '%s' members must be a table", tostring(allianceId)))
         elseif alliance.members then
             for _, memberId in ipairs(alliance.members) do
                 if not campaign.players[memberId] then
-                    table.insert(report.warnings, string.format("Alliance %s has invalid member: %s", alliance.name, memberId))
+                    table.insert(report.warnings, string.format("Alliance %s has invalid member: %s", alliance.name or allianceId, memberId))
                 end
             end
         end

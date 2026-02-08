@@ -9,7 +9,7 @@ Handles XP awards, rank progression, and XP caps for 10th Edition Crusade.
 
 Three XP Award Types:
 1. Battle Experience: +1 XP to all participating units
-2. Every Third Kill: +1 XP per third enemy unit destroyed
+2. Dealers of Death: +1 XP per third enemy unit destroyed (lifetime tally)
 3. Marked for Greatness: +3 XP to ONE selected unit per player per battle
 ]]
 
@@ -143,6 +143,7 @@ function addXP(unit, amount, reason, campaignLog)
 
         -- Cap XP if would exceed max
         if oldXP + amount > maxXP then
+            local requestedAmount = amount
             amount = maxXP - oldXP
             if campaignLog then
                 table.insert(campaignLog, {
@@ -150,7 +151,7 @@ function addXP(unit, amount, reason, campaignLog)
                     timestamp = Utils.getUnixTimestamp(),
                     details = {
                         unit = unit.name,
-                        originalAmount = oldXP + amount,
+                        requestedAmount = requestedAmount,
                         cappedAmount = amount,
                         message = "XP capped at 30 for non-CHARACTER"
                     }
@@ -254,12 +255,12 @@ function awardBattleExperienceXP(battleRecord, campaignUnits, campaignLog)
     return results
 end
 
---- Calculate and award Every Third Kill XP
+--- Calculate and award Dealers of Death XP (10th Ed: +1 XP per 3rd unit destroyed)
 -- @param unit table The unit object
 -- @param newKills number New kills this battle
 -- @param campaignLog table Campaign log
 -- @return number XP awarded
-function calculateEveryThirdKillXP(unit, newKills, campaignLog)
+function calculateDealersOfDeathXP(unit, newKills, campaignLog)
     local oldTotal = unit.combatTallies.unitsDestroyed
     local newTotal = oldTotal + newKills
 
@@ -272,7 +273,7 @@ function calculateEveryThirdKillXP(unit, newKills, campaignLog)
         local success, actualXP, message = addXP(
             unit,
             xpToAward,
-            string.format("Every Third Kill (x%d)", xpToAward),
+            string.format("Dealers of Death (x%d)", xpToAward),
             campaignLog
         )
 
@@ -351,24 +352,24 @@ end
 function processPostBattleXP(battleRecord, campaignUnits, campaignLog)
     local summary = {
         battleExperience = {},
-        everyThirdKill = {},
+        dealersOfDeath = {},
         markedForGreatness = {}
     }
 
     -- 1. Award Battle Experience (+1 to all)
     summary.battleExperience = awardBattleExperienceXP(battleRecord, campaignUnits, campaignLog)
 
-    -- 2. Calculate Every Third Kill
+    -- 2. Calculate Dealers of Death
     for unitId, tallies in pairs(battleRecord.combatTallies) do
         local unit = campaignUnits[unitId]
         if unit then
-            local xp = calculateEveryThirdKillXP(
+            local xp = calculateDealersOfDeathXP(
                 unit,
                 tallies.killsThisBattle or 0,
                 campaignLog
             )
             if xp > 0 then
-                summary.everyThirdKill[unitId] = xp
+                summary.dealersOfDeath[unitId] = xp
             end
         end
     end
@@ -389,10 +390,10 @@ function incrementBattlesParticipated(unit)
     unit.combatTallies.battlesParticipated = unit.combatTallies.battlesParticipated + 1
 end
 
---- Get next "Every Third Kill" threshold
+--- Get next Dealers of Death XP threshold (every 3rd kill)
 -- @param currentKills number Current total kills
 -- @return number Next threshold
-function getNextThirdKillThreshold(currentKills)
+function getNextDealersOfDeathThreshold(currentKills)
     return math.ceil((currentKills + 1) / 3) * 3
 end
 
@@ -457,10 +458,10 @@ return {
     getXPForNextRank = getXPForNextRank,
     addXP = addXP,
     awardBattleExperienceXP = awardBattleExperienceXP,
-    calculateEveryThirdKillXP = calculateEveryThirdKillXP,
+    calculateDealersOfDeathXP = calculateDealersOfDeathXP,
     awardMarkedForGreatnessXP = awardMarkedForGreatnessXP,
     processPostBattleXP = processPostBattleXP,
     incrementBattlesParticipated = incrementBattlesParticipated,
-    getNextThirdKillThreshold = getNextThirdKillThreshold,
+    getNextDealersOfDeathThreshold = getNextDealersOfDeathThreshold,
     applyLegendaryVeterans = applyLegendaryVeterans
 }

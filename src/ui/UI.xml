@@ -1,8 +1,29 @@
 <Defaults>
+    <!-- Text defaults -->
     <Text fontSize="14" color="#FFFFFF" />
-    <Button fontSize="14" colors="#FFFFFF|#CCCCCC|#999999|#666666" />
-    <Toggle fontSize="12" />
-    <InputField fontSize="14" characterLimit="100" />
+
+    <!-- Button defaults with state colors: normal|highlighted|pressed|disabled -->
+    <Button fontSize="14"
+            colors="#DDDDDD|#FFFFFF|#AAAAAA|#555555"
+            textColor="#111111" />
+
+    <!-- Toggle defaults with state colors -->
+    <Toggle fontSize="12"
+            colors="#888888|#AAAAAA|#666666|#444444" />
+
+    <!-- Input defaults -->
+    <InputField fontSize="14"
+                characterLimit="100"
+                color="#222222"
+                textColor="#FFFFFF"
+                placeholder="..." />
+
+    <!-- Dropdown defaults -->
+    <Dropdown fontSize="14"
+              color="#333333"
+              textColor="#FFFFFF"
+              itemTextColor="#FFFFFF"
+              itemBackgroundColors="#333333|#555555" />
 </Defaults>
 
 <!-- Main UI Container -->
@@ -13,6 +34,8 @@
        height="600"
        padding="10 10 10 10"
        color="rgba(0,0,0,0.8)"
+       allowDragging="true"
+       returnToOriginalPositionWhenReleased="false"
        active="true">
 
     <!-- Main Menu Panel -->
@@ -165,7 +188,8 @@
 
                 <Button id="mainPanel_recordBattle"
                         height="45"
-                        color="#FF8800"
+                        colors="#FF8800|#FFAA33|#CC6600|#664400"
+                        textColor="#FFFFFF"
                         onClick="UICore.onButtonClick">
                     Record Battle
                 </Button>
@@ -186,7 +210,8 @@
 
                 <Button id="mainPanel_save"
                         height="45"
-                        color="#00AA00"
+                        colors="#00AA00|#00CC00|#008800|#004400"
+                        textColor="#FFFFFF"
                         onClick="UICore.onButtonClick">
                     Save Campaign
                 </Button>
@@ -442,7 +467,7 @@
                     </Text>
 
                     <Text id="unitDetails_cpBreakdown" fontSize="10" color="#AAAAAA">
-                        XP: 0 (÷5 = 0 CP) | Honours: 0 CP | Scars: -0 CP
+                        Honours: 0 CP | Scars: -0 CP
                     </Text>
                 </VerticalLayout>
             </Panel>
@@ -474,7 +499,8 @@
                 <Button id="unitDetails_save"
                         width="50%"
                         onClick="UICore.onButtonClick"
-                        color="#00FF00">
+                        colors="#00CC00|#00FF00|#009900|#004400"
+                        textColor="#FFFFFF">
                     Save Unit
                 </Button>
             </HorizontalLayout>
@@ -518,7 +544,8 @@
                 <Button id="newRecruit_import"
                         width="50%"
                         onClick="UICore.onButtonClick"
-                        color="#00FF00">
+                        colors="#00CC00|#00FF00|#009900|#004400"
+                        textColor="#FFFFFF">
                     Import Units
                 </Button>
             </HorizontalLayout>

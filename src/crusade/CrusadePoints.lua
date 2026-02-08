@@ -6,12 +6,13 @@ Crusade Points Calculation System
 Version: 1.0.0-alpha
 
 CRITICAL: This module implements the correct 10th Edition Crusade Points formula.
-Formula: CP = floor(XP / 5) + Battle Honours - Battle Scars
+Formula: CP = Battle Honours CP - Battle Scars count
 
-- Battle Honours: +1 each (or +2 if TITANIC)
+- Battle Traits / Weapon Mods: +1 each (or +2 if TITANIC)
 - Crusade Relics: +1 (Artificer), +2 (Antiquity), +3 (Legendary)
 - Battle Scars: -1 each
 - Can result in NEGATIVE Crusade Points
+- NOTE: Unlike 9th Edition, XP does NOT contribute to CP in 10th Edition
 ]]
 
 local Utils = require("src/core/Utils")
@@ -21,6 +22,8 @@ local Utils = require("src/core/Utils")
 -- ============================================================================
 
 --- Calculate Crusade Points for a unit (10th Edition formula)
+-- 10th Edition: CP = Battle Honours CP - Battle Scars count
+-- Note: Unlike 9th Edition, XP does NOT contribute to CP in 10th Edition
 -- @param unit table The unit object
 -- @return number Crusade Points (can be negative)
 function calculateCrusadePoints(unit)
@@ -29,17 +32,14 @@ function calculateCrusadePoints(unit)
         return 0
     end
 
-    -- Base CP from XP: floor(XP / 5)
-    local cpFromXP = math.floor(unit.experiencePoints / 5)
-
-    -- Add Battle Honours
+    -- Add Battle Honours CP
     local cpFromHonours = calculateHonoursCrusadePoints(unit)
 
     -- Subtract Battle Scars
     local cpFromScars = #unit.battleScars
 
-    -- Final calculation: CP = floor(XP/5) + Honours - Scars
-    local totalCP = cpFromXP + cpFromHonours - cpFromScars
+    -- Final calculation: CP = Honours - Scars (10th Edition)
+    local totalCP = cpFromHonours - cpFromScars
 
     -- Log if CP is negative (valid but noteworthy)
     if totalCP < 0 then
@@ -133,17 +133,15 @@ function getCrusadePointsBreakdown(unit)
     if not unit then
         return {
             total = 0,
-            fromXP = 0,
             fromHonours = 0,
             fromScars = 0,
             formula = "Unit not found"
         }
     end
 
-    local cpFromXP = math.floor(unit.experiencePoints / 5)
     local cpFromHonours = calculateHonoursCrusadePoints(unit)
     local cpFromScars = #unit.battleScars
-    local total = cpFromXP + cpFromHonours - cpFromScars
+    local total = cpFromHonours - cpFromScars
 
     -- Build detailed honour breakdown
     local honourDetails = {}
@@ -170,7 +168,6 @@ function getCrusadePointsBreakdown(unit)
 
     return {
         total = total,
-        fromXP = cpFromXP,
         fromHonours = cpFromHonours,
         fromScars = cpFromScars,
         xp = unit.experiencePoints,
@@ -180,8 +177,7 @@ function getCrusadePointsBreakdown(unit)
         honourDetails = honourDetails,
         scarNames = scarNames,
         formula = string.format(
-            "CP = floor(%d/5) + %d - %d = %d",
-            unit.experiencePoints,
+            "CP = %d - %d = %d",
             cpFromHonours,
             cpFromScars,
             total
@@ -218,7 +214,9 @@ end
 -- @param descending boolean Sort descending (highest first) if true
 -- @return table Sorted array of units
 function sortUnitsByCrusadePoints(units, descending)
-    local sortedUnits = Utils.deepCopy(units)
+    -- Shallow copy to avoid mutating caller's array; units themselves are references
+    local sortedUnits = {}
+    for i, u in ipairs(units) do sortedUnits[i] = u end
 
     table.sort(sortedUnits, function(a, b)
         local cpA = a.crusadePoints or 0
@@ -232,16 +230,6 @@ function sortUnitsByCrusadePoints(units, descending)
     end)
 
     return sortedUnits
-end
-
---- Calculate total Supply Points used from Crusade Points
--- NOTE: In 10th Edition, Supply is based on unit POINTS COST, not Crusade Points
--- This function is for reference only - do not use for Supply calculations
--- @param crusadePoints number The unit's Crusade Points
--- @return number Supply points (DO NOT USE FOR 10TH EDITION)
-function crusadePointsToSupply_DEPRECATED(crusadePoints)
-    Utils.logWarning("crusadePointsToSupply is deprecated in 10th Edition. Use unit.pointsCost instead.")
-    return 0
 end
 
 --- Calculate Supply Used for a player based on unit points costs (P11: Enhanced validation)
