@@ -31,7 +31,9 @@ function createCampaign(name, config)
         edition = Constants.EDITION,
 
         -- Settings
+        description = config.description or "",
         supplyLimitDefault = config.supplyLimit or Constants.DEFAULT_SUPPLY_LIMIT,
+        battleSizes = config.battleSizes or {},
         missionPack = config.missionPack or nil,
 
         -- Organizational Data
@@ -72,6 +74,9 @@ function createPlayer(name, color, faction, config)
         name = name,
         color = color,
         faction = faction,
+        forceName = config.forceName or "",
+        subfaction = config.subfaction or "",
+        detachment = config.detachment or "",
 
         -- Territory
         startingHex = config.startingHex or nil,

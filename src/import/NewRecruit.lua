@@ -1,12 +1,15 @@
 --[[
 =====================================
 CRUSADE CAMPAIGN TRACKER
-New Recruit JSON Import
+New Recruit / BattleScribe JSON Import
 =====================================
 Version: 1.0.0-alpha
 
-This module imports units from New Recruit (https://www.newrecruit.eu/) JSON format.
-Auto-detects unit flags and creates complete Crusade cards.
+This module imports units from:
+- New Recruit (https://www.newrecruit.eu/) JSON export
+- BattleScribe roster JSON export (roster.forces[].selections[] format)
+
+Auto-detects unit flags from keywords/categories and creates Crusade cards.
 ]]
 
 local Utils = require("src/core/Utils")
@@ -62,7 +65,251 @@ local TRANSPORT_KEYWORDS = {
 }
 
 -- ============================================================================
--- JSON PARSING
+-- FORMAT DETECTION
+-- ============================================================================
+
+--- Detect the JSON format and route to the appropriate parser
+-- @param data table Parsed JSON data
+-- @return string Format type: "battlescribe", "flat_array", "single_unit", or "unknown"
+function NewRecruit.detectFormat(data)
+    -- BattleScribe roster format: has data.roster.forces
+    if data.roster and data.roster.forces then
+        return "battlescribe"
+    end
+
+    -- Flat array of unit objects with name/datasheet
+    if data.units then
+        return "flat_array"
+    end
+
+    -- Single unit object
+    if data.name and data.datasheet then
+        return "single_unit"
+    end
+
+    -- Check if it's a raw array of objects with .name
+    if type(data) == "table" and #data > 0 and data[1] and data[1].name then
+        return "flat_array"
+    end
+
+    return "unknown"
+end
+
+-- ============================================================================
+-- BATTLESCRIBE ROSTER PARSER
+-- ============================================================================
+
+--- Extract roster metadata from BattleScribe format
+-- @param roster table The roster object
+-- @return table Metadata {name, faction, detachment, battleSize}
+function NewRecruit.extractRosterMetadata(roster)
+    local metadata = {
+        name = roster.name or "Unknown Roster",
+        faction = nil,
+        detachment = nil,
+        battleSize = nil
+    }
+
+    local forces = roster.forces or {}
+    if #forces > 0 then
+        local force = forces[1]
+        -- catalogueName is "Imperium - Adeptus Astartes - Space Wolves" etc.
+        metadata.faction = force.catalogueName or force.name or nil
+    end
+
+    return metadata
+end
+
+--- Parse a BattleScribe roster into unit data
+-- @param data table Full BattleScribe JSON (contains data.roster)
+-- @param playerId string Target player ID
+-- @return table Import result {success, units, errors, metadata}
+function NewRecruit.parseBattleScribeRoster(data, playerId)
+    local result = {
+        success = true,
+        units = {},
+        errors = {},
+        metadata = nil
+    }
+
+    local roster = data.roster
+    if not roster then
+        result.success = false
+        table.insert(result.errors, "No roster found in BattleScribe data")
+        return result
+    end
+
+    result.metadata = NewRecruit.extractRosterMetadata(roster)
+
+    local forces = roster.forces or {}
+    if #forces == 0 then
+        result.success = false
+        table.insert(result.errors, "No forces found in roster")
+        return result
+    end
+
+    -- Process each force (typically just one)
+    for _, force in ipairs(forces) do
+        local selections = force.selections or {}
+
+        for _, selection in ipairs(selections) do
+            -- Only process model and unit type selections (skip Configuration entries)
+            if selection.type == "model" or selection.type == "unit" then
+                local unit, err = NewRecruit.parseBattleScribeSelection(selection, playerId, force)
+                if unit then
+                    table.insert(result.units, unit)
+                else
+                    table.insert(result.errors, tostring(selection.name or "Unknown") .. ": " .. (err or "Parse error"))
+                end
+            end
+        end
+    end
+
+    if #result.units == 0 and #result.errors > 0 then
+        result.success = false
+    end
+
+    return result
+end
+
+--- Parse a single BattleScribe selection (unit/model) into a Crusade unit
+-- @param selection table A BattleScribe selection object
+-- @param playerId string Target player ID
+-- @param force table Parent force object (for faction data)
+-- @return table, string Unit object or nil, error message
+function NewRecruit.parseBattleScribeSelection(selection, playerId, force)
+    if not selection or not selection.name then
+        return nil, "Missing selection name"
+    end
+
+    local name = selection.name
+
+    -- Extract categories as keywords
+    local keywords = {}
+    local categories = selection.categories or {}
+    for _, cat in ipairs(categories) do
+        if cat.name then
+            table.insert(keywords, cat.name)
+        end
+    end
+
+    -- Calculate total points cost (base + sub-selection upgrades)
+    local pointsCost = 0
+    if selection.costs then
+        for _, cost in ipairs(selection.costs) do
+            if cost.name == "pts" then
+                pointsCost = pointsCost + (tonumber(cost.value) or 0)
+            end
+        end
+    end
+
+    -- Add points from sub-selections (enhancements, upgrades)
+    local subSelections = selection.selections or {}
+    for _, sub in ipairs(subSelections) do
+        if sub.costs then
+            for _, cost in ipairs(sub.costs) do
+                if cost.name == "pts" then
+                    pointsCost = pointsCost + (tonumber(cost.value) or 0)
+                end
+            end
+        end
+    end
+
+    -- Extract equipment from sub-selections (type="upgrade" that aren't detachments/config)
+    local equipment = {}
+    for _, sub in ipairs(subSelections) do
+        if sub.type == "upgrade" and not sub.group then
+            table.insert(equipment, sub.name)
+        elseif sub.type == "upgrade" and sub.group and sub.group ~= "Detachment" and sub.group ~= "Battle Size" then
+            table.insert(equipment, sub.name)
+        end
+    end
+
+    -- Detect battlefield role from categories
+    local battlefieldRole = NewRecruit._detectRoleFromCategories(keywords)
+
+    -- Detect unit flags from categories
+    local flags = NewRecruit.detectUnitFlags(keywords, battlefieldRole)
+
+    -- Extract faction keywords from categories (prefixed with "Faction: ")
+    local selectableKeywords = {}
+    for _, cat in ipairs(categories) do
+        if cat.name and string.find(cat.name, "^Faction: ") then
+            table.insert(selectableKeywords, string.sub(cat.name, 10)) -- strip "Faction: " prefix
+        end
+    end
+
+    -- Create unit object
+    local unit = DataModel.createUnit(playerId, {
+        name = name,
+        unitType = name, -- BattleScribe selection name IS the datasheet name
+        pointsCost = pointsCost,
+        battlefieldRole = battlefieldRole,
+
+        -- Auto-detected flags
+        isCharacter = flags.isCharacter,
+        isTitanic = flags.isTitanic,
+        isEpicHero = flags.isEpicHero,
+        isBattleline = flags.isBattleline,
+        isDedicatedTransport = flags.isDedicatedTransport,
+        canGainXP = flags.canGainXP,
+
+        -- Additional data
+        selectableKeywords = selectableKeywords,
+        equipment = equipment,
+        abilities = {},
+        notes = "Imported from BattleScribe roster"
+    })
+
+    return unit, nil
+end
+
+--- Detect battlefield role from BattleScribe category names
+-- @param categories table Array of category name strings
+-- @return string Matched battlefield role or ""
+function NewRecruit._detectRoleFromCategories(categories)
+    -- Map BattleScribe category names to standard battlefield roles
+    local roleMap = {
+        ["Character"]            = "HQ",
+        ["Epic Hero"]            = "HQ",
+        ["Chapter Master"]       = "HQ",
+        ["Lieutenant"]           = "HQ",
+        ["Battleline"]           = "Troops",
+        ["Infantry"]             = "", -- too generic
+        ["Vehicle"]              = "Heavy Support",
+        ["Walker"]               = "Heavy Support",
+        ["Mounted"]              = "Fast Attack",
+        ["Beast"]                = "Fast Attack",
+        ["Transport"]            = "Dedicated Transport",
+        ["Flyer"]                = "Flyer",
+        ["Fortification"]        = "Fortification",
+        ["Lord of War"]          = "Lord of War",
+        ["Titanic"]              = "Lord of War",
+    }
+
+    -- Priority order: more specific categories first
+    local priorityOrder = {
+        "Epic Hero", "Chapter Master", "Lieutenant", "Lord of War",
+        "Battleline", "Transport", "Flyer", "Fortification",
+        "Mounted", "Beast", "Walker", "Vehicle", "Character"
+    }
+
+    for _, checkCat in ipairs(priorityOrder) do
+        for _, catName in ipairs(categories) do
+            if catName == checkCat then
+                local role = roleMap[checkCat]
+                if role and role ~= "" then
+                    return role
+                end
+            end
+        end
+    end
+
+    return ""
+end
+
+-- ============================================================================
+-- FLAT FORMAT PARSER (original New Recruit format)
 -- ============================================================================
 
 --- Parse New Recruit JSON and create units
@@ -91,11 +338,27 @@ function NewRecruit.importFromJSON(jsonString, playerId)
         }
     end
 
-    -- Process the parsed data
-    return NewRecruit.processNewRecruitData(data, playerId)
+    -- Detect format and route to appropriate parser
+    local format = NewRecruit.detectFormat(data)
+
+    if format == "battlescribe" then
+        Utils.logInfo("Detected BattleScribe roster format")
+        local result = NewRecruit.parseBattleScribeRoster(data, playerId)
+        NewRecruit.lastImportResult = result
+        return result
+    elseif format == "flat_array" or format == "single_unit" then
+        Utils.logInfo("Detected flat/single unit format")
+        return NewRecruit.processNewRecruitData(data, playerId)
+    else
+        return {
+            success = false,
+            units = {},
+            errors = {"Unrecognized JSON format. Expected BattleScribe roster or New Recruit unit data."}
+        }
+    end
 end
 
---- Process parsed New Recruit data
+--- Process parsed New Recruit flat format data
 -- @param data table Parsed JSON data
 -- @param playerId string Target player ID
 -- @return table Import result
@@ -107,7 +370,6 @@ function NewRecruit.processNewRecruitData(data, playerId)
     }
 
     -- New Recruit can export single units or full rosters
-    -- Check if data is array of units or single unit
     local unitsData = data
     if data.units then
         -- Full roster format
@@ -133,7 +395,7 @@ function NewRecruit.processNewRecruitData(data, playerId)
     return result
 end
 
---- Parse a single unit from New Recruit data
+--- Parse a single unit from New Recruit flat format
 -- @param unitData table Unit JSON object
 -- @param playerId string Target player ID
 -- @return table, string Unit object or nil, error message
@@ -299,7 +561,7 @@ end
 -- ============================================================================
 
 --- Import units into campaign
--- @param jsonString string New Recruit JSON
+-- @param jsonString string New Recruit or BattleScribe JSON
 -- @param playerId string Target player ID
 -- @param campaign table Active campaign
 -- @return boolean Success status
@@ -315,14 +577,14 @@ function NewRecruit.importUnits(jsonString, playerId, campaign)
         return false
     end
 
-    -- Parse JSON
+    -- Parse JSON (auto-detects format)
     local result = NewRecruit.importFromJSON(jsonString, playerId)
 
     if not result.success then
         -- Show errors
         broadcastToAll("Import failed with errors:", {1, 0, 0})
-        for _, error in ipairs(result.errors) do
-            broadcastToAll("  " .. error, {1, 0, 0})
+        for _, err in ipairs(result.errors) do
+            broadcastToAll("  " .. err, {1, 0, 0})
         end
         return false
     end
@@ -345,17 +607,29 @@ function NewRecruit.importUnits(jsonString, playerId, campaign)
         addedCount = addedCount + 1
     end
 
+    -- Log roster metadata if BattleScribe import
+    local source = "New Recruit"
+    if result.metadata then
+        source = "BattleScribe"
+        if result.metadata.faction then
+            Utils.logInfo("Roster faction: " .. result.metadata.faction)
+        end
+    end
+
     -- Add event log entry
-    table.insert(campaign.eventLog, {
+    if not campaign.log then
+        campaign.log = {}
+    end
+    table.insert(campaign.log, {
         timestamp = Utils.getUnixTimestamp(),
         type = "units_imported",
         playerId = playerId,
         playerName = player.name,
         count = addedCount,
-        description = string.format("Imported %d units from New Recruit", addedCount)
+        description = string.format("Imported %d units from %s", addedCount, source)
     })
 
-    broadcastToAll(string.format("Successfully imported %d units for %s", addedCount, player.name), {0, 1, 0})
+    broadcastToAll(string.format("Imported %d units for %s from %s", addedCount, player.name, source), {0, 1, 0})
 
     NewRecruit.campaign = campaign
     return true
@@ -372,7 +646,7 @@ function NewRecruit.openImportPanel(playerId)
     -- UICore.showPanel("newRecruitImport")
     -- UICore.setValue("newRecruit_playerId", playerId)
 
-    broadcastToAll("New Recruit import panel opened. Paste JSON from newrecruit.eu", {0, 1, 1})
+    broadcastToAll("New Recruit import panel opened. Paste JSON from newrecruit.eu or BattleScribe", {0, 1, 1})
 
     log("New Recruit import panel opened for player: " .. playerId)
 end
