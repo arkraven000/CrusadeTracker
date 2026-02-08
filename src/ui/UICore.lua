@@ -238,7 +238,12 @@ end
 -- @param id string Button ID
 function UICore.handleMainMenuClick(player, value, id)
     if id == "mainMenu_newCampaign" then
-        UICore.showPanel("campaignSetup")
+        -- Must call showCampaignSetupWizard to reset and render step content
+        if _G.showCampaignSetupWizard then
+            _G.showCampaignSetupWizard()
+        else
+            UICore.showPanel("campaignSetup")
+        end
     elseif id == "mainMenu_loadCampaign" then
         -- Load campaign from notebook
         broadcastToAll("Loading campaign from notebook...", {0, 1, 1})

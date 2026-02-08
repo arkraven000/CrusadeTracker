@@ -530,6 +530,7 @@ function CampaignSetup._buildStep1Content()
             text = wd.campaignName,
             placeholder = "Enter campaign name...",
             fontSize = "14",
+            preferredHeight = "35",
             onValueChanged = "onUIButtonClick"
         } },
         { tag = "Panel", attributes = { height = "5" } },
@@ -541,6 +542,7 @@ function CampaignSetup._buildStep1Content()
             fontSize = "12",
             characterLimit = "500",
             lineType = "MultiLineNewline",
+            preferredHeight = "60",
             onValueChanged = "onUIButtonClick"
         } },
         { tag = "Panel", attributes = { height = "5" } },
@@ -550,6 +552,7 @@ function CampaignSetup._buildStep1Content()
             text = tostring(wd.supplyLimit),
             characterLimit = "5",
             fontSize = "14",
+            preferredHeight = "35",
             onValueChanged = "onUIButtonClick"
         } },
         { tag = "Panel", attributes = { height = "5" } },
@@ -559,6 +562,7 @@ function CampaignSetup._buildStep1Content()
             text = tostring(wd.startingRP),
             characterLimit = "2",
             fontSize = "14",
+            preferredHeight = "35",
             onValueChanged = "onUIButtonClick"
         } }
     }
@@ -602,6 +606,7 @@ function CampaignSetup._buildStep2Content()
             text = tostring(wd.mapWidth),
             characterLimit = "2",
             fontSize = "14",
+            preferredHeight = "35",
             onValueChanged = "onUIButtonClick"
         } })
         table.insert(children, { tag = "Panel", attributes = { height = "5" } })
@@ -611,6 +616,7 @@ function CampaignSetup._buildStep2Content()
             text = tostring(wd.mapHeight),
             characterLimit = "2",
             fontSize = "14",
+            preferredHeight = "35",
             onValueChanged = "onUIButtonClick"
         } })
         table.insert(children, { tag = "Panel", attributes = { height = "5" } })
@@ -643,6 +649,7 @@ function CampaignSetup._buildStep3Content()
             text = pf.name,
             placeholder = "Player name...",
             fontSize = "14",
+            preferredHeight = "35",
             onValueChanged = "onUIButtonClick"
         } },
 
@@ -676,6 +683,7 @@ function CampaignSetup._buildStep3Content()
         text = pf.faction,
         placeholder = "e.g., Adeptus Astartes, Orks, Aeldari",
         fontSize = "14",
+        preferredHeight = "35",
         onValueChanged = "onUIButtonClick"
     } })
 
@@ -686,6 +694,7 @@ function CampaignSetup._buildStep3Content()
         text = pf.subfaction,
         placeholder = "e.g., Space Wolves, Evil Sunz, Hive Fleet Leviathan",
         fontSize = "12",
+        preferredHeight = "30",
         onValueChanged = "onUIButtonClick"
     } })
 
@@ -696,6 +705,7 @@ function CampaignSetup._buildStep3Content()
         text = pf.forceName,
         placeholder = "e.g., The Emperor's Blade, Waaagh! Gutrippa",
         fontSize = "12",
+        preferredHeight = "30",
         onValueChanged = "onUIButtonClick"
     } })
 
@@ -706,6 +716,7 @@ function CampaignSetup._buildStep3Content()
         text = pf.detachment,
         placeholder = "e.g., Gladius Task Force, Saga of the Great Wolf",
         fontSize = "12",
+        preferredHeight = "30",
         onValueChanged = "onUIButtonClick"
     } })
 
@@ -783,6 +794,7 @@ function CampaignSetup._buildStep4Content()
             text = wd.missionPack or "",
             placeholder = "Leave blank to skip",
             fontSize = "14",
+            preferredHeight = "35",
             onValueChanged = "onUIButtonClick"
         } }
     }

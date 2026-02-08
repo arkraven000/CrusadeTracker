@@ -174,8 +174,11 @@ function onLoad(saved_data)
 
     else
         -- New campaign - show setup wizard
+        -- Delay to ensure TTS XML UI has fully initialized (needs 1-2 frames after onLoad)
         Utils.logInfo("No saved campaign found. Starting setup wizard...")
-        showCampaignSetupWizard()
+        Wait.frames(function()
+            showCampaignSetupWizard()
+        end, 5)
     end
 
     Utils.logInfo("Crusade Campaign Tracker loaded successfully")
@@ -593,9 +596,12 @@ function showCampaignSetupWizard()
         UICore.registerModule("campaignSetup", CampaignSetup)
     end
 
-    -- Reset wizard and show panel
-    CampaignSetup.reset()
+    -- Show panel first, then reset/render content after a short delay
+    -- to ensure TTS XML UI is ready for setXmlTable calls
     UICore.showPanel("campaignSetup")
+    Wait.frames(function()
+        CampaignSetup.reset()
+    end, 3)
 end
 
 --- Complete campaign setup from wizard (ASYNC - uses callback for notebook creation)
@@ -680,6 +686,7 @@ end
 -- always reflect the current value of the global.
 _G.createNewCampaign = createNewCampaign
 _G.completeCampaignSetup = completeCampaignSetup
+_G.showCampaignSetupWizard = showCampaignSetupWizard
 _G.addPlayer = addPlayer
 _G.addUnit = addUnit
 _G.deleteUnit = deleteUnit
