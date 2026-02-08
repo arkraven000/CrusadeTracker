@@ -429,10 +429,19 @@
 
                     <HorizontalLayout spacing="5" height="30">
                         <Text width="30%">Role:</Text>
-                        <InputField id="unitDetails_role"
-                                   width="70%"
-                                   placeholder="Battlefield Role"
-                                   onValueChanged="onUIButtonClick" />
+                        <Dropdown id="unitDetails_role"
+                                  width="70%"
+                                  onValueChanged="onUIButtonClick">
+                            <Option>HQ</Option>
+                            <Option>Troops</Option>
+                            <Option>Elites</Option>
+                            <Option>Fast Attack</Option>
+                            <Option>Heavy Support</Option>
+                            <Option>Flyer</Option>
+                            <Option>Dedicated Transport</Option>
+                            <Option>Fortification</Option>
+                            <Option>Lord of War</Option>
+                        </Dropdown>
                     </HorizontalLayout>
 
                     <HorizontalLayout spacing="5" height="30">

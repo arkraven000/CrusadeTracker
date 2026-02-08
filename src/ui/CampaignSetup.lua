@@ -7,8 +7,8 @@ Version: 1.0.0-alpha
 
 5-step campaign creation wizard:
 1. Campaign Name & Settings
-2. Map Configuration
-3. Add Players
+2. Map Configuration (optional)
+3. Add Players (with force name, faction, subfaction, detachment)
 4. Mission Pack Selection (optional)
 5. Review & Create
 ]]
@@ -28,7 +28,9 @@ local CampaignSetup = {
     -- Wizard data (temporary until campaign creation)
     wizardData = {
         campaignName = "",
+        campaignDescription = "",
         supplyLimit = Constants.DEFAULT_SUPPLY_LIMIT,
+        useMap = true,
         mapWidth = Constants.DEFAULT_MAP_WIDTH,
         mapHeight = Constants.DEFAULT_MAP_HEIGHT,
         mapSkin = Constants.DEFAULT_MAP_SKIN,
@@ -47,13 +49,24 @@ function CampaignSetup.reset()
     CampaignSetup.currentStep = 1
     CampaignSetup.wizardData = {
         campaignName = "",
+        campaignDescription = "",
         supplyLimit = Constants.DEFAULT_SUPPLY_LIMIT,
+        useMap = true,
         mapWidth = Constants.DEFAULT_MAP_WIDTH,
         mapHeight = Constants.DEFAULT_MAP_HEIGHT,
         mapSkin = Constants.DEFAULT_MAP_SKIN,
         players = {},
         missionPack = nil,
         startingRP = Constants.STARTING_RP
+    }
+
+    CampaignSetup._playerForm = {
+        name = "",
+        color = "White",
+        faction = "",
+        forceName = "",
+        subfaction = "",
+        detachment = ""
     }
 
     CampaignSetup.refreshUI()
@@ -121,7 +134,11 @@ function CampaignSetup.validateStep(stepNum)
         return true
 
     elseif stepNum == 2 then
-        -- Step 2: Map Configuration
+        -- Step 2: Map Configuration (skip validation if map disabled)
+        if not CampaignSetup.wizardData.useMap then
+            return true
+        end
+
         if CampaignSetup.wizardData.mapWidth < 3 or CampaignSetup.wizardData.mapWidth > 15 then
             broadcastToAll("Map width must be between 3 and 15 hexes", {1, 0, 0})
             return false
@@ -171,6 +188,13 @@ function CampaignSetup.setCampaignName(name)
     log("Campaign name set to: " .. name)
 end
 
+--- Set campaign description
+-- @param desc string Campaign description
+function CampaignSetup.setCampaignDescription(desc)
+    CampaignSetup.wizardData.campaignDescription = desc
+    log("Campaign description set")
+end
+
 --- Set supply limit
 -- @param limit number Supply limit
 function CampaignSetup.setSupplyLimit(limit)
@@ -188,6 +212,13 @@ end
 -- ============================================================================
 -- STEP 2: MAP CONFIGURATION
 -- ============================================================================
+
+--- Set whether the campaign uses a hex map
+-- @param useMap boolean True to use map, false to skip
+function CampaignSetup.setUseMap(useMap)
+    CampaignSetup.wizardData.useMap = useMap
+    log("Use map set to: " .. tostring(useMap))
+end
 
 --- Set map dimensions
 -- @param width number Map width in hexes
@@ -214,7 +245,10 @@ end
 -- @param playerName string Player name
 -- @param playerColor string TTS player color
 -- @param faction string Faction name
-function CampaignSetup.addPlayer(playerName, playerColor, faction)
+-- @param forceName string Crusade force name
+-- @param subfaction string Subfaction (e.g. Ultramarines)
+-- @param detachment string Detachment name
+function CampaignSetup.addPlayer(playerName, playerColor, faction, forceName, subfaction, detachment)
     -- Check for duplicate colors
     for _, player in ipairs(CampaignSetup.wizardData.players) do
         if player.color == playerColor then
@@ -226,7 +260,10 @@ function CampaignSetup.addPlayer(playerName, playerColor, faction)
     local playerConfig = {
         name = playerName,
         color = playerColor,
-        faction = faction
+        faction = faction,
+        forceName = forceName or "",
+        subfaction = subfaction or "",
+        detachment = detachment or ""
     }
 
     table.insert(CampaignSetup.wizardData.players, playerConfig)
@@ -253,9 +290,10 @@ end
 
 --- Refresh player list UI
 function CampaignSetup.refreshPlayerList()
-    -- Update UI to show current players
-    -- This would interact with UICore to update the player list display
     log("Refreshing player list: " .. #CampaignSetup.wizardData.players .. " players")
+    if CampaignSetup.currentStep == 3 then
+        CampaignSetup.renderStepContent(3)
+    end
 end
 
 -- ============================================================================
@@ -281,31 +319,54 @@ end
 --- Get campaign summary for review
 -- @return string Summary text
 function CampaignSetup.getCampaignSummary()
+    local wd = CampaignSetup.wizardData
     local summary = {
-        "Campaign Name: " .. CampaignSetup.wizardData.campaignName,
-        "Supply Limit: " .. CampaignSetup.wizardData.supplyLimit,
-        "Starting RP: " .. CampaignSetup.wizardData.startingRP,
-        "",
-        "Map: " .. CampaignSetup.wizardData.mapWidth .. "x" .. CampaignSetup.wizardData.mapHeight .. " hexes",
-        "Map Skin: " .. CampaignSetup.wizardData.mapSkin,
-        "",
-        "Players (" .. #CampaignSetup.wizardData.players .. "):"
+        "Campaign Name: " .. wd.campaignName,
     }
 
-    for i, player in ipairs(CampaignSetup.wizardData.players) do
-        table.insert(summary, "  " .. i .. ". " .. player.name .. " - " .. player.faction .. " (" .. player.color .. ")")
+    if wd.campaignDescription and wd.campaignDescription ~= "" then
+        table.insert(summary, "Description: " .. wd.campaignDescription)
     end
 
-    if CampaignSetup.wizardData.missionPack then
+    table.insert(summary, "Supply Limit: " .. wd.supplyLimit)
+    table.insert(summary, "Starting RP: " .. wd.startingRP)
+    table.insert(summary, "")
+
+    if wd.useMap then
+        table.insert(summary, "Map: " .. wd.mapWidth .. "x" .. wd.mapHeight .. " hexes")
+        table.insert(summary, "Map Skin: " .. wd.mapSkin)
+    else
+        table.insert(summary, "Map: None (no territory map)")
+    end
+
+    table.insert(summary, "")
+    table.insert(summary, "Players (" .. #wd.players .. "):")
+
+    for i, player in ipairs(wd.players) do
+        local line = "  " .. i .. ". " .. player.name .. " (" .. player.color .. ")"
+        line = line .. "\n      Faction: " .. player.faction
+        if player.subfaction and player.subfaction ~= "" then
+            line = line .. " - " .. player.subfaction
+        end
+        if player.forceName and player.forceName ~= "" then
+            line = line .. "\n      Force: " .. player.forceName
+        end
+        if player.detachment and player.detachment ~= "" then
+            line = line .. "\n      Detachment: " .. player.detachment
+        end
+        table.insert(summary, line)
+    end
+
+    if wd.missionPack then
         table.insert(summary, "")
-        table.insert(summary, "Mission Pack: " .. CampaignSetup.wizardData.missionPack)
+        table.insert(summary, "Mission Pack: " .. wd.missionPack)
     end
 
     return table.concat(summary, "\n")
 end
 
 --- Create campaign from wizard data
--- @return boolean Success status
+-- @return table|false Campaign object or false on failure
 function CampaignSetup.createCampaign()
     log("Creating campaign from wizard data...")
 
@@ -318,50 +379,54 @@ function CampaignSetup.createCampaign()
         end
     end
 
+    local wd = CampaignSetup.wizardData
+
     -- Create campaign object
     local campaignConfig = {
-        supplyLimit = CampaignSetup.wizardData.supplyLimit,
-        missionPack = CampaignSetup.wizardData.missionPack,
+        description = wd.campaignDescription,
+        supplyLimit = wd.supplyLimit,
+        missionPack = wd.missionPack,
         resources = {}
     }
 
     local campaign = DataModel.createCampaign(
-        CampaignSetup.wizardData.campaignName,
+        wd.campaignName,
         campaignConfig
     )
 
-    -- Create map configuration
-    campaign.mapConfig = DataModel.createHexMapConfig(
-        CampaignSetup.wizardData.mapWidth,
-        CampaignSetup.wizardData.mapHeight
-    )
-
-    campaign.mapConfig.currentMapSkin = CampaignSetup.wizardData.mapSkin
+    -- Create map configuration only if map is enabled
+    if wd.useMap then
+        campaign.mapConfig = DataModel.createHexMapConfig(
+            wd.mapWidth,
+            wd.mapHeight
+        )
+        campaign.mapConfig.currentMapSkin = wd.mapSkin
+    end
 
     -- Add players
-    for _, playerConfig in ipairs(CampaignSetup.wizardData.players) do
+    for _, playerConfig in ipairs(wd.players) do
         local playerObj = DataModel.createPlayer(
             playerConfig.name,
             playerConfig.color,
             playerConfig.faction,
             {
-                supplyLimit = CampaignSetup.wizardData.supplyLimit
+                supplyLimit = wd.supplyLimit,
+                forceName = playerConfig.forceName,
+                subfaction = playerConfig.subfaction,
+                detachment = playerConfig.detachment
             }
         )
 
         -- Set starting RP (override default)
-        playerObj.requisitionPoints = CampaignSetup.wizardData.startingRP
+        playerObj.requisitionPoints = wd.startingRP
 
         campaign.players[playerObj.id] = playerObj
 
         log("Added player: " .. playerConfig.name)
     end
 
-    -- Set as active campaign (this would be in Global.lua)
-    -- Global.CrusadeCampaign = campaign
-
     broadcastToAll("Campaign created: " .. campaign.name, {0, 1, 0})
-    broadcastToAll("Players: " .. #CampaignSetup.wizardData.players, {0, 1, 1})
+    broadcastToAll("Players: " .. #wd.players, {0, 1, 1})
 
     log("Campaign creation complete!")
     log(CampaignSetup.getCampaignSummary())
@@ -378,8 +443,26 @@ end
 CampaignSetup._playerForm = {
     name = "",
     color = "White",
-    faction = ""
+    faction = "",
+    forceName = "",
+    subfaction = "",
+    detachment = ""
 }
+
+--- Get the first available (unused) player color
+-- @return string First available color name
+function CampaignSetup._getFirstAvailableColor()
+    local usedColors = {}
+    for _, p in ipairs(CampaignSetup.wizardData.players) do
+        usedColors[p.color] = true
+    end
+    for _, colorName in ipairs(Constants.PLAYER_COLOR_NAMES) do
+        if not usedColors[colorName] then
+            return colorName
+        end
+    end
+    return "White"
+end
 
 --- Refresh UI for current step
 function CampaignSetup.refreshUI()
@@ -450,6 +533,17 @@ function CampaignSetup._buildStep1Content()
             onValueChanged = "onUIButtonClick"
         } },
         { tag = "Panel", attributes = { height = "5" } },
+        { tag = "Text", attributes = { text = "Description (optional):", fontSize = "12" } },
+        { tag = "InputField", attributes = {
+            id = "campaignSetup_descriptionInput",
+            text = wd.campaignDescription,
+            placeholder = "Campaign narrative, house rules, notes...",
+            fontSize = "12",
+            characterLimit = "500",
+            lineType = "MultiLineNewline",
+            onValueChanged = "onUIButtonClick"
+        } },
+        { tag = "Panel", attributes = { height = "5" } },
         { tag = "Text", attributes = { text = "Supply Limit (points):", fontSize = "12" } },
         { tag = "InputField", attributes = {
             id = "campaignSetup_supplyLimitInput",
@@ -473,59 +567,86 @@ end
 --- Build Step 2 content: Map Configuration
 function CampaignSetup._buildStep2Content()
     local wd = CampaignSetup.wizardData
-    local skinOptions = {}
-    local skins = { "forgeWorld", "deathWorld", "hiveCity", "spaceHulk", "iceWorld", "desert" }
-    local skinLabels = { "Forge World", "Death World", "Hive City", "Space Hulk", "Ice World", "Desert" }
-    for i, skin in ipairs(skins) do
-        local opt = { tag = "Option", value = skinLabels[i] }
-        if skin == wd.mapSkin then
-            opt.attributes = { selected = "true" }
-        end
-        table.insert(skinOptions, opt)
-    end
 
-    return {
+    local children = {
         { tag = "Text", attributes = { text = "Step 2: Map Configuration", fontSize = "16", color = "#FFFF00" } },
         { tag = "Panel", attributes = { height = "8" } },
-        { tag = "Text", attributes = { text = "Map Width (3-15 hexes):", fontSize = "12" } },
-        { tag = "InputField", attributes = {
+        { tag = "Toggle", attributes = {
+            id = "campaignSetup_useMapToggle",
+            isOn = wd.useMap and "true" or "false",
+            onValueChanged = "onUIButtonClick",
+            fontSize = "13"
+        }, value = "Use Territory Map" },
+        { tag = "Text", attributes = {
+            text = "Disable for campaigns without territory control.",
+            fontSize = "10", color = "#888888"
+        } },
+        { tag = "Panel", attributes = { height = "5" } },
+    }
+
+    if wd.useMap then
+        local skinOptions = {}
+        local skins = { "forgeWorld", "deathWorld", "hiveCity", "spaceHulk", "iceWorld", "desert" }
+        local skinLabels = { "Forge World", "Death World", "Hive City", "Space Hulk", "Ice World", "Desert" }
+        for i, skin in ipairs(skins) do
+            local opt = { tag = "Option", value = skinLabels[i] }
+            if skin == wd.mapSkin then
+                opt.attributes = { selected = "true" }
+            end
+            table.insert(skinOptions, opt)
+        end
+
+        table.insert(children, { tag = "Text", attributes = { text = "Map Width (3-15 hexes):", fontSize = "12" } })
+        table.insert(children, { tag = "InputField", attributes = {
             id = "campaignSetup_mapWidthInput",
             text = tostring(wd.mapWidth),
             characterLimit = "2",
             fontSize = "14",
             onValueChanged = "onUIButtonClick"
-        } },
-        { tag = "Panel", attributes = { height = "5" } },
-        { tag = "Text", attributes = { text = "Map Height (3-15 hexes):", fontSize = "12" } },
-        { tag = "InputField", attributes = {
+        } })
+        table.insert(children, { tag = "Panel", attributes = { height = "5" } })
+        table.insert(children, { tag = "Text", attributes = { text = "Map Height (3-15 hexes):", fontSize = "12" } })
+        table.insert(children, { tag = "InputField", attributes = {
             id = "campaignSetup_mapHeightInput",
             text = tostring(wd.mapHeight),
             characterLimit = "2",
             fontSize = "14",
             onValueChanged = "onUIButtonClick"
-        } },
-        { tag = "Panel", attributes = { height = "5" } },
-        { tag = "Text", attributes = { text = "Map Skin:", fontSize = "12" } },
-        { tag = "Dropdown", attributes = {
+        } })
+        table.insert(children, { tag = "Panel", attributes = { height = "5" } })
+        table.insert(children, { tag = "Text", attributes = { text = "Map Skin:", fontSize = "12" } })
+        table.insert(children, { tag = "Dropdown", attributes = {
             id = "campaignSetup_mapSkinSelect",
             onValueChanged = "onUIButtonClick"
-        }, children = skinOptions }
-    }
+        }, children = skinOptions })
+    else
+        table.insert(children, { tag = "Text", attributes = {
+            text = "No territory map will be created.\nYou can add one later from campaign settings.",
+            fontSize = "12", color = "#AAAAAA"
+        } })
+    end
+
+    return children
 end
 
 --- Build Step 3 content: Add Players
 function CampaignSetup._buildStep3Content()
+    local pf = CampaignSetup._playerForm
     local children = {
         { tag = "Text", attributes = { text = "Step 3: Add Players (min 2)", fontSize = "16", color = "#FFFF00" } },
-        { tag = "Panel", attributes = { height = "5" } },
+        { tag = "Panel", attributes = { height = "3" } },
+
+        -- Player Name
         { tag = "Text", attributes = { text = "Player Name:", fontSize = "12" } },
         { tag = "InputField", attributes = {
             id = "campaignSetup_playerNameInput",
-            text = CampaignSetup._playerForm.name,
+            text = pf.name,
             placeholder = "Player name...",
             fontSize = "14",
             onValueChanged = "onUIButtonClick"
         } },
+
+        -- Player Color
         { tag = "Text", attributes = { text = "Player Color:", fontSize = "12" } }
     }
 
@@ -548,15 +669,47 @@ function CampaignSetup._buildStep3Content()
         onValueChanged = "onUIButtonClick"
     }, children = colorOptions })
 
+    -- Faction
     table.insert(children, { tag = "Text", attributes = { text = "Faction:", fontSize = "12" } })
     table.insert(children, { tag = "InputField", attributes = {
         id = "campaignSetup_factionInput",
-        text = CampaignSetup._playerForm.faction,
-        placeholder = "e.g., Space Marines",
+        text = pf.faction,
+        placeholder = "e.g., Adeptus Astartes, Orks, Aeldari",
         fontSize = "14",
         onValueChanged = "onUIButtonClick"
     } })
 
+    -- Subfaction
+    table.insert(children, { tag = "Text", attributes = { text = "Subfaction (optional):", fontSize = "12" } })
+    table.insert(children, { tag = "InputField", attributes = {
+        id = "campaignSetup_subfactionInput",
+        text = pf.subfaction,
+        placeholder = "e.g., Space Wolves, Evil Sunz, Hive Fleet Leviathan",
+        fontSize = "12",
+        onValueChanged = "onUIButtonClick"
+    } })
+
+    -- Force Name
+    table.insert(children, { tag = "Text", attributes = { text = "Crusade Force Name (optional):", fontSize = "12" } })
+    table.insert(children, { tag = "InputField", attributes = {
+        id = "campaignSetup_forceNameInput",
+        text = pf.forceName,
+        placeholder = "e.g., The Emperor's Blade, Waaagh! Gutrippa",
+        fontSize = "12",
+        onValueChanged = "onUIButtonClick"
+    } })
+
+    -- Detachment
+    table.insert(children, { tag = "Text", attributes = { text = "Detachment (optional):", fontSize = "12" } })
+    table.insert(children, { tag = "InputField", attributes = {
+        id = "campaignSetup_detachmentInput",
+        text = pf.detachment,
+        placeholder = "e.g., Gladius Task Force, Saga of the Great Wolf",
+        fontSize = "12",
+        onValueChanged = "onUIButtonClick"
+    } })
+
+    -- Add Player button
     table.insert(children, { tag = "Panel", attributes = { height = "3" } })
     table.insert(children, { tag = "Button", attributes = {
         id = "campaignSetup_addPlayer",
@@ -581,13 +734,21 @@ function CampaignSetup._buildStep3Content()
         } })
     else
         for i, p in ipairs(CampaignSetup.wizardData.players) do
+            local detail = p.faction
+            if p.subfaction and p.subfaction ~= "" then
+                detail = detail .. " - " .. p.subfaction
+            end
+            if p.forceName and p.forceName ~= "" then
+                detail = detail .. " | " .. p.forceName
+            end
+
             table.insert(children, {
                 tag = "HorizontalLayout",
                 attributes = { spacing = "5", height = "28" },
                 children = {
                     { tag = "Text", attributes = {
-                        text = i .. ". " .. p.name .. " - " .. p.faction .. " (" .. p.color .. ")",
-                        width = "80%", fontSize = "11"
+                        text = i .. ". " .. p.name .. " - " .. detail .. " (" .. p.color .. ")",
+                        width = "80%", fontSize = "10"
                     } },
                     { tag = "Button", attributes = {
                         id = "campaignSetup_removePlayer_" .. i,
@@ -634,7 +795,7 @@ function CampaignSetup._buildStep5Content()
         { tag = "Panel", attributes = { height = "8" } },
         { tag = "Text", attributes = {
             text = CampaignSetup.getCampaignSummary(),
-            fontSize = "12", color = "#CCCCCC"
+            fontSize = "11", color = "#CCCCCC"
         } },
         { tag = "Panel", attributes = { height = "10" } },
         { tag = "Text", attributes = {
@@ -642,14 +803,6 @@ function CampaignSetup._buildStep5Content()
             fontSize = "14", color = "#00FF00", alignment = "MiddleCenter"
         } }
     }
-end
-
---- Refresh player list UI (re-render step 3 content)
-function CampaignSetup.refreshPlayerList()
-    log("Refreshing player list: " .. #CampaignSetup.wizardData.players .. " players")
-    if CampaignSetup.currentStep == 3 then
-        CampaignSetup.renderStepContent(3)
-    end
 end
 
 --- Handle button clicks from UI
@@ -674,18 +827,33 @@ function CampaignSetup.handleClick(player, value, id)
 
     elseif id == "campaignSetup_cancel" then
         CampaignSetup.reset()
-        UI.setAttribute("campaignSetupPanel", "active", "false")
-        UI.setAttribute("mainMenuPanel", "active", "true")
+        -- Use UICore-compatible panel management via _G if available,
+        -- otherwise fall back to direct attribute setting
+        if _G.UICore and _G.UICore.showPanel then
+            _G.UICore.showPanel("mainMenu")
+        else
+            UI.setAttribute("campaignSetupPanel", "active", "false")
+            UI.setAttribute("mainMenuPanel", "active", "true")
+        end
 
-    -- Input field handlers
+    -- Step 1: Campaign settings
     elseif id == "campaignSetup_nameInput" then
         CampaignSetup.setCampaignName(value)
+
+    elseif id == "campaignSetup_descriptionInput" then
+        CampaignSetup.setCampaignDescription(value)
 
     elseif id == "campaignSetup_supplyLimitInput" then
         CampaignSetup.setSupplyLimit(value)
 
     elseif id == "campaignSetup_startingRPInput" then
         CampaignSetup.setStartingRP(value)
+
+    -- Step 2: Map configuration
+    elseif id == "campaignSetup_useMapToggle" then
+        CampaignSetup.setUseMap(value == "True")
+        -- Re-render to show/hide map fields
+        CampaignSetup.renderStepContent(2)
 
     elseif id == "campaignSetup_mapWidthInput" then
         CampaignSetup.setMapDimensions(value, CampaignSetup.wizardData.mapHeight)
@@ -705,6 +873,7 @@ function CampaignSetup.handleClick(player, value, id)
         }
         CampaignSetup.setMapSkin(skinMap[value] or "forgeWorld")
 
+    -- Step 3: Player form fields
     elseif id == "campaignSetup_playerNameInput" then
         CampaignSetup._playerForm.name = value
 
@@ -714,6 +883,15 @@ function CampaignSetup.handleClick(player, value, id)
     elseif id == "campaignSetup_factionInput" then
         CampaignSetup._playerForm.faction = value
 
+    elseif id == "campaignSetup_forceNameInput" then
+        CampaignSetup._playerForm.forceName = value
+
+    elseif id == "campaignSetup_subfactionInput" then
+        CampaignSetup._playerForm.subfaction = value
+
+    elseif id == "campaignSetup_detachmentInput" then
+        CampaignSetup._playerForm.detachment = value
+
     elseif id == "campaignSetup_addPlayer" then
         local pf = CampaignSetup._playerForm
         if pf.name == "" then
@@ -721,11 +899,22 @@ function CampaignSetup.handleClick(player, value, id)
         elseif pf.faction == "" then
             broadcastToAll("Please enter a faction", {1, 0, 0})
         else
-            CampaignSetup.addPlayer(pf.name, pf.color, pf.faction)
-            -- Clear form for next player
-            CampaignSetup._playerForm = { name = "", color = "White", faction = "" }
+            CampaignSetup.addPlayer(
+                pf.name, pf.color, pf.faction,
+                pf.forceName, pf.subfaction, pf.detachment
+            )
+            -- Reset form with next available color
+            CampaignSetup._playerForm = {
+                name = "",
+                color = CampaignSetup._getFirstAvailableColor(),
+                faction = "",
+                forceName = "",
+                subfaction = "",
+                detachment = ""
+            }
         end
 
+    -- Step 4: Mission pack
     elseif id == "campaignSetup_missionPackInput" then
         if value and value ~= "" then
             CampaignSetup.setMissionPack(value)
@@ -733,6 +922,7 @@ function CampaignSetup.handleClick(player, value, id)
             CampaignSetup.setMissionPack(nil)
         end
 
+    -- Remove player buttons
     elseif string.match(id, "^campaignSetup_removePlayer_(%d+)") then
         local playerIndex = tonumber(string.match(id, "campaignSetup_removePlayer_(%d+)"))
         CampaignSetup.removePlayer(playerIndex)
