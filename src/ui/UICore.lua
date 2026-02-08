@@ -52,6 +52,7 @@ function UICore.initialize()
     -- Register panel types
     UICore.panels = {
         mainMenu = false,
+        mainCampaign = false,
         campaignSetup = false,
         playerManagement = false,
         settings = false,
@@ -203,18 +204,24 @@ function UICore.onButtonClick(player, value, id)
     -- Route to appropriate handler based on ID prefix
     if string.match(id, "^mainMenu_") then
         UICore.handleMainMenuClick(player, value, id)
+    elseif string.match(id, "^mainPanel_") then
+        UICore.handleMainPanelClick(player, value, id)
     elseif string.match(id, "^campaignSetup_") then
         UICore.handleCampaignSetupClick(player, value, id)
     elseif string.match(id, "^playerMgmt_") then
         UICore.handlePlayerManagementClick(player, value, id)
     elseif string.match(id, "^settings_") then
         UICore.handleSettingsClick(player, value, id)
+    elseif string.match(id, "^campaignLog_") then
+        UICore.handleCampaignLogClick(player, value, id)
     elseif string.match(id, "^manageForces_") then
         UICore.handleManageForcesClick(player, value, id)
     elseif string.match(id, "^unitDetails_") then
         UICore.handleUnitDetailsClick(player, value, id)
     elseif string.match(id, "^newRecruit_") then
         UICore.handleNewRecruitClick(player, value, id)
+    elseif string.match(id, "^battleLog_") then
+        UICore.handleBattleLogClick(player, value, id)
     else
         log("WARNING: Unhandled button click: " .. id)
     end
@@ -235,6 +242,57 @@ function UICore.handleMainMenuClick(player, value, id)
         UICore.showPanel("settings")
     elseif id == "mainMenu_exit" then
         UICore.hideAllPanels()
+    end
+end
+
+--- Handle main campaign panel clicks (post-setup dashboard)
+-- @param player object Player who clicked
+-- @param value string Button value
+-- @param id string Button ID
+function UICore.handleMainPanelClick(player, value, id)
+    if id == "mainPanel_playerMgmt" then
+        UICore.showPanel("manageForces")
+    elseif id == "mainPanel_map" then
+        UICore.showPanel("mapView")
+    elseif id == "mainPanel_log" then
+        UICore.showPanel("campaignLog")
+    elseif id == "mainPanel_recordBattle" then
+        UICore.showPanel("recordBattle")
+    elseif id == "mainPanel_battleLog" then
+        UICore.showPanel("battleLog")
+    elseif id == "mainPanel_settings" then
+        UICore.showPanel("settings")
+    elseif id == "mainPanel_save" then
+        broadcastToAll("Saving campaign...", {0, 1, 1})
+        if _G.onSave then
+            _G.onSave()
+        end
+    end
+end
+
+--- Handle campaign log clicks
+-- @param player object Player who clicked
+-- @param value string Button value
+-- @param id string Button ID
+function UICore.handleCampaignLogClick(player, value, id)
+    if id == "campaignLog_close" then
+        UICore.hidePanel("campaignLog")
+        UICore.showPanel("mainCampaign")
+    elseif UICore.campaignLogModule then
+        UICore.campaignLogModule.handleClick(player, value, id)
+    end
+end
+
+--- Handle battle log clicks (close button routed via onUIButtonClick)
+-- @param player object Player who clicked
+-- @param value string Button value
+-- @param id string Button ID
+function UICore.handleBattleLogClick(player, value, id)
+    if id == "battleLog_close" then
+        UICore.hidePanel("battleLog")
+        UICore.showPanel("mainCampaign")
+    elseif UICore.battleLogModule then
+        UICore.battleLogModule.handleClick(player, value, id)
     end
 end
 
@@ -423,7 +481,7 @@ function UICore.createButtonCell(id, label, width, attrs)
             fontSize = attrs.fontSize or "11",
             colors = attrs.colors or "#DDDDDD|#FFFFFF|#AAAAAA|#555555",
             textColor = attrs.textColor or "#111111",
-            onClick = attrs.onClick or "UICore.onButtonClick"
+            onClick = attrs.onClick or "onUIButtonClick"
         },
         value = label
     }
@@ -554,7 +612,7 @@ function UICore.createBattleRow(battle, campaign)
                         "battleLog_selectBattle_" .. (battle.id or ""),
                         "View",
                         "10%",
-                        { fontSize = "10", onClick = "BattleLog.onButtonClick" }
+                        { fontSize = "10", onClick = "onBattleLogButtonClick" }
                     )
                 }
             }

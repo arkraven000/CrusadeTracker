@@ -570,10 +570,10 @@ function createMainUI()
         end
 
         -- Show main campaign panel
-        UICore.showPanel("mainCampaignPanel")
+        UICore.showPanel("mainCampaign")
     else
         -- Show main menu
-        UICore.showPanel("mainMenuPanel")
+        UICore.showPanel("mainMenu")
     end
 
     Utils.logInfo("UI system initialized successfully")
@@ -591,7 +591,7 @@ function showCampaignSetupWizard()
 
     -- Reset wizard and show panel
     CampaignSetup.reset()
-    UICore.showPanel("campaignSetupPanel")
+    UICore.showPanel("campaignSetup")
 end
 
 --- Complete campaign setup from wizard (ASYNC - uses callback for notebook creation)
