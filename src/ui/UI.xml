@@ -33,7 +33,7 @@
        width="400"
        height="600"
        padding="10 10 10 10"
-       color="rgba(0,0,0,0.8)"
+       color="rgba(0,0,0,0.9)"
        allowDragging="true"
        returnToOriginalPositionWhenReleased="false"
        active="true">
@@ -45,11 +45,11 @@
            active="true">
 
         <VerticalLayout spacing="15" padding="20">
-            <Text fontSize="24" alignment="MiddleCenter">
-                CRUSADE CAMPAIGN TRACKER
+            <Text fontSize="24" alignment="MiddleCenter" color="#D4A843" fontStyle="Bold">
+                CRUSADE TRACKER
             </Text>
 
-            <Text fontSize="12" alignment="MiddleCenter" color="#CCCCCC">
+            <Text fontSize="12" alignment="MiddleCenter" color="#888888">
                 Warhammer 40,000 10th Edition
             </Text>
 
@@ -57,25 +57,35 @@
 
             <Button id="mainMenu_newCampaign"
                     height="50"
+                    fontSize="16"
+                    fontStyle="Bold"
+                    colors="#8B6914|#D4A843|#6B5010|#44340A"
+                    textColor="#FFFFFF"
                     onClick="onUIButtonClick">
                 New Campaign
             </Button>
 
             <Button id="mainMenu_loadCampaign"
                     height="50"
+                    fontSize="14"
+                    colors="#444444|#666666|#333333|#222222"
+                    textColor="#CCCCCC"
                     onClick="onUIButtonClick">
                 Load Campaign
             </Button>
 
             <Button id="mainMenu_settings"
                     height="50"
+                    fontSize="14"
+                    colors="#444444|#666666|#333333|#222222"
+                    textColor="#CCCCCC"
                     onClick="onUIButtonClick">
                 Settings
             </Button>
 
             <Panel height="40" />
 
-            <Text fontSize="10" alignment="MiddleCenter" color="#888888">
+            <Text fontSize="10" alignment="MiddleCenter" color="#555555">
                 Version 1.0.0-alpha
             </Text>
         </VerticalLayout>
@@ -87,40 +97,68 @@
            height="100%"
            active="false">
 
-        <VerticalLayout spacing="10" padding="15">
-            <Text fontSize="20" alignment="MiddleCenter">
-                Campaign Setup
+        <VerticalLayout spacing="8" padding="12 15 12 15">
+            <!-- Title -->
+            <Text fontSize="22" alignment="MiddleCenter" color="#D4A843" fontStyle="Bold">
+                NEW CAMPAIGN
+            </Text>
+            <Text id="setupStepDescription" fontSize="11" alignment="MiddleCenter" color="#888888">
+                Name your campaign and set basic rules
             </Text>
 
-            <!-- Step Indicator -->
-            <HorizontalLayout spacing="5" height="30">
-                <Panel id="setupStep1Indicator" width="20%" height="100%" color="#FFFF00" />
-                <Panel id="setupStep2Indicator" width="20%" height="100%" color="#CCCCCC" />
-                <Panel id="setupStep3Indicator" width="20%" height="100%" color="#CCCCCC" />
-                <Panel id="setupStep4Indicator" width="20%" height="100%" color="#CCCCCC" />
-                <Panel id="setupStep5Indicator" width="20%" height="100%" color="#CCCCCC" />
+            <Panel height="4" />
+
+            <!-- Step Indicator with Labels -->
+            <HorizontalLayout spacing="3" height="36">
+                <Panel id="setupStep1Indicator" width="20%" height="100%" color="#D4A843">
+                    <Text id="setupStep1Label" text="1 Basics" fontSize="9" color="#000000" alignment="MiddleCenter" fontStyle="Bold" />
+                </Panel>
+                <Panel id="setupStep2Indicator" width="20%" height="100%" color="#333333">
+                    <Text id="setupStep2Label" text="2 Map" fontSize="9" color="#666666" alignment="MiddleCenter" />
+                </Panel>
+                <Panel id="setupStep3Indicator" width="20%" height="100%" color="#333333">
+                    <Text id="setupStep3Label" text="3 Players" fontSize="9" color="#666666" alignment="MiddleCenter" />
+                </Panel>
+                <Panel id="setupStep4Indicator" width="20%" height="100%" color="#333333">
+                    <Text id="setupStep4Label" text="4 Mission" fontSize="9" color="#666666" alignment="MiddleCenter" />
+                </Panel>
+                <Panel id="setupStep5Indicator" width="20%" height="100%" color="#333333">
+                    <Text id="setupStep5Label" text="5 Review" fontSize="9" color="#666666" alignment="MiddleCenter" />
+                </Panel>
             </HorizontalLayout>
+
+            <Panel height="2" />
 
             <!-- Step Content Area -->
             <Panel id="setupContentArea" width="100%" height="400" />
 
             <!-- Navigation Buttons -->
-            <HorizontalLayout spacing="10" height="40">
+            <HorizontalLayout spacing="8" height="42">
                 <Button id="campaignSetup_cancel"
-                        width="30%"
-                        onClick="onUIButtonClick">
+                        width="25%"
+                        onClick="onUIButtonClick"
+                        fontSize="13"
+                        colors="#3A2222|#553333|#2A1515|#221111"
+                        textColor="#CC8888">
                     Cancel
                 </Button>
 
                 <Button id="campaignSetup_previous"
                         width="30%"
-                        onClick="onUIButtonClick">
+                        onClick="onUIButtonClick"
+                        fontSize="13"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#AAAAAA">
                     Previous
                 </Button>
 
                 <Button id="campaignSetup_next"
-                        width="40%"
-                        onClick="onUIButtonClick">
+                        width="45%"
+                        onClick="onUIButtonClick"
+                        fontSize="15"
+                        fontStyle="Bold"
+                        colors="#8B6914|#D4A843|#6B5010|#44340A"
+                        textColor="#FFFFFF">
                     Next
                 </Button>
             </HorizontalLayout>
