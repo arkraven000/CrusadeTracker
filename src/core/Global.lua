@@ -675,6 +675,7 @@ end
 -- so it does not need _G assignment. Accessing _G.CrusadeCampaign will
 -- always reflect the current value of the global.
 _G.createNewCampaign = createNewCampaign
+_G.completeCampaignSetup = completeCampaignSetup
 _G.addPlayer = addPlayer
 _G.addUnit = addUnit
 _G.deleteUnit = deleteUnit
