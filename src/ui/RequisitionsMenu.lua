@@ -54,7 +54,7 @@ end
 function RequisitionsMenu.openForPlayer(playerId)
     local player = RequisitionsMenu.campaign.players[playerId]
     if not player then
-        broadcastToAll("ERROR: Player not found", {1, 0, 0})
+        broadcastToAll("ERROR: Player not found", {0.80, 0.33, 0.33})
         return
     end
 
@@ -91,12 +91,12 @@ end
 -- @param params table Requisition-specific parameters
 function RequisitionsMenu.purchaseRequisition(params)
     if not RequisitionsMenu.selectedPlayer then
-        broadcastToAll("ERROR: No player selected", {1, 0, 0})
+        broadcastToAll("ERROR: No player selected", {0.80, 0.33, 0.33})
         return
     end
 
     if not RequisitionsMenu.selectedRequisition then
-        broadcastToAll("ERROR: No requisition selected", {1, 0, 0})
+        broadcastToAll("ERROR: No requisition selected", {0.80, 0.33, 0.33})
         return
     end
 
@@ -114,11 +114,11 @@ function RequisitionsMenu.purchaseRequisition(params)
     )
 
     if success then
-        broadcastToAll(message, {0, 1, 0})
+        broadcastToAll(message, {0.30, 0.69, 0.31})
         RequisitionsMenu.selectedRequisition = nil
         RequisitionsMenu.selectedUnit = nil
     else
-        broadcastToAll("ERROR: " .. message, {1, 0, 0})
+        broadcastToAll("ERROR: " .. message, {0.80, 0.33, 0.33})
     end
 
     RequisitionsMenu.refreshUI()

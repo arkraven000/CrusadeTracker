@@ -246,7 +246,7 @@ function UICore.handleMainMenuClick(player, value, id)
         end
     elseif id == "mainMenu_loadCampaign" then
         -- Load campaign from notebook
-        broadcastToAll("Loading campaign from notebook...", {0, 1, 1})
+        broadcastToAll("Loading campaign from notebook...", {0.60, 0.60, 0.60})
         -- TODO: Implement load
     elseif id == "mainMenu_settings" then
         UICore.showPanel("settings")
@@ -273,7 +273,7 @@ function UICore.handleMainPanelClick(player, value, id)
     elseif id == "mainPanel_settings" then
         UICore.showPanel("settings")
     elseif id == "mainPanel_save" then
-        broadcastToAll("Saving campaign...", {0, 1, 1})
+        broadcastToAll("Saving campaign...", {0.60, 0.60, 0.60})
         if _G.onSave then
             _G.onSave()
         end
@@ -446,16 +446,16 @@ end
 -- @param message string Notification message
 -- @param messageType string "info", "success", "warning", "error"
 function UICore.showNotification(message, messageType)
-    local color = {1, 1, 1} -- Default white
+    local color = {0.93, 0.93, 0.93} -- Default near-white
 
     if messageType == "success" then
-        color = {0, 1, 0} -- Green
+        color = {0.30, 0.69, 0.31} -- Muted green (#4CAF50)
     elseif messageType == "warning" then
-        color = {1, 1, 0} -- Yellow
+        color = {0.83, 0.66, 0.26} -- Gold (#D4A843)
     elseif messageType == "error" then
-        color = {1, 0, 0} -- Red
+        color = {0.80, 0.33, 0.33} -- Muted red (#CC5555)
     elseif messageType == "info" then
-        color = {0, 1, 1} -- Cyan
+        color = {0.60, 0.60, 0.60} -- Gray (#999999)
     end
 
     broadcastToAll(message, color)
@@ -468,16 +468,16 @@ end
 -- @param message string Notification message
 -- @param messageType string "info", "success", "warning", "error"
 function UICore.showPlayerNotification(playerColor, message, messageType)
-    local color = {1, 1, 1}
+    local color = {0.93, 0.93, 0.93}
 
     if messageType == "success" then
-        color = {0, 1, 0}
+        color = {0.30, 0.69, 0.31}
     elseif messageType == "warning" then
-        color = {1, 1, 0}
+        color = {0.83, 0.66, 0.26}
     elseif messageType == "error" then
-        color = {1, 0, 0}
+        color = {0.80, 0.33, 0.33}
     elseif messageType == "info" then
-        color = {0, 1, 1}
+        color = {0.60, 0.60, 0.60}
     end
 
     printToColor(message, playerColor, color)
@@ -500,7 +500,7 @@ function UICore.createTextCell(text, width, attrs)
             text = tostring(text),
             width = width or "100%",
             fontSize = attrs.fontSize or "12",
-            color = attrs.color or "#FFFFFF",
+            color = attrs.color or "#EEEEEE",
             alignment = attrs.alignment or "MiddleLeft"
         }
     }
@@ -520,8 +520,8 @@ function UICore.createButtonCell(id, label, width, attrs)
             id = id,
             width = width or "100%",
             fontSize = attrs.fontSize or "11",
-            colors = attrs.colors or "#DDDDDD|#FFFFFF|#AAAAAA|#555555",
-            textColor = attrs.textColor or "#111111",
+            colors = attrs.colors or "#444444|#666666|#333333|#222222",
+            textColor = attrs.textColor or "#CCCCCC",
             onClick = attrs.onClick or "onUIButtonClick"
         },
         value = label
@@ -549,20 +549,20 @@ end
 -- @param unit table Unit display info (from ManageForces.getUnitDisplayInfo)
 -- @return table XML table element (a row with unit info and action buttons)
 function UICore.createUnitRow(unit)
-    local rankColor = "#FFFFFF"
+    local rankColor = "#EEEEEE"
     if unit.rank >= 4 then
-        rankColor = "#FFD700" -- Gold for Heroic/Legendary
+        rankColor = "#D4A843" -- Gold for Heroic/Legendary
     elseif unit.rank >= 3 then
-        rankColor = "#00CCFF" -- Cyan for Blooded
+        rankColor = "#6EAAC8" -- Muted blue for Blooded
     elseif unit.rank >= 2 then
-        rankColor = "#AAAAAA" -- Gray for Battle-Hardened
+        rankColor = "#999999" -- Gray for Battle-Hardened
     end
 
-    local cpColor = "#00FF00"
+    local cpColor = "#4CAF50"
     if unit.crusadePoints < 0 then
-        cpColor = "#FF4444"
+        cpColor = "#CC5555"
     elseif unit.crusadePoints == 0 then
-        cpColor = "#AAAAAA"
+        cpColor = "#999999"
     end
 
     local nameText = unit.name
@@ -646,7 +646,7 @@ function UICore.createBattleRow(battle, campaign)
                 children = {
                     UICore.createTextCell(battle.missionType or "Unknown", "25%", { fontSize = "11" }),
                     UICore.createTextCell(participantsStr, "25%", { fontSize = "10", color = "#CCCCCC" }),
-                    UICore.createTextCell(winnerStr, "15%", { fontSize = "10", color = "#00FF00", alignment = "MiddleCenter" }),
+                    UICore.createTextCell(winnerStr, "15%", { fontSize = "10", color = "#4CAF50", alignment = "MiddleCenter" }),
                     UICore.createTextCell(battle.battleSize or "", "12%", { fontSize = "10", color = "#AAAAAA", alignment = "MiddleCenter" }),
                     UICore.createTextCell(dateStr, "13%", { fontSize = "9", color = "#888888", alignment = "MiddleCenter" }),
                     UICore.createButtonCell(

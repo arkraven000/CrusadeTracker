@@ -125,13 +125,13 @@ function ManageForces.updateSupplyDisplay(player)
     -- UICore.setValue("manageForces_supplyBar", supplyPercent)
 
     -- Change color based on usage
-    local color = "#00FF00" -- Green
+    local color = "#4CAF50" -- Muted green
     if supplyPercent > 90 then
-        color = "#FF0000" -- Red
+        color = "#CC4444" -- Muted red
     elseif supplyPercent > 75 then
-        color = "#FFAA00" -- Orange
+        color = "#CC9933" -- Muted orange
     elseif supplyPercent > 50 then
-        color = "#FFFF00" -- Yellow
+        color = "#D4A843" -- Gold
     end
 
     -- UICore.setColor("manageForces_supplyBar", color)
@@ -278,7 +278,7 @@ end
 --- Add a new unit to the Order of Battle
 function ManageForces.addNewUnit()
     if not ManageForces.selectedPlayerId then
-        broadcastToAll("Please select a player first", {1, 0, 0})
+        broadcastToAll("Please select a player first", {0.80, 0.33, 0.33})
         return
     end
 
@@ -286,7 +286,7 @@ function ManageForces.addNewUnit()
     -- UICore.showPanel("unitDetails")
     -- UnitDetails.setMode("create", ManageForces.selectedPlayerId, nil)
 
-    broadcastToAll("Opening unit creation panel...", {0, 1, 1})
+    broadcastToAll("Opening unit creation panel...", {0.60, 0.60, 0.60})
     log("Add new unit for player: " .. ManageForces.selectedPlayerId)
 end
 
@@ -294,7 +294,7 @@ end
 -- @param unitId string Unit ID to edit
 function ManageForces.editUnit(unitId)
     if not unitId then
-        broadcastToAll("No unit selected", {1, 0, 0})
+        broadcastToAll("No unit selected", {0.80, 0.33, 0.33})
         return
     end
 
@@ -303,7 +303,7 @@ function ManageForces.editUnit(unitId)
     -- UnitDetails.setMode("edit", ManageForces.selectedPlayerId, unitId)
 
     ManageForces.selectedUnitId = unitId
-    broadcastToAll("Opening unit editor...", {0, 1, 1})
+    broadcastToAll("Opening unit editor...", {0.60, 0.60, 0.60})
     log("Edit unit: " .. unitId)
 end
 
@@ -311,20 +311,20 @@ end
 -- @param unitId string Unit ID to delete
 function ManageForces.deleteUnit(unitId)
     if not unitId then
-        broadcastToAll("No unit selected", {1, 0, 0})
+        broadcastToAll("No unit selected", {0.80, 0.33, 0.33})
         return
     end
 
     -- Find the unit
     local unit = ManageForces.campaign.units[unitId]
     if not unit then
-        broadcastToAll("Unit not found", {1, 0, 0})
+        broadcastToAll("Unit not found", {0.80, 0.33, 0.33})
         return
     end
 
     -- Show confirmation dialog
     -- For now, just broadcast warning
-    broadcastToAll("DELETE UNIT: " .. unit.name .. " - This cannot be undone!", {1, 0, 0})
+    broadcastToAll("DELETE UNIT: " .. unit.name .. " - This cannot be undone!", {0.80, 0.33, 0.33})
 
     -- TODO: Implement confirmation dialog
     -- When confirmed, call ManageForces.confirmDeleteUnit(unitId)
@@ -371,7 +371,7 @@ function ManageForces.confirmDeleteUnit(unitId)
         description = string.format("Deleted unit: %s", unit.name)
     })
 
-    broadcastToAll(string.format("Unit '%s' deleted from %s's roster", unit.name, player.name), {1, 1, 0})
+    broadcastToAll(string.format("Unit '%s' deleted from %s's roster", unit.name, player.name), {0.83, 0.66, 0.26})
 
     -- Refresh display
     ManageForces.refresh()
@@ -386,11 +386,11 @@ end
 --- Import unit from New Recruit JSON
 function ManageForces.importFromNewRecruit()
     if not ManageForces.selectedPlayerId then
-        broadcastToAll("Please select a player first", {1, 0, 0})
+        broadcastToAll("Please select a player first", {0.80, 0.33, 0.33})
         return
     end
 
-    broadcastToAll("New Recruit import coming soon!", {0, 1, 1})
+    broadcastToAll("New Recruit import coming soon!", {0.60, 0.60, 0.60})
 
     -- TODO: Show New Recruit import panel
     -- NewRecruit.openImportPanel(ManageForces.selectedPlayerId)

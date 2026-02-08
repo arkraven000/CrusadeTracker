@@ -39,7 +39,7 @@ function PlayerManagement.addPlayer(name, color, faction)
     local player = DataModel.createPlayer(name, color, faction)
     PlayerManagement.campaign.players[player.id] = player
     
-    broadcastToAll("Player added: " .. name, {0, 1, 0})
+    broadcastToAll("Player added: " .. name, {0.30, 0.69, 0.31})
     PlayerManagement.refresh()
     
     return true
@@ -53,7 +53,7 @@ function PlayerManagement.removePlayer(playerId)
     local player = PlayerManagement.campaign.players[playerId]
     PlayerManagement.campaign.players[playerId] = nil
     
-    broadcastToAll("Player removed: " .. player.name, {1, 1, 0})
+    broadcastToAll("Player removed: " .. player.name, {0.83, 0.66, 0.26})
     PlayerManagement.refresh()
     
     return true

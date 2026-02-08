@@ -154,13 +154,13 @@ end
 --- Save campaign
 function MainPanel.saveCampaign()
     -- Call SaveLoad module
-    broadcastToAll("Saving campaign...", {0, 1, 1})
+    broadcastToAll("Saving campaign...", {0.60, 0.60, 0.60})
     -- local success = SaveLoad.saveCampaign(MainPanel.campaign)
 
     -- if success then
-    --     broadcastToAll("Campaign saved successfully", {0, 1, 0})
+    --     broadcastToAll("Campaign saved successfully", {0.30, 0.69, 0.31})
     -- else
-    --     broadcastToAll("Campaign save failed", {1, 0, 0})
+    --     broadcastToAll("Campaign save failed", {0.80, 0.33, 0.33})
     -- end
 
     log("Save campaign requested")

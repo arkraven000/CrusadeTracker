@@ -302,12 +302,12 @@ end
 -- @param text string Text to copy
 function ExportImport.copyToClipboard(text)
     if not text then
-        broadcastToAll("ERROR: No data to copy", {1, 0, 0})
+        broadcastToAll("ERROR: No data to copy", {0.80, 0.33, 0.33})
         return
     end
 
     -- In TTS, copy would need to use the copy() function or display in a text box
-    broadcastToAll("Export data ready. Copy from output panel.", {0, 1, 1})
+    broadcastToAll("Export data ready. Copy from output panel.", {0.60, 0.60, 0.60})
     print(text)
 end
 
@@ -320,7 +320,7 @@ function ExportImport.refreshUI()
     -- Update mode selection buttons
     local modes = {"full", "player", "units"}
     for _, mode in ipairs(modes) do
-        local color = (mode == ExportImport.exportMode) and "#FFFF00" or "#CCCCCC"
+        local color = (mode == ExportImport.exportMode) and "#D4A843" or "#444444"
         -- UI.setAttribute("exportImport_mode_" .. mode, "color", color)
     end
 
@@ -343,14 +343,14 @@ function ExportImport.onButtonClick(player, value, id)
         if json then
             ExportImport.copyToClipboard(json)
         else
-            broadcastToAll("ERROR: " .. (err or "Export failed"), {1, 0, 0})
+            broadcastToAll("ERROR: " .. (err or "Export failed"), {0.80, 0.33, 0.33})
         end
 
     elseif id == "exportImport_import" then
         -- Would need to get JSON from input field
         -- local json = UI.getAttribute("exportImport_importField", "text")
         -- local success, message = ExportImport.importFullCampaign(json)
-        -- broadcastToAll(message, success and {0, 1, 0} or {1, 0, 0})
+        -- broadcastToAll(message, success and {0.30, 0.69, 0.31} or {0.80, 0.33, 0.33})
 
     elseif id:match("^exportImport_mode_") then
         local mode = id:gsub("^exportImport_mode_", "")
