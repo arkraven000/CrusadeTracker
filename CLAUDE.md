@@ -215,3 +215,5 @@ CrusadeCampaign
 - **Enhancement is singular**: `unit.enhancement` is a single object or nil, NOT an array. Do not use `unit.enhancements`
 - **Alliances are keyed by ID**: `campaign.alliances[allianceId]`, NOT an indexed array. Use `pairs()` to iterate, not `ipairs()`
 - **RP default max is 5**: Per 10th Edition rules players normally cannot exceed 5 RP (enforced by convention, not hard cap)
+- **`UI.setXmlTable` replaces the ENTIRE UI**: It does NOT accept an element ID to target a subtree. `UI.setXmlTable(data)` takes one table argument. To update a specific element's children, use the get-modify-set pattern: `local xml = UI.getXmlTable()`, find the element, replace its `.children`, then `UI.setXmlTable(xml)`. See `CampaignSetup._replaceXmlChildren()` and `UICore._replaceXmlChildren()`.
+- **Hex data uses `controlledBy`**: Territory hex data uses `hexData.controlledBy` (not `controllerId`) to reference the owning player ID. This must match across MapControls, MapView, DataModel, and TerritoryOverlays.

@@ -677,7 +677,29 @@ function UICore.createEmptyState(message)
     }
 end
 
+--- Recursively find an element by ID in an XML table tree and replace its children
+-- @param xmlTable table Array of XML elements
+-- @param targetId string The id attribute to search for
+-- @param newChildren table Array of child elements to set
+-- @return boolean True if element was found and updated
+function UICore._replaceXmlChildren(xmlTable, targetId, newChildren)
+    for _, element in ipairs(xmlTable) do
+        if element.attributes and element.attributes.id == targetId then
+            element.children = newChildren
+            return true
+        end
+        if element.children then
+            if UICore._replaceXmlChildren(element.children, targetId, newChildren) then
+                return true
+            end
+        end
+    end
+    return false
+end
+
 --- Render a list of XML table elements into a target panel
+-- UI.setXmlTable does NOT support targeting by element ID.
+-- Uses the get-modify-set pattern instead.
 -- @param panelId string Target panel element ID
 -- @param elements table Array of XML table elements
 function UICore.renderList(panelId, elements)
@@ -690,7 +712,16 @@ function UICore.renderList(panelId, elements)
         children = elements
     }
 
-    UI.setXmlTable(panelId, { container })
+    local fullXml = UI.getXmlTable()
+    if fullXml then
+        if UICore._replaceXmlChildren(fullXml, panelId, { container }) then
+            UI.setXmlTable(fullXml)
+        else
+            log("ERROR: Could not find " .. panelId .. " in UI XML tree")
+        end
+    else
+        log("ERROR: UI.getXmlTable() returned nil - UI may not be initialized yet")
+    end
 end
 
 -- ============================================================================
