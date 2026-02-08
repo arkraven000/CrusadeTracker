@@ -643,6 +643,29 @@ function onUIButtonClick(player, value, id)
     UICore.onButtonClick(player, value, id)
 end
 
+--- RecordBattle UI callbacks (called from XML UI)
+-- TTS XML onClick must reference flat global function names (no dots).
+function onRecordBattleButtonClick(player, value, id)
+    RecordBattle.onButtonClick(player, value, id)
+end
+
+function onRecordBattleDropdownChange(player, value, id)
+    RecordBattle.onDropdownChange(player, value, id)
+end
+
+function onRecordBattleInputChange(player, value, id)
+    RecordBattle.onInputChange(player, value, id)
+end
+
+--- BattleLog UI callbacks (called from XML UI)
+function onBattleLogButtonClick(player, value, id)
+    BattleLog.onButtonClick(player, value, id)
+end
+
+function onBattleLogDropdownChange(player, value, id)
+    BattleLog.onDropdownChange(player, value, id)
+end
+
 -- ============================================================================
 -- EXPORTS FOR TESTING
 -- ============================================================================
@@ -657,6 +680,11 @@ _G.addUnit = addUnit
 _G.deleteUnit = deleteUnit
 _G.createAlliance = createAlliance
 _G.onUIButtonClick = onUIButtonClick
+_G.onRecordBattleButtonClick = onRecordBattleButtonClick
+_G.onRecordBattleDropdownChange = onRecordBattleDropdownChange
+_G.onRecordBattleInputChange = onRecordBattleInputChange
+_G.onBattleLogButtonClick = onBattleLogButtonClick
+_G.onBattleLogDropdownChange = onBattleLogDropdownChange
 _G.UICore = UICore
 
 Utils.logInfo("Global script initialized")
