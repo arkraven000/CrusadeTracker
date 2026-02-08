@@ -464,19 +464,42 @@ function CampaignSetup._getFirstAvailableColor()
     return "White"
 end
 
+-- Step descriptions shown below the title
+CampaignSetup._stepDescriptions = {
+    "Name your campaign and set basic rules",
+    "Configure the territory hex map",
+    "Add the players joining this crusade",
+    "Optionally choose a mission pack",
+    "Review your settings and create the campaign"
+}
+
 --- Refresh UI for current step
 function CampaignSetup.refreshUI()
     log("Refreshing campaign setup UI - Step " .. CampaignSetup.currentStep)
 
-    -- Update step indicators
+    -- Update step description text
+    local desc = CampaignSetup._stepDescriptions[CampaignSetup.currentStep] or ""
+    UI.setAttribute("setupStepDescription", "text", desc)
+
+    -- Update step indicators (color + label styling)
     for step = 1, CampaignSetup.maxSteps do
         local stepIndicator = "setupStep" .. step .. "Indicator"
+        local stepLabel = "setupStep" .. step .. "Label"
         if step == CampaignSetup.currentStep then
-            UI.setAttribute(stepIndicator, "color", "#FFFF00")
+            -- Current step: gold background, dark text
+            UI.setAttribute(stepIndicator, "color", "#D4A843")
+            UI.setAttribute(stepLabel, "color", "#000000")
+            UI.setAttribute(stepLabel, "fontStyle", "Bold")
         elseif step < CampaignSetup.currentStep then
-            UI.setAttribute(stepIndicator, "color", "#00FF00")
+            -- Completed step: muted green background, dark text
+            UI.setAttribute(stepIndicator, "color", "#2E6B3A")
+            UI.setAttribute(stepLabel, "color", "#AAFFAA")
+            UI.setAttribute(stepLabel, "fontStyle", "Normal")
         else
-            UI.setAttribute(stepIndicator, "color", "#CCCCCC")
+            -- Future step: dark background, dim text
+            UI.setAttribute(stepIndicator, "color", "#333333")
+            UI.setAttribute(stepLabel, "color", "#666666")
+            UI.setAttribute(stepLabel, "fontStyle", "Normal")
         end
     end
 
@@ -488,9 +511,11 @@ function CampaignSetup.refreshUI()
         CampaignSetup.currentStep > 1 and "true" or "false")
 
     if CampaignSetup.currentStep == CampaignSetup.maxSteps then
-        UI.setAttribute("campaignSetup_next", "text", "Create Campaign")
+        UI.setAttribute("campaignSetup_next", "text", "CREATE CAMPAIGN")
+        UI.setAttribute("campaignSetup_next", "colors", "#2E6B3A|#3D8B4D|#1E4B2A|#152E1A")
     else
         UI.setAttribute("campaignSetup_next", "text", "Next")
+        UI.setAttribute("campaignSetup_next", "colors", "#8B6914|#D4A843|#6B5010|#44340A")
     end
 end
 
@@ -556,19 +581,19 @@ end
 function CampaignSetup._buildStep1Content()
     local wd = CampaignSetup.wizardData
     return {
-        { tag = "Text", attributes = { text = "Step 1: Campaign Name & Settings", fontSize = "16", color = "#FFFF00" } },
-        { tag = "Panel", attributes = { height = "8" } },
-        { tag = "Text", attributes = { text = "Campaign Name:", fontSize = "12" } },
+        { tag = "Text", attributes = { text = "Campaign Name *", fontSize = "13", color = "#D4A843" } },
         { tag = "InputField", attributes = {
             id = "campaignSetup_nameInput",
             text = wd.campaignName,
             placeholder = "Enter campaign name...",
             fontSize = "14",
             preferredHeight = "35",
+            color = "#1A1A2E",
+            textColor = "#EEEEEE",
             onValueChanged = "onUIButtonClick"
         } },
-        { tag = "Panel", attributes = { height = "5" } },
-        { tag = "Text", attributes = { text = "Description (optional):", fontSize = "12" } },
+        { tag = "Panel", attributes = { height = "4" } },
+        { tag = "Text", attributes = { text = "Description (optional)", fontSize = "13", color = "#BBBBBB" } },
         { tag = "InputField", attributes = {
             id = "campaignSetup_descriptionInput",
             text = wd.campaignDescription,
@@ -576,28 +601,43 @@ function CampaignSetup._buildStep1Content()
             fontSize = "12",
             characterLimit = "500",
             lineType = "MultiLineNewline",
-            preferredHeight = "60",
+            preferredHeight = "55",
+            color = "#1A1A2E",
+            textColor = "#EEEEEE",
             onValueChanged = "onUIButtonClick"
         } },
-        { tag = "Panel", attributes = { height = "5" } },
-        { tag = "Text", attributes = { text = "Supply Limit (points):", fontSize = "12" } },
+        { tag = "Panel", attributes = { height = "4" } },
+        -- Supply & RP side by side context
+        { tag = "Text", attributes = { text = "Supply Limit (points)", fontSize = "13", color = "#BBBBBB" } },
         { tag = "InputField", attributes = {
             id = "campaignSetup_supplyLimitInput",
             text = tostring(wd.supplyLimit),
             characterLimit = "5",
             fontSize = "14",
             preferredHeight = "35",
+            color = "#1A1A2E",
+            textColor = "#EEEEEE",
             onValueChanged = "onUIButtonClick"
         } },
-        { tag = "Panel", attributes = { height = "5" } },
-        { tag = "Text", attributes = { text = "Starting Requisition Points:", fontSize = "12" } },
+        { tag = "Text", attributes = {
+            text = "Max points each player can field in their Order of Battle",
+            fontSize = "9", color = "#666666"
+        } },
+        { tag = "Panel", attributes = { height = "4" } },
+        { tag = "Text", attributes = { text = "Starting Requisition Points", fontSize = "13", color = "#BBBBBB" } },
         { tag = "InputField", attributes = {
             id = "campaignSetup_startingRPInput",
             text = tostring(wd.startingRP),
             characterLimit = "2",
             fontSize = "14",
             preferredHeight = "35",
+            color = "#1A1A2E",
+            textColor = "#EEEEEE",
             onValueChanged = "onUIButtonClick"
+        } },
+        { tag = "Text", attributes = {
+            text = "RP spent to add units and use requisitions (default 5)",
+            fontSize = "9", color = "#666666"
         } }
     }
 end
@@ -607,19 +647,18 @@ function CampaignSetup._buildStep2Content()
     local wd = CampaignSetup.wizardData
 
     local children = {
-        { tag = "Text", attributes = { text = "Step 2: Map Configuration", fontSize = "16", color = "#FFFF00" } },
-        { tag = "Panel", attributes = { height = "8" } },
         { tag = "Toggle", attributes = {
             id = "campaignSetup_useMapToggle",
             isOn = wd.useMap and "true" or "false",
             onValueChanged = "onUIButtonClick",
-            fontSize = "13"
+            fontSize = "13",
+            colors = "#555555|#777777|#444444|#333333"
         }, value = "Use Territory Map" },
         { tag = "Text", attributes = {
-            text = "Disable for campaigns without territory control.",
-            fontSize = "10", color = "#888888"
+            text = "Enable for campaigns with hex-based territory control.",
+            fontSize = "10", color = "#666666"
         } },
-        { tag = "Panel", attributes = { height = "5" } },
+        { tag = "Panel", attributes = { height = "6" } },
     }
 
     if wd.useMap then
@@ -634,35 +673,52 @@ function CampaignSetup._buildStep2Content()
             table.insert(skinOptions, opt)
         end
 
-        table.insert(children, { tag = "Text", attributes = { text = "Map Width (3-15 hexes):", fontSize = "12" } })
+        table.insert(children, { tag = "Text", attributes = { text = "Map Width (3-15 hexes)", fontSize = "13", color = "#BBBBBB" } })
         table.insert(children, { tag = "InputField", attributes = {
             id = "campaignSetup_mapWidthInput",
             text = tostring(wd.mapWidth),
             characterLimit = "2",
             fontSize = "14",
             preferredHeight = "35",
+            color = "#1A1A2E",
+            textColor = "#EEEEEE",
             onValueChanged = "onUIButtonClick"
         } })
-        table.insert(children, { tag = "Panel", attributes = { height = "5" } })
-        table.insert(children, { tag = "Text", attributes = { text = "Map Height (3-15 hexes):", fontSize = "12" } })
+        table.insert(children, { tag = "Panel", attributes = { height = "4" } })
+        table.insert(children, { tag = "Text", attributes = { text = "Map Height (3-15 hexes)", fontSize = "13", color = "#BBBBBB" } })
         table.insert(children, { tag = "InputField", attributes = {
             id = "campaignSetup_mapHeightInput",
             text = tostring(wd.mapHeight),
             characterLimit = "2",
             fontSize = "14",
             preferredHeight = "35",
+            color = "#1A1A2E",
+            textColor = "#EEEEEE",
             onValueChanged = "onUIButtonClick"
         } })
-        table.insert(children, { tag = "Panel", attributes = { height = "5" } })
-        table.insert(children, { tag = "Text", attributes = { text = "Map Skin:", fontSize = "12" } })
+        table.insert(children, { tag = "Panel", attributes = { height = "4" } })
+        table.insert(children, { tag = "Text", attributes = { text = "Map Skin", fontSize = "13", color = "#BBBBBB" } })
         table.insert(children, { tag = "Dropdown", attributes = {
             id = "campaignSetup_mapSkinSelect",
+            color = "#1A1A2E",
+            textColor = "#EEEEEE",
+            itemTextColor = "#EEEEEE",
+            itemBackgroundColors = "#1A1A2E|#333355",
             onValueChanged = "onUIButtonClick"
         }, children = skinOptions })
-    else
         table.insert(children, { tag = "Text", attributes = {
-            text = "No territory map will be created.\nYou can add one later from campaign settings.",
-            fontSize = "12", color = "#AAAAAA"
+            text = "Visual theme for the territory map hexes",
+            fontSize = "9", color = "#666666"
+        } })
+    else
+        table.insert(children, { tag = "Panel", attributes = { height = "10" } })
+        table.insert(children, { tag = "Text", attributes = {
+            text = "No territory map will be created.",
+            fontSize = "13", color = "#999999", alignment = "MiddleCenter"
+        } })
+        table.insert(children, { tag = "Text", attributes = {
+            text = "You can add one later from campaign settings.",
+            fontSize = "11", color = "#666666", alignment = "MiddleCenter"
         } })
     end
 
@@ -672,23 +728,32 @@ end
 --- Build Step 3 content: Add Players
 function CampaignSetup._buildStep3Content()
     local pf = CampaignSetup._playerForm
-    local children = {
-        { tag = "Text", attributes = { text = "Step 3: Add Players (min 2)", fontSize = "16", color = "#FFFF00" } },
-        { tag = "Panel", attributes = { height = "3" } },
+    local playerCount = #CampaignSetup.wizardData.players
+    local statusColor = playerCount >= 2 and "#4CAF50" or "#CC8888"
+    local statusText = playerCount .. " added" .. (playerCount < 2 and " (need at least 2)" or "")
 
-        -- Player Name
-        { tag = "Text", attributes = { text = "Player Name:", fontSize = "12" } },
+    local children = {
+        -- Player count status
+        { tag = "Text", attributes = {
+            text = "Players: " .. statusText,
+            fontSize = "12", color = statusColor, alignment = "MiddleRight"
+        } },
+
+        -- Player Name & Color on same conceptual row
+        { tag = "Text", attributes = { text = "Player Name *", fontSize = "13", color = "#D4A843" } },
         { tag = "InputField", attributes = {
             id = "campaignSetup_playerNameInput",
             text = pf.name,
             placeholder = "Player name...",
             fontSize = "14",
-            preferredHeight = "35",
+            preferredHeight = "32",
+            color = "#1A1A2E",
+            textColor = "#EEEEEE",
             onValueChanged = "onUIButtonClick"
         } },
 
         -- Player Color
-        { tag = "Text", attributes = { text = "Player Color:", fontSize = "12" } }
+        { tag = "Text", attributes = { text = "Player Color", fontSize = "12", color = "#BBBBBB" } }
     }
 
     -- Build color dropdown with used colors excluded
@@ -707,75 +772,85 @@ function CampaignSetup._buildStep3Content()
 
     table.insert(children, { tag = "Dropdown", attributes = {
         id = "campaignSetup_playerColorSelect",
+        color = "#1A1A2E",
+        textColor = "#EEEEEE",
+        itemTextColor = "#EEEEEE",
+        itemBackgroundColors = "#1A1A2E|#333355",
         onValueChanged = "onUIButtonClick"
     }, children = colorOptions })
 
-    -- Faction
-    table.insert(children, { tag = "Text", attributes = { text = "Faction:", fontSize = "12" } })
+    -- Faction (required)
+    table.insert(children, { tag = "Text", attributes = { text = "Faction *", fontSize = "13", color = "#D4A843" } })
     table.insert(children, { tag = "InputField", attributes = {
         id = "campaignSetup_factionInput",
         text = pf.faction,
         placeholder = "e.g., Adeptus Astartes, Orks, Aeldari",
-        fontSize = "14",
-        preferredHeight = "35",
+        fontSize = "13",
+        preferredHeight = "32",
+        color = "#1A1A2E",
+        textColor = "#EEEEEE",
         onValueChanged = "onUIButtonClick"
     } })
 
-    -- Subfaction
-    table.insert(children, { tag = "Text", attributes = { text = "Subfaction (optional):", fontSize = "12" } })
+    -- Subfaction (optional)
+    table.insert(children, { tag = "Text", attributes = { text = "Subfaction (optional)", fontSize = "12", color = "#888888" } })
     table.insert(children, { tag = "InputField", attributes = {
         id = "campaignSetup_subfactionInput",
         text = pf.subfaction,
-        placeholder = "e.g., Space Wolves, Evil Sunz, Hive Fleet Leviathan",
+        placeholder = "e.g., Space Wolves, Evil Sunz",
         fontSize = "12",
-        preferredHeight = "30",
+        preferredHeight = "28",
+        color = "#1A1A2E",
+        textColor = "#EEEEEE",
         onValueChanged = "onUIButtonClick"
     } })
 
-    -- Force Name
-    table.insert(children, { tag = "Text", attributes = { text = "Crusade Force Name (optional):", fontSize = "12" } })
+    -- Force Name (optional)
+    table.insert(children, { tag = "Text", attributes = { text = "Crusade Force Name (optional)", fontSize = "12", color = "#888888" } })
     table.insert(children, { tag = "InputField", attributes = {
         id = "campaignSetup_forceNameInput",
         text = pf.forceName,
-        placeholder = "e.g., The Emperor's Blade, Waaagh! Gutrippa",
+        placeholder = "e.g., The Emperor's Blade",
         fontSize = "12",
-        preferredHeight = "30",
+        preferredHeight = "28",
+        color = "#1A1A2E",
+        textColor = "#EEEEEE",
         onValueChanged = "onUIButtonClick"
     } })
 
-    -- Detachment
-    table.insert(children, { tag = "Text", attributes = { text = "Detachment (optional):", fontSize = "12" } })
+    -- Detachment (optional)
+    table.insert(children, { tag = "Text", attributes = { text = "Detachment (optional)", fontSize = "12", color = "#888888" } })
     table.insert(children, { tag = "InputField", attributes = {
         id = "campaignSetup_detachmentInput",
         text = pf.detachment,
-        placeholder = "e.g., Gladius Task Force, Saga of the Great Wolf",
+        placeholder = "e.g., Gladius Task Force",
         fontSize = "12",
-        preferredHeight = "30",
+        preferredHeight = "28",
+        color = "#1A1A2E",
+        textColor = "#EEEEEE",
         onValueChanged = "onUIButtonClick"
     } })
 
     -- Add Player button
-    table.insert(children, { tag = "Panel", attributes = { height = "3" } })
+    table.insert(children, { tag = "Panel", attributes = { height = "2" } })
     table.insert(children, { tag = "Button", attributes = {
         id = "campaignSetup_addPlayer",
         onClick = "onUIButtonClick",
         fontSize = "14",
-        height = "35",
-        colors = "#00AA00|#00CC00|#008800|#004400",
+        height = "34",
+        fontStyle = "Bold",
+        colors = "#2E6B3A|#3D8B4D|#1E4B2A|#152E1A",
         textColor = "#FFFFFF"
-    }, value = "Add Player" })
+    }, value = "+ Add Player" })
+
+    -- Divider
+    table.insert(children, { tag = "Panel", attributes = { height = "1", color = "#444444" } })
 
     -- Current player list
-    table.insert(children, { tag = "Panel", attributes = { height = "5" } })
-    table.insert(children, { tag = "Text", attributes = {
-        text = "Players (" .. #CampaignSetup.wizardData.players .. "):",
-        fontSize = "14", color = "#CCCCCC"
-    } })
-
-    if #CampaignSetup.wizardData.players == 0 then
+    if playerCount == 0 then
         table.insert(children, { tag = "Text", attributes = {
-            text = "No players added yet.",
-            fontSize = "11", color = "#888888"
+            text = "No players added yet. Fill in the form above and click '+ Add Player'.",
+            fontSize = "11", color = "#666666", alignment = "MiddleCenter"
         } })
     else
         for i, p in ipairs(CampaignSetup.wizardData.players) do
@@ -789,19 +864,23 @@ function CampaignSetup._buildStep3Content()
 
             table.insert(children, {
                 tag = "HorizontalLayout",
-                attributes = { spacing = "5", height = "28" },
+                attributes = { spacing = "5", height = "26" },
                 children = {
+                    { tag = "Panel", attributes = {
+                        width = "4", height = "100%",
+                        color = "#D4A843"
+                    } },
                     { tag = "Text", attributes = {
-                        text = i .. ". " .. p.name .. " - " .. detail .. " (" .. p.color .. ")",
-                        width = "80%", fontSize = "10"
+                        text = p.name .. " (" .. p.color .. ") - " .. detail,
+                        width = "78%", fontSize = "10", color = "#CCCCCC"
                     } },
                     { tag = "Button", attributes = {
                         id = "campaignSetup_removePlayer_" .. i,
                         onClick = "onUIButtonClick",
-                        width = "20%",
-                        fontSize = "10",
-                        colors = "#CC4444|#FF6666|#992222|#662222",
-                        textColor = "#FFFFFF"
+                        width = "18%",
+                        fontSize = "9",
+                        colors = "#553333|#774444|#442222|#331111",
+                        textColor = "#CC8888"
                     }, value = "Remove" }
                 }
             })
@@ -815,20 +894,24 @@ end
 function CampaignSetup._buildStep4Content()
     local wd = CampaignSetup.wizardData
     return {
-        { tag = "Text", attributes = { text = "Step 4: Mission Pack (Optional)", fontSize = "16", color = "#FFFF00" } },
-        { tag = "Panel", attributes = { height = "8" } },
         { tag = "Text", attributes = {
-            text = "Optionally specify a mission pack for this campaign.",
-            fontSize = "12", color = "#AAAAAA"
+            text = "If your group uses a specific mission pack, enter its name below.",
+            fontSize = "12", color = "#999999"
         } },
-        { tag = "Panel", attributes = { height = "5" } },
-        { tag = "Text", attributes = { text = "Mission Pack Name:", fontSize = "12" } },
+        { tag = "Text", attributes = {
+            text = "This is optional - you can skip this step.",
+            fontSize = "11", color = "#666666"
+        } },
+        { tag = "Panel", attributes = { height = "8" } },
+        { tag = "Text", attributes = { text = "Mission Pack Name", fontSize = "13", color = "#BBBBBB" } },
         { tag = "InputField", attributes = {
             id = "campaignSetup_missionPackInput",
             text = wd.missionPack or "",
             placeholder = "Leave blank to skip",
             fontSize = "14",
             preferredHeight = "35",
+            color = "#1A1A2E",
+            textColor = "#EEEEEE",
             onValueChanged = "onUIButtonClick"
         } }
     }
@@ -836,19 +919,99 @@ end
 
 --- Build Step 5 content: Review & Create
 function CampaignSetup._buildStep5Content()
-    return {
-        { tag = "Text", attributes = { text = "Step 5: Review & Create", fontSize = "16", color = "#FFFF00" } },
-        { tag = "Panel", attributes = { height = "8" } },
-        { tag = "Text", attributes = {
-            text = CampaignSetup.getCampaignSummary(),
-            fontSize = "11", color = "#CCCCCC"
-        } },
-        { tag = "Panel", attributes = { height = "10" } },
-        { tag = "Text", attributes = {
-            text = "Click 'Create Campaign' to begin your Crusade!",
-            fontSize = "14", color = "#00FF00", alignment = "MiddleCenter"
-        } }
-    }
+    local wd = CampaignSetup.wizardData
+
+    local children = {}
+
+    -- Campaign name header
+    table.insert(children, { tag = "Text", attributes = {
+        text = wd.campaignName,
+        fontSize = "18", color = "#D4A843", alignment = "MiddleCenter", fontStyle = "Bold"
+    } })
+
+    if wd.campaignDescription and wd.campaignDescription ~= "" then
+        table.insert(children, { tag = "Text", attributes = {
+            text = wd.campaignDescription,
+            fontSize = "10", color = "#888888", alignment = "MiddleCenter"
+        } })
+    end
+
+    table.insert(children, { tag = "Panel", attributes = { height = "6" } })
+
+    -- Settings section
+    table.insert(children, { tag = "Panel", attributes = { height = "1", color = "#333333" } })
+    table.insert(children, { tag = "Text", attributes = {
+        text = "Supply Limit: " .. wd.supplyLimit .. " pts    |    Starting RP: " .. wd.startingRP,
+        fontSize = "12", color = "#BBBBBB", alignment = "MiddleCenter"
+    } })
+
+    -- Map section
+    if wd.useMap then
+        table.insert(children, { tag = "Text", attributes = {
+            text = "Map: " .. wd.mapWidth .. "x" .. wd.mapHeight .. " hexes (" .. wd.mapSkin .. ")",
+            fontSize = "12", color = "#BBBBBB", alignment = "MiddleCenter"
+        } })
+    else
+        table.insert(children, { tag = "Text", attributes = {
+            text = "Map: None",
+            fontSize = "12", color = "#888888", alignment = "MiddleCenter"
+        } })
+    end
+
+    table.insert(children, { tag = "Panel", attributes = { height = "1", color = "#333333" } })
+    table.insert(children, { tag = "Panel", attributes = { height = "4" } })
+
+    -- Players section
+    table.insert(children, { tag = "Text", attributes = {
+        text = "PLAYERS (" .. #wd.players .. ")",
+        fontSize = "13", color = "#D4A843"
+    } })
+
+    for i, player in ipairs(wd.players) do
+        local line = player.name .. " (" .. player.color .. ") - " .. player.faction
+        if player.subfaction and player.subfaction ~= "" then
+            line = line .. " / " .. player.subfaction
+        end
+        table.insert(children, {
+            tag = "HorizontalLayout",
+            attributes = { spacing = "5", height = "20" },
+            children = {
+                { tag = "Panel", attributes = { width = "4", height = "100%", color = "#2E6B3A" } },
+                { tag = "Text", attributes = {
+                    text = line,
+                    fontSize = "11", color = "#CCCCCC"
+                } }
+            }
+        })
+
+        if player.forceName and player.forceName ~= "" then
+            table.insert(children, { tag = "Text", attributes = {
+                text = "      Force: " .. player.forceName,
+                fontSize = "10", color = "#888888"
+            } })
+        end
+    end
+
+    -- Mission pack
+    if wd.missionPack then
+        table.insert(children, { tag = "Panel", attributes = { height = "4" } })
+        table.insert(children, { tag = "Text", attributes = {
+            text = "Mission Pack: " .. wd.missionPack,
+            fontSize = "12", color = "#BBBBBB"
+        } })
+    end
+
+    table.insert(children, { tag = "Panel", attributes = { height = "10" } })
+    table.insert(children, { tag = "Text", attributes = {
+        text = "Ready to begin your Crusade!",
+        fontSize = "14", color = "#4CAF50", alignment = "MiddleCenter"
+    } })
+    table.insert(children, { tag = "Text", attributes = {
+        text = "Click 'CREATE CAMPAIGN' below to start.",
+        fontSize = "11", color = "#888888", alignment = "MiddleCenter"
+    } })
+
+    return children
 end
 
 --- Handle button clicks from UI
