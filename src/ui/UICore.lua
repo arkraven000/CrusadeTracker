@@ -80,7 +80,7 @@ end
 --- Show a UI panel
 -- @param panelName string Panel identifier
 function UICore.showPanel(panelName)
-    if not UICore.panels[panelName] then
+    if UICore.panels[panelName] == nil then
         log("ERROR: Unknown panel: " .. tostring(panelName))
         return
     end
@@ -102,7 +102,7 @@ end
 --- Hide a UI panel
 -- @param panelName string Panel identifier
 function UICore.hidePanel(panelName)
-    if not UICore.panels[panelName] then
+    if UICore.panels[panelName] == nil then
         log("ERROR: Unknown panel: " .. tostring(panelName))
         return
     end

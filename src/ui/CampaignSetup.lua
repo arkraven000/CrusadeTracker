@@ -374,47 +374,281 @@ end
 -- UI INTEGRATION
 -- ============================================================================
 
+-- Temporary state for player addition form
+CampaignSetup._playerForm = {
+    name = "",
+    color = "White",
+    faction = ""
+}
+
 --- Refresh UI for current step
 function CampaignSetup.refreshUI()
     log("Refreshing campaign setup UI - Step " .. CampaignSetup.currentStep)
 
-    -- This would update UICore to show the correct step panel
-    -- Each step would have its own UI panel that gets shown/hidden
-
-    -- Update step indicator
+    -- Update step indicators
     for step = 1, CampaignSetup.maxSteps do
         local stepIndicator = "setupStep" .. step .. "Indicator"
         if step == CampaignSetup.currentStep then
-            -- Highlight current step
-            -- UICore.setColor(stepIndicator, "#FFFF00")
+            UI.setAttribute(stepIndicator, "color", "#FFFF00")
         elseif step < CampaignSetup.currentStep then
-            -- Mark completed steps
-            -- UICore.setColor(stepIndicator, "#00FF00")
+            UI.setAttribute(stepIndicator, "color", "#00FF00")
         else
-            -- Mark future steps
-            -- UICore.setColor(stepIndicator, "#CCCCCC")
+            UI.setAttribute(stepIndicator, "color", "#CCCCCC")
         end
     end
 
-    -- Show/hide step panels
-    for step = 1, CampaignSetup.maxSteps do
-        local stepPanel = "setupStep" .. step .. "Panel"
-        if step == CampaignSetup.currentStep then
-            -- UICore.setVisible(stepPanel, true)
-        else
-            -- UICore.setVisible(stepPanel, false)
-        end
-    end
+    -- Render step content into setupContentArea
+    CampaignSetup.renderStepContent(CampaignSetup.currentStep)
 
     -- Update navigation buttons
-    -- UICore.setEnabled("setupPrevButton", CampaignSetup.currentStep > 1)
-    -- UICore.setEnabled("setupNextButton", CampaignSetup.currentStep < CampaignSetup.maxSteps)
+    UI.setAttribute("campaignSetup_previous", "interactable",
+        CampaignSetup.currentStep > 1 and "true" or "false")
 
     if CampaignSetup.currentStep == CampaignSetup.maxSteps then
-        -- Show "Create Campaign" button instead of "Next"
-        -- UICore.setText("setupNextButton", "Create Campaign")
+        UI.setAttribute("campaignSetup_next", "text", "Create Campaign")
     else
-        -- UICore.setText("setupNextButton", "Next")
+        UI.setAttribute("campaignSetup_next", "text", "Next")
+    end
+end
+
+--- Render content for a wizard step into setupContentArea
+-- @param stepNum number Step number (1-5)
+function CampaignSetup.renderStepContent(stepNum)
+    local content = {}
+
+    if stepNum == 1 then
+        content = CampaignSetup._buildStep1Content()
+    elseif stepNum == 2 then
+        content = CampaignSetup._buildStep2Content()
+    elseif stepNum == 3 then
+        content = CampaignSetup._buildStep3Content()
+    elseif stepNum == 4 then
+        content = CampaignSetup._buildStep4Content()
+    elseif stepNum == 5 then
+        content = CampaignSetup._buildStep5Content()
+    end
+
+    UI.setXmlTable("setupContentArea", { {
+        tag = "VerticalLayout",
+        attributes = { spacing = "8", padding = "5 10 5 10" },
+        children = content
+    } })
+end
+
+--- Build Step 1 content: Campaign Name & Settings
+function CampaignSetup._buildStep1Content()
+    local wd = CampaignSetup.wizardData
+    return {
+        { tag = "Text", attributes = { text = "Step 1: Campaign Name & Settings", fontSize = "16", color = "#FFFF00" } },
+        { tag = "Panel", attributes = { height = "8" } },
+        { tag = "Text", attributes = { text = "Campaign Name:", fontSize = "12" } },
+        { tag = "InputField", attributes = {
+            id = "campaignSetup_nameInput",
+            text = wd.campaignName,
+            placeholder = "Enter campaign name...",
+            fontSize = "14",
+            onValueChanged = "onUIButtonClick"
+        } },
+        { tag = "Panel", attributes = { height = "5" } },
+        { tag = "Text", attributes = { text = "Supply Limit (points):", fontSize = "12" } },
+        { tag = "InputField", attributes = {
+            id = "campaignSetup_supplyLimitInput",
+            text = tostring(wd.supplyLimit),
+            characterLimit = "5",
+            fontSize = "14",
+            onValueChanged = "onUIButtonClick"
+        } },
+        { tag = "Panel", attributes = { height = "5" } },
+        { tag = "Text", attributes = { text = "Starting Requisition Points:", fontSize = "12" } },
+        { tag = "InputField", attributes = {
+            id = "campaignSetup_startingRPInput",
+            text = tostring(wd.startingRP),
+            characterLimit = "2",
+            fontSize = "14",
+            onValueChanged = "onUIButtonClick"
+        } }
+    }
+end
+
+--- Build Step 2 content: Map Configuration
+function CampaignSetup._buildStep2Content()
+    local wd = CampaignSetup.wizardData
+    local skinOptions = {}
+    local skins = { "forgeWorld", "deathWorld", "hiveCity", "spaceHulk", "iceWorld", "desert" }
+    local skinLabels = { "Forge World", "Death World", "Hive City", "Space Hulk", "Ice World", "Desert" }
+    for i, skin in ipairs(skins) do
+        local opt = { tag = "Option", value = skinLabels[i] }
+        if skin == wd.mapSkin then
+            opt.attributes = { selected = "true" }
+        end
+        table.insert(skinOptions, opt)
+    end
+
+    return {
+        { tag = "Text", attributes = { text = "Step 2: Map Configuration", fontSize = "16", color = "#FFFF00" } },
+        { tag = "Panel", attributes = { height = "8" } },
+        { tag = "Text", attributes = { text = "Map Width (3-15 hexes):", fontSize = "12" } },
+        { tag = "InputField", attributes = {
+            id = "campaignSetup_mapWidthInput",
+            text = tostring(wd.mapWidth),
+            characterLimit = "2",
+            fontSize = "14",
+            onValueChanged = "onUIButtonClick"
+        } },
+        { tag = "Panel", attributes = { height = "5" } },
+        { tag = "Text", attributes = { text = "Map Height (3-15 hexes):", fontSize = "12" } },
+        { tag = "InputField", attributes = {
+            id = "campaignSetup_mapHeightInput",
+            text = tostring(wd.mapHeight),
+            characterLimit = "2",
+            fontSize = "14",
+            onValueChanged = "onUIButtonClick"
+        } },
+        { tag = "Panel", attributes = { height = "5" } },
+        { tag = "Text", attributes = { text = "Map Skin:", fontSize = "12" } },
+        { tag = "Dropdown", attributes = {
+            id = "campaignSetup_mapSkinSelect",
+            onValueChanged = "onUIButtonClick"
+        }, children = skinOptions }
+    }
+end
+
+--- Build Step 3 content: Add Players
+function CampaignSetup._buildStep3Content()
+    local children = {
+        { tag = "Text", attributes = { text = "Step 3: Add Players (min 2)", fontSize = "16", color = "#FFFF00" } },
+        { tag = "Panel", attributes = { height = "5" } },
+        { tag = "Text", attributes = { text = "Player Name:", fontSize = "12" } },
+        { tag = "InputField", attributes = {
+            id = "campaignSetup_playerNameInput",
+            text = CampaignSetup._playerForm.name,
+            placeholder = "Player name...",
+            fontSize = "14",
+            onValueChanged = "onUIButtonClick"
+        } },
+        { tag = "Text", attributes = { text = "Player Color:", fontSize = "12" } }
+    }
+
+    -- Build color dropdown with used colors excluded
+    local usedColors = {}
+    for _, p in ipairs(CampaignSetup.wizardData.players) do
+        usedColors[p.color] = true
+    end
+
+    local colorOptions = {}
+    for _, colorName in ipairs(Constants.PLAYER_COLOR_NAMES) do
+        if not usedColors[colorName] then
+            local opt = { tag = "Option", value = colorName }
+            table.insert(colorOptions, opt)
+        end
+    end
+
+    table.insert(children, { tag = "Dropdown", attributes = {
+        id = "campaignSetup_playerColorSelect",
+        onValueChanged = "onUIButtonClick"
+    }, children = colorOptions })
+
+    table.insert(children, { tag = "Text", attributes = { text = "Faction:", fontSize = "12" } })
+    table.insert(children, { tag = "InputField", attributes = {
+        id = "campaignSetup_factionInput",
+        text = CampaignSetup._playerForm.faction,
+        placeholder = "e.g., Space Marines",
+        fontSize = "14",
+        onValueChanged = "onUIButtonClick"
+    } })
+
+    table.insert(children, { tag = "Panel", attributes = { height = "3" } })
+    table.insert(children, { tag = "Button", attributes = {
+        id = "campaignSetup_addPlayer",
+        onClick = "onUIButtonClick",
+        fontSize = "14",
+        height = "35",
+        colors = "#00AA00|#00CC00|#008800|#004400",
+        textColor = "#FFFFFF"
+    }, value = "Add Player" })
+
+    -- Current player list
+    table.insert(children, { tag = "Panel", attributes = { height = "5" } })
+    table.insert(children, { tag = "Text", attributes = {
+        text = "Players (" .. #CampaignSetup.wizardData.players .. "):",
+        fontSize = "14", color = "#CCCCCC"
+    } })
+
+    if #CampaignSetup.wizardData.players == 0 then
+        table.insert(children, { tag = "Text", attributes = {
+            text = "No players added yet.",
+            fontSize = "11", color = "#888888"
+        } })
+    else
+        for i, p in ipairs(CampaignSetup.wizardData.players) do
+            table.insert(children, {
+                tag = "HorizontalLayout",
+                attributes = { spacing = "5", height = "28" },
+                children = {
+                    { tag = "Text", attributes = {
+                        text = i .. ". " .. p.name .. " - " .. p.faction .. " (" .. p.color .. ")",
+                        width = "80%", fontSize = "11"
+                    } },
+                    { tag = "Button", attributes = {
+                        id = "campaignSetup_removePlayer_" .. i,
+                        onClick = "onUIButtonClick",
+                        width = "20%",
+                        fontSize = "10",
+                        colors = "#CC4444|#FF6666|#992222|#662222",
+                        textColor = "#FFFFFF"
+                    }, value = "Remove" }
+                }
+            })
+        end
+    end
+
+    return children
+end
+
+--- Build Step 4 content: Mission Pack Selection
+function CampaignSetup._buildStep4Content()
+    local wd = CampaignSetup.wizardData
+    return {
+        { tag = "Text", attributes = { text = "Step 4: Mission Pack (Optional)", fontSize = "16", color = "#FFFF00" } },
+        { tag = "Panel", attributes = { height = "8" } },
+        { tag = "Text", attributes = {
+            text = "Optionally specify a mission pack for this campaign.",
+            fontSize = "12", color = "#AAAAAA"
+        } },
+        { tag = "Panel", attributes = { height = "5" } },
+        { tag = "Text", attributes = { text = "Mission Pack Name:", fontSize = "12" } },
+        { tag = "InputField", attributes = {
+            id = "campaignSetup_missionPackInput",
+            text = wd.missionPack or "",
+            placeholder = "Leave blank to skip",
+            fontSize = "14",
+            onValueChanged = "onUIButtonClick"
+        } }
+    }
+end
+
+--- Build Step 5 content: Review & Create
+function CampaignSetup._buildStep5Content()
+    return {
+        { tag = "Text", attributes = { text = "Step 5: Review & Create", fontSize = "16", color = "#FFFF00" } },
+        { tag = "Panel", attributes = { height = "8" } },
+        { tag = "Text", attributes = {
+            text = CampaignSetup.getCampaignSummary(),
+            fontSize = "12", color = "#CCCCCC"
+        } },
+        { tag = "Panel", attributes = { height = "10" } },
+        { tag = "Text", attributes = {
+            text = "Click 'Create Campaign' to begin your Crusade!",
+            fontSize = "14", color = "#00FF00", alignment = "MiddleCenter"
+        } }
+    }
+end
+
+--- Refresh player list UI (re-render step 3 content)
+function CampaignSetup.refreshPlayerList()
+    log("Refreshing player list: " .. #CampaignSetup.wizardData.players .. " players")
+    if CampaignSetup.currentStep == 3 then
+        CampaignSetup.renderStepContent(3)
     end
 end
 
@@ -425,12 +659,11 @@ end
 function CampaignSetup.handleClick(player, value, id)
     if id == "campaignSetup_next" then
         if CampaignSetup.currentStep == CampaignSetup.maxSteps then
-            -- Create campaign
-            local campaign = CampaignSetup.createCampaign()
-            if campaign then
-                -- TODO: Pass to Global.lua to set as active campaign
-                -- UICore.hidePanel("campaignSetup")
-                -- UICore.showPanel("mainMenu")
+            -- Final step: create campaign via Global.lua
+            if _G.completeCampaignSetup then
+                _G.completeCampaignSetup(CampaignSetup.wizardData)
+            else
+                log("ERROR: completeCampaignSetup not available in _G")
             end
         else
             CampaignSetup.nextStep()
@@ -441,15 +674,64 @@ function CampaignSetup.handleClick(player, value, id)
 
     elseif id == "campaignSetup_cancel" then
         CampaignSetup.reset()
-        -- UICore.hidePanel("campaignSetup")
-        -- UICore.showPanel("mainMenu")
+        UI.setAttribute("campaignSetupPanel", "active", "false")
+        UI.setAttribute("mainMenuPanel", "active", "true")
 
-    elseif string.match(id, "^campaignSetup_addPlayer") then
-        -- Get player data from UI inputs
-        -- local playerName = UICore.getValue("setupPlayerName")
-        -- local playerColor = UICore.getValue("setupPlayerColor")
-        -- local faction = UICore.getValue("setupPlayerFaction")
-        -- CampaignSetup.addPlayer(playerName, playerColor, faction)
+    -- Input field handlers
+    elseif id == "campaignSetup_nameInput" then
+        CampaignSetup.setCampaignName(value)
+
+    elseif id == "campaignSetup_supplyLimitInput" then
+        CampaignSetup.setSupplyLimit(value)
+
+    elseif id == "campaignSetup_startingRPInput" then
+        CampaignSetup.setStartingRP(value)
+
+    elseif id == "campaignSetup_mapWidthInput" then
+        CampaignSetup.setMapDimensions(value, CampaignSetup.wizardData.mapHeight)
+
+    elseif id == "campaignSetup_mapHeightInput" then
+        CampaignSetup.setMapDimensions(CampaignSetup.wizardData.mapWidth, value)
+
+    elseif id == "campaignSetup_mapSkinSelect" then
+        -- Map dropdown text back to skin key
+        local skinMap = {
+            ["Forge World"] = "forgeWorld",
+            ["Death World"] = "deathWorld",
+            ["Hive City"] = "hiveCity",
+            ["Space Hulk"] = "spaceHulk",
+            ["Ice World"] = "iceWorld",
+            ["Desert"] = "desert"
+        }
+        CampaignSetup.setMapSkin(skinMap[value] or "forgeWorld")
+
+    elseif id == "campaignSetup_playerNameInput" then
+        CampaignSetup._playerForm.name = value
+
+    elseif id == "campaignSetup_playerColorSelect" then
+        CampaignSetup._playerForm.color = value
+
+    elseif id == "campaignSetup_factionInput" then
+        CampaignSetup._playerForm.faction = value
+
+    elseif id == "campaignSetup_addPlayer" then
+        local pf = CampaignSetup._playerForm
+        if pf.name == "" then
+            broadcastToAll("Please enter a player name", {1, 0, 0})
+        elseif pf.faction == "" then
+            broadcastToAll("Please enter a faction", {1, 0, 0})
+        else
+            CampaignSetup.addPlayer(pf.name, pf.color, pf.faction)
+            -- Clear form for next player
+            CampaignSetup._playerForm = { name = "", color = "White", faction = "" }
+        end
+
+    elseif id == "campaignSetup_missionPackInput" then
+        if value and value ~= "" then
+            CampaignSetup.setMissionPack(value)
+        else
+            CampaignSetup.setMissionPack(nil)
+        end
 
     elseif string.match(id, "^campaignSetup_removePlayer_(%d+)") then
         local playerIndex = tonumber(string.match(id, "campaignSetup_removePlayer_(%d+)"))
