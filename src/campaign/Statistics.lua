@@ -263,7 +263,7 @@ function getBattleStatistics(campaign)
     local stats = {
         totalBattles = #campaign.battles,
         incursionBattles = 0,
-        strikeForc Battles = 0,
+        strikeForceBattles = 0,
         onslaughtBattles = 0,
 
         averageUnitsPerBattle = 0,
