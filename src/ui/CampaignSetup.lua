@@ -494,6 +494,26 @@ function CampaignSetup.refreshUI()
     end
 end
 
+--- Recursively find an element by ID in an XML table tree and replace its children
+-- @param xmlTable table Array of XML elements
+-- @param targetId string The id attribute to search for
+-- @param newChildren table Array of child elements to set
+-- @return boolean True if element was found and updated
+function CampaignSetup._replaceXmlChildren(xmlTable, targetId, newChildren)
+    for _, element in ipairs(xmlTable) do
+        if element.attributes and element.attributes.id == targetId then
+            element.children = newChildren
+            return true
+        end
+        if element.children then
+            if CampaignSetup._replaceXmlChildren(element.children, targetId, newChildren) then
+                return true
+            end
+        end
+    end
+    return false
+end
+
 --- Render content for a wizard step into setupContentArea
 -- @param stepNum number Step number (1-5)
 function CampaignSetup.renderStepContent(stepNum)
@@ -511,11 +531,25 @@ function CampaignSetup.renderStepContent(stepNum)
         content = CampaignSetup._buildStep5Content()
     end
 
-    UI.setXmlTable("setupContentArea", { {
+    local newChildren = { {
         tag = "VerticalLayout",
         attributes = { spacing = "8", padding = "5 10 5 10" },
         children = content
-    } })
+    } }
+
+    -- UI.setXmlTable does NOT support targeting by element ID.
+    -- Use the get-modify-set pattern: get full UI XML, find the target
+    -- element, replace its children, then set the full XML back.
+    local fullXml = UI.getXmlTable()
+    if fullXml then
+        if CampaignSetup._replaceXmlChildren(fullXml, "setupContentArea", newChildren) then
+            UI.setXmlTable(fullXml)
+        else
+            log("ERROR: Could not find setupContentArea in UI XML tree")
+        end
+    else
+        log("ERROR: UI.getXmlTable() returned nil - UI may not be initialized yet")
+    end
 end
 
 --- Build Step 1 content: Campaign Name & Settings
