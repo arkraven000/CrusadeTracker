@@ -57,19 +57,19 @@
 
             <Button id="mainMenu_newCampaign"
                     height="50"
-                    onClick="UICore.onButtonClick">
+                    onClick="onUIButtonClick">
                 New Campaign
             </Button>
 
             <Button id="mainMenu_loadCampaign"
                     height="50"
-                    onClick="UICore.onButtonClick">
+                    onClick="onUIButtonClick">
                 Load Campaign
             </Button>
 
             <Button id="mainMenu_settings"
                     height="50"
-                    onClick="UICore.onButtonClick">
+                    onClick="onUIButtonClick">
                 Settings
             </Button>
 
@@ -108,19 +108,19 @@
             <HorizontalLayout spacing="10" height="40">
                 <Button id="campaignSetup_cancel"
                         width="30%"
-                        onClick="UICore.onButtonClick">
+                        onClick="onUIButtonClick">
                     Cancel
                 </Button>
 
                 <Button id="campaignSetup_previous"
                         width="30%"
-                        onClick="UICore.onButtonClick">
+                        onClick="onUIButtonClick">
                     Previous
                 </Button>
 
                 <Button id="campaignSetup_next"
                         width="40%"
-                        onClick="UICore.onButtonClick">
+                        onClick="onUIButtonClick">
                     Next
                 </Button>
             </HorizontalLayout>
@@ -170,19 +170,19 @@
             <VerticalLayout spacing="8">
                 <Button id="mainPanel_playerMgmt"
                         height="45"
-                        onClick="UICore.onButtonClick">
+                        onClick="onUIButtonClick">
                     Manage Players
                 </Button>
 
                 <Button id="mainPanel_map"
                         height="45"
-                        onClick="UICore.onButtonClick">
+                        onClick="onUIButtonClick">
                     View Map
                 </Button>
 
                 <Button id="mainPanel_log"
                         height="45"
-                        onClick="UICore.onButtonClick">
+                        onClick="onUIButtonClick">
                     Campaign Log
                 </Button>
 
@@ -190,19 +190,19 @@
                         height="45"
                         colors="#FF8800|#FFAA33|#CC6600|#664400"
                         textColor="#FFFFFF"
-                        onClick="UICore.onButtonClick">
+                        onClick="onUIButtonClick">
                     Record Battle
                 </Button>
 
                 <Button id="mainPanel_battleLog"
                         height="45"
-                        onClick="UICore.onButtonClick">
+                        onClick="onUIButtonClick">
                     Battle History
                 </Button>
 
                 <Button id="mainPanel_settings"
                         height="45"
-                        onClick="UICore.onButtonClick">
+                        onClick="onUIButtonClick">
                     Settings
                 </Button>
 
@@ -212,7 +212,7 @@
                         height="45"
                         colors="#00AA00|#00CC00|#008800|#004400"
                         textColor="#FFFFFF"
-                        onClick="UICore.onButtonClick">
+                        onClick="onUIButtonClick">
                     Save Campaign
                 </Button>
             </VerticalLayout>
@@ -230,34 +230,34 @@
 
             <!-- Tab Buttons -->
             <HorizontalLayout spacing="5" height="35">
-                <Button id="settings_tabGeneral" onClick="UICore.onButtonClick">General</Button>
-                <Button id="settings_tabMap" onClick="UICore.onButtonClick">Map</Button>
-                <Button id="settings_tabDisplay" onClick="UICore.onButtonClick">Display</Button>
+                <Button id="settings_tabGeneral" onClick="onUIButtonClick">General</Button>
+                <Button id="settings_tabMap" onClick="onUIButtonClick">Map</Button>
+                <Button id="settings_tabDisplay" onClick="onUIButtonClick">Display</Button>
             </HorizontalLayout>
 
             <!-- Map Skin Section -->
             <Text fontSize="14">Map Skin</Text>
             <VerticalLayout spacing="5">
-                <Button id="settings_mapSkin_forgeWorld" onClick="UICore.onButtonClick">Forge World</Button>
-                <Button id="settings_mapSkin_deathWorld" onClick="UICore.onButtonClick">Death World</Button>
-                <Button id="settings_mapSkin_hiveCity" onClick="UICore.onButtonClick">Hive City</Button>
-                <Button id="settings_mapSkin_spaceHulk" onClick="UICore.onButtonClick">Space Hulk</Button>
-                <Button id="settings_mapSkin_iceWorld" onClick="UICore.onButtonClick">Ice World</Button>
-                <Button id="settings_mapSkin_desert" onClick="UICore.onButtonClick">Desert</Button>
+                <Button id="settings_mapSkin_forgeWorld" onClick="onUIButtonClick">Forge World</Button>
+                <Button id="settings_mapSkin_deathWorld" onClick="onUIButtonClick">Death World</Button>
+                <Button id="settings_mapSkin_hiveCity" onClick="onUIButtonClick">Hive City</Button>
+                <Button id="settings_mapSkin_spaceHulk" onClick="onUIButtonClick">Space Hulk</Button>
+                <Button id="settings_mapSkin_iceWorld" onClick="onUIButtonClick">Ice World</Button>
+                <Button id="settings_mapSkin_desert" onClick="onUIButtonClick">Desert</Button>
             </VerticalLayout>
 
             <!-- Display Options -->
             <Panel height="10" />
             <Text fontSize="14">Display Options</Text>
             <Toggle id="settings_toggleHexGuides"
-                    onValueChanged="UICore.onButtonClick">
+                    onValueChanged="onUIButtonClick">
                 Show Hex Guides
             </Toggle>
 
             <Panel height="20" />
 
             <Button id="settings_close"
-                    onClick="UICore.onButtonClick">
+                    onClick="onUIButtonClick">
                 Close
             </Button>
         </VerticalLayout>
@@ -274,10 +274,10 @@
 
             <!-- Filter Buttons -->
             <HorizontalLayout spacing="5" height="30">
-                <Button id="campaignLog_filterAll" onClick="UICore.onButtonClick">All</Button>
-                <Button id="campaignLog_filterBattles" onClick="UICore.onButtonClick">Battles</Button>
-                <Button id="campaignLog_filterUnits" onClick="UICore.onButtonClick">Units</Button>
-                <Button id="campaignLog_filterPlayers" onClick="UICore.onButtonClick">Players</Button>
+                <Button id="campaignLog_filterAll" onClick="onUIButtonClick">All</Button>
+                <Button id="campaignLog_filterBattles" onClick="onUIButtonClick">Battles</Button>
+                <Button id="campaignLog_filterUnits" onClick="onUIButtonClick">Units</Button>
+                <Button id="campaignLog_filterPlayers" onClick="onUIButtonClick">Players</Button>
             </HorizontalLayout>
 
             <!-- Log Content Area -->
@@ -291,7 +291,7 @@
             </Panel>
 
             <Button id="campaignLog_close"
-                    onClick="UICore.onButtonClick">
+                    onClick="onUIButtonClick">
                 Close
             </Button>
         </VerticalLayout>
@@ -311,7 +311,7 @@
                 <Text width="25%">Player:</Text>
                 <Dropdown id="manageForces_playerSelect"
                          width="75%"
-                         onChange="UICore.onButtonClick">
+                         onChange="onUIButtonClick">
                 </Dropdown>
             </HorizontalLayout>
 
@@ -337,10 +337,10 @@
                 <InputField id="manageForces_search"
                            width="60%"
                            placeholder="Search units..."
-                           onValueChanged="UICore.onButtonClick" />
+                           onValueChanged="onUIButtonClick" />
                 <Dropdown id="manageForces_sortBy"
                          width="40%"
-                         onChange="UICore.onButtonClick">
+                         onChange="onUIButtonClick">
                     <Option value="name">Name</Option>
                     <Option value="role">Role</Option>
                     <Option value="xp">XP</Option>
@@ -363,7 +363,7 @@
             <HorizontalLayout spacing="10" height="30">
                 <Button id="manageForces_prevPage"
                         width="30%"
-                        onClick="UICore.onButtonClick">
+                        onClick="onUIButtonClick">
                     Previous
                 </Button>
                 <Text id="manageForces_pageInfo" width="40%" alignment="MiddleCenter">
@@ -371,7 +371,7 @@
                 </Text>
                 <Button id="manageForces_nextPage"
                         width="30%"
-                        onClick="UICore.onButtonClick">
+                        onClick="onUIButtonClick">
                     Next
                 </Button>
             </HorizontalLayout>
@@ -380,17 +380,17 @@
             <HorizontalLayout spacing="10" height="40">
                 <Button id="manageForces_addUnit"
                         width="33%"
-                        onClick="UICore.onButtonClick">
+                        onClick="onUIButtonClick">
                     Add Unit
                 </Button>
                 <Button id="manageForces_import"
                         width="33%"
-                        onClick="UICore.onButtonClick">
+                        onClick="onUIButtonClick">
                     Import
                 </Button>
                 <Button id="manageForces_close"
                         width="33%"
-                        onClick="UICore.onButtonClick">
+                        onClick="onUIButtonClick">
                     Close
                 </Button>
             </HorizontalLayout>
@@ -416,7 +416,7 @@
                         <InputField id="unitDetails_name"
                                    width="70%"
                                    placeholder="Enter unit name..."
-                                   onValueChanged="UICore.onButtonClick" />
+                                   onValueChanged="onUIButtonClick" />
                     </HorizontalLayout>
 
                     <HorizontalLayout spacing="5" height="30">
@@ -424,7 +424,7 @@
                         <InputField id="unitDetails_unitType"
                                    width="70%"
                                    placeholder="e.g., Intercessor Squad"
-                                   onValueChanged="UICore.onButtonClick" />
+                                   onValueChanged="onUIButtonClick" />
                     </HorizontalLayout>
 
                     <HorizontalLayout spacing="5" height="30">
@@ -432,7 +432,7 @@
                         <InputField id="unitDetails_role"
                                    width="70%"
                                    placeholder="Battlefield Role"
-                                   onValueChanged="UICore.onButtonClick" />
+                                   onValueChanged="onUIButtonClick" />
                     </HorizontalLayout>
 
                     <HorizontalLayout spacing="5" height="30">
@@ -440,14 +440,14 @@
                         <InputField id="unitDetails_points"
                                    width="30%"
                                    characterLimit="4"
-                                   onValueChanged="UICore.onButtonClick" />
+                                   onValueChanged="onUIButtonClick" />
                         <Text width="40%" fontSize="12" color="#CCCCCC">Power Level / Points Cost</Text>
                     </HorizontalLayout>
 
                     <HorizontalLayout spacing="10" height="25">
-                        <Toggle id="unitDetails_toggleCharacter" onClick="UICore.onButtonClick">CHARACTER</Toggle>
-                        <Toggle id="unitDetails_toggleTitanic" onClick="UICore.onButtonClick">TITANIC</Toggle>
-                        <Toggle id="unitDetails_toggleEpicHero" onClick="UICore.onButtonClick">EPIC HERO</Toggle>
+                        <Toggle id="unitDetails_toggleCharacter" onClick="onUIButtonClick">CHARACTER</Toggle>
+                        <Toggle id="unitDetails_toggleTitanic" onClick="onUIButtonClick">TITANIC</Toggle>
+                        <Toggle id="unitDetails_toggleEpicHero" onClick="onUIButtonClick">EPIC HERO</Toggle>
                     </HorizontalLayout>
                 </VerticalLayout>
             </Panel>
@@ -479,7 +479,7 @@
                         <Text id="unitDetails_honoursHeader" width="70%">Battle Honours (0 / 3)</Text>
                         <Button id="unitDetails_addHonour"
                                 width="30%"
-                                onClick="UICore.onButtonClick">
+                                onClick="onUIButtonClick">
                             Add
                         </Button>
                     </HorizontalLayout>
@@ -493,12 +493,12 @@
             <HorizontalLayout spacing="10" height="40">
                 <Button id="unitDetails_cancel"
                         width="50%"
-                        onClick="UICore.onButtonClick">
+                        onClick="onUIButtonClick">
                     Cancel
                 </Button>
                 <Button id="unitDetails_save"
                         width="50%"
-                        onClick="UICore.onButtonClick"
+                        onClick="onUIButtonClick"
                         colors="#00CC00|#00FF00|#009900|#004400"
                         textColor="#FFFFFF">
                     Save Unit
@@ -527,7 +527,7 @@
                        characterLimit="10000"
                        lineType="MultiLine"
                        placeholder="Paste New Recruit JSON here..."
-                       onValueChanged="UICore.onButtonClick" />
+                       onValueChanged="onUIButtonClick" />
 
             <!-- Import Status -->
             <Text id="newRecruit_status" fontSize="12" color="#FFFF00">
@@ -538,12 +538,12 @@
             <HorizontalLayout spacing="10" height="40">
                 <Button id="newRecruit_cancel"
                         width="50%"
-                        onClick="UICore.onButtonClick">
+                        onClick="onUIButtonClick">
                     Cancel
                 </Button>
                 <Button id="newRecruit_import"
                         width="50%"
-                        onClick="UICore.onButtonClick"
+                        onClick="onUIButtonClick"
                         colors="#00CC00|#00FF00|#009900|#004400"
                         textColor="#FFFFFF">
                     Import Units
@@ -590,7 +590,7 @@
                         <Text width="30%">Battle Size:</Text>
                         <Dropdown id="recordBattle_battleSize"
                                   width="70%"
-                                  onValueChanged="RecordBattle.onDropdownChange">
+                                  onValueChanged="onRecordBattleDropdownChange">
                             <Option>Incursion</Option>
                             <Option selected="true">Strike Force</Option>
                             <Option>Onslaught</Option>
@@ -603,7 +603,7 @@
                         <InputField id="recordBattle_missionType"
                                     width="70%"
                                     placeholder="Mission name"
-                                    onValueChanged="RecordBattle.onInputChange" />
+                                    onValueChanged="onRecordBattleInputChange" />
                     </HorizontalLayout>
 
                     <!-- Mission Pack -->
@@ -612,7 +612,7 @@
                         <InputField id="recordBattle_missionPack"
                                     width="70%"
                                     placeholder="Optional"
-                                    onValueChanged="RecordBattle.onInputChange" />
+                                    onValueChanged="onRecordBattleInputChange" />
                     </HorizontalLayout>
 
                     <!-- Hex Location -->
@@ -621,7 +621,7 @@
                         <InputField id="recordBattle_hexLocation"
                                     width="70%"
                                     placeholder="e.g., 0,0"
-                                    onValueChanged="RecordBattle.onInputChange" />
+                                    onValueChanged="onRecordBattleInputChange" />
                     </HorizontalLayout>
 
                     <Panel height="10" />
@@ -690,19 +690,19 @@
             <HorizontalLayout spacing="10" height="40">
                 <Button id="recordBattle_cancel"
                         width="30%"
-                        onClick="RecordBattle.onButtonClick">
+                        onClick="onRecordBattleButtonClick">
                     Cancel
                 </Button>
 
                 <Button id="recordBattle_previous"
                         width="30%"
-                        onClick="RecordBattle.onButtonClick">
+                        onClick="onRecordBattleButtonClick">
                     Previous
                 </Button>
 
                 <Button id="recordBattle_next"
                         width="40%"
-                        onClick="RecordBattle.onButtonClick">
+                        onClick="onRecordBattleButtonClick">
                     Next
                 </Button>
             </HorizontalLayout>
@@ -725,13 +725,13 @@
                 <Text width="20%">Filter:</Text>
                 <Dropdown id="battleLog_filterPlayer"
                           width="40%"
-                          onValueChanged="BattleLog.onDropdownChange">
+                          onValueChanged="onBattleLogDropdownChange">
                     <Option selected="true">All Players</Option>
                 </Dropdown>
 
                 <Dropdown id="battleLog_filterBattleSize"
                           width="40%"
-                          onValueChanged="BattleLog.onDropdownChange">
+                          onValueChanged="onBattleLogDropdownChange">
                     <Option selected="true">All Sizes</Option>
                     <Option>Incursion</Option>
                     <Option>Strike Force</Option>
@@ -744,7 +744,7 @@
                 <Text width="20%">Sort by:</Text>
                 <Dropdown id="battleLog_sortBy"
                           width="50%"
-                          onValueChanged="BattleLog.onDropdownChange">
+                          onValueChanged="onBattleLogDropdownChange">
                     <Option selected="true">Newest First</Option>
                     <Option>Oldest First</Option>
                     <Option>Most Participants</Option>
@@ -753,7 +753,7 @@
 
                 <Button id="battleLog_clearFilters"
                         width="30%"
-                        onClick="BattleLog.onButtonClick">
+                        onClick="onBattleLogButtonClick">
                     Clear Filters
                 </Button>
             </HorizontalLayout>
@@ -795,7 +795,7 @@
                         </Text>
                         <Button id="battleLog_closeBattleDetails"
                                 width="30%"
-                                onClick="BattleLog.onButtonClick">
+                                onClick="onBattleLogButtonClick">
                             Back to List
                         </Button>
                     </HorizontalLayout>
@@ -815,7 +815,7 @@
             <HorizontalLayout spacing="10" height="35">
                 <Button id="battleLog_previousPage"
                         width="25%"
-                        onClick="BattleLog.onButtonClick">
+                        onClick="onBattleLogButtonClick">
                     &lt; Prev
                 </Button>
 
@@ -828,7 +828,7 @@
 
                 <Button id="battleLog_nextPage"
                         width="25%"
-                        onClick="BattleLog.onButtonClick">
+                        onClick="onBattleLogButtonClick">
                     Next &gt;
                 </Button>
             </HorizontalLayout>
@@ -836,7 +836,7 @@
             <!-- Close Button -->
             <Button id="battleLog_close"
                     height="40"
-                    onClick="UICore.onButtonClick">
+                    onClick="onUIButtonClick">
                 Close
             </Button>
         </VerticalLayout>
