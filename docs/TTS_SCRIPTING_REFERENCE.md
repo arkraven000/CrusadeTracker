@@ -321,11 +321,11 @@ These trigger Unity animations, unlike setting `active` which is instant.
 ### Replacing Entire UI Subtrees
 
 ```lua
--- Replace with raw XML string
+-- Replace entire UI with raw XML string
 UI.setXml('<Panel><Text>Hello</Text></Panel>')
 
--- Replace a specific element's children using a Lua table
-UI.setXmlTable("parentElementId", {
+-- Replace entire UI with a Lua table
+UI.setXmlTable({
     {
         tag = "VerticalLayout",
         attributes = { spacing = "10" },
@@ -338,6 +338,37 @@ UI.setXmlTable("parentElementId", {
         }
     }
 })
+```
+
+**IMPORTANT**: `UI.setXmlTable(data)` replaces the **entire** UI. It does
+NOT accept an element ID to target a specific subtree. To update a specific
+element's children, use the get-modify-set pattern:
+
+```lua
+-- Get-modify-set pattern for updating a specific element's children
+local fullXml = UI.getXmlTable()
+
+-- Recursively find element by ID and replace its children
+local function replaceChildren(xmlTable, targetId, newChildren)
+    for _, element in ipairs(xmlTable) do
+        if element.attributes and element.attributes.id == targetId then
+            element.children = newChildren
+            return true
+        end
+        if element.children then
+            if replaceChildren(element.children, targetId, newChildren) then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+replaceChildren(fullXml, "parentElementId", {
+    { tag = "Text", attributes = { text = "Updated content" } }
+})
+
+UI.setXmlTable(fullXml)
 ```
 
 **Warning**: After `setXml` or `setXmlTable`, `UI.loading` will be `true`
@@ -619,13 +650,14 @@ Convention: XML panel IDs are `<name>Panel` (e.g., `mainMenuPanel`,
 `campaignSetupPanel`). Lua refers to them by the short name (e.g.,
 `"mainMenu"`, `"campaignSetup"`).
 
-### Dynamic Content via setXmlTable
+### Dynamic Content via get-modify-set Pattern
 
 For wizard-style UIs where content changes between steps, build Lua tables
-and inject them:
+and inject them using the get-modify-set pattern (since `UI.setXmlTable`
+replaces the entire UI, NOT a specific element):
 
 ```lua
-UI.setXmlTable("setupContentArea", {
+local newChildren = {
     {
         tag = "VerticalLayout",
         attributes = { spacing = "8" },
@@ -633,15 +665,24 @@ UI.setXmlTable("setupContentArea", {
             { tag = "Text", attributes = { text = "Step Title" } },
             { tag = "InputField", attributes = {
                 id = "myInput",
-                onValueChanged = "onUIButtonClick"
+                onValueChanged = "onUIButtonClick",
+                preferredHeight = "35"
             } }
         }
     }
-})
+}
+
+-- Get full UI, find target element, replace children, set full UI back
+local fullXml = UI.getXmlTable()
+replaceChildren(fullXml, "setupContentArea", newChildren)
+UI.setXmlTable(fullXml)
 ```
 
 This replaces the children of `setupContentArea` with the new tree. Used
-heavily in `CampaignSetup.renderStepContent()`.
+in `CampaignSetup.renderStepContent()` and `UICore.renderList()`.
+
+**Note**: Dynamically created `InputField` elements should include
+`preferredHeight` to ensure proper sizing inside `VerticalLayout`.
 
 ### Module Registration
 
