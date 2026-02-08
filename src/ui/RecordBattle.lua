@@ -91,7 +91,7 @@ function RecordBattle.nextStep()
         -- Validate Step 1: Battle Setup
         local valid, err = RecordBattle.validateStep1()
         if not valid then
-            broadcastToAll(err, {1, 0, 0})
+            broadcastToAll(err, {0.80, 0.33, 0.33})
             return
         end
         RecordBattle.currentStep = 2
@@ -100,7 +100,7 @@ function RecordBattle.nextStep()
         -- Validate Step 2: Battle Results
         local valid, err = RecordBattle.validateStep2()
         if not valid then
-            broadcastToAll(err, {1, 0, 0})
+            broadcastToAll(err, {0.80, 0.33, 0.33})
             return
         end
         RecordBattle.currentStep = 3
@@ -295,7 +295,7 @@ function RecordBattle.setMarkedForGreatness(playerId, unitId)
     )
 
     if not valid then
-        broadcastToAll("ERROR: " .. err, {1, 0, 0})
+        broadcastToAll("ERROR: " .. err, {0.80, 0.33, 0.33})
         return
     end
 
@@ -321,7 +321,7 @@ function RecordBattle.applyOutOfActionConsequence(unitId, consequenceType, param
     )
 
     if success then
-        broadcastToAll(message, {0, 1, 0})
+        broadcastToAll(message, {0.30, 0.69, 0.31})
         -- Store result
         RecordBattle.outOfActionResults[unitId] = {
             consequence = consequenceType,
@@ -329,7 +329,7 @@ function RecordBattle.applyOutOfActionConsequence(unitId, consequenceType, param
             message = message
         }
     else
-        broadcastToAll("ERROR: " .. message, {1, 0, 0})
+        broadcastToAll("ERROR: " .. message, {0.80, 0.33, 0.33})
     end
 
     RecordBattle.refreshUI()
@@ -344,7 +344,7 @@ function RecordBattle.completeBattle()
     )
 
     if not valid then
-        broadcastToAll("ERROR: " .. err, {1, 0, 0})
+        broadcastToAll("ERROR: " .. err, {0.80, 0.33, 0.33})
         return
     end
 
@@ -378,7 +378,7 @@ function RecordBattle.completeBattle()
         message = message .. "\nResult: Draw"
     end
 
-    broadcastToAll(message, {0, 1, 0})
+    broadcastToAll(message, {0.30, 0.69, 0.31})
 
     -- Reset state
     RecordBattle.workingBattle = nil
@@ -397,10 +397,23 @@ function RecordBattle.refreshUI()
         return
     end
 
-    -- Update step indicators
+    -- Update step indicators (color + label styling)
     for step = 1, 3 do
-        local color = (step == RecordBattle.currentStep) and "#FFFF00" or "#CCCCCC"
-        UI.setAttribute("recordBattleStep" .. step .. "Indicator", "color", color)
+        local stepIndicator = "recordBattleStep" .. step .. "Indicator"
+        local stepLabel = "recordBattleStep" .. step .. "Label"
+        if step == RecordBattle.currentStep then
+            UI.setAttribute(stepIndicator, "color", "#D4A843")
+            UI.setAttribute(stepLabel, "color", "#000000")
+            UI.setAttribute(stepLabel, "fontStyle", "Bold")
+        elseif step < RecordBattle.currentStep then
+            UI.setAttribute(stepIndicator, "color", "#2E6B3A")
+            UI.setAttribute(stepLabel, "color", "#AAFFAA")
+            UI.setAttribute(stepLabel, "fontStyle", "Normal")
+        else
+            UI.setAttribute(stepIndicator, "color", "#333333")
+            UI.setAttribute(stepLabel, "color", "#666666")
+            UI.setAttribute(stepLabel, "fontStyle", "Normal")
+        end
     end
 
     -- Hide all step panels

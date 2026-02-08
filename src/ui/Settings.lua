@@ -35,7 +35,7 @@ function Settings.loadMapSkin(skinKey)
         return
     end
     
-    broadcastToAll("Loading map skin: " .. skinKey, {0, 1, 1})
+    broadcastToAll("Loading map skin: " .. skinKey, {0.60, 0.60, 0.60})
     
     if Settings.campaign.mapConfig then
         Settings.campaign.mapConfig.currentMapSkin = skinKey
@@ -47,7 +47,7 @@ end
 function Settings.toggleHexGuides(show)
     if Settings.campaign and Settings.campaign.mapConfig then
         Settings.campaign.mapConfig.showHexGuides = show
-        broadcastToAll("Hex guides: " .. (show and "ON" or "OFF"), {0, 1, 1})
+        broadcastToAll("Hex guides: " .. (show and "ON" or "OFF"), {0.60, 0.60, 0.60})
     end
 end
 

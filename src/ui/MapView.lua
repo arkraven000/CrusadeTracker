@@ -160,7 +160,7 @@ function MapView.displayHexInfo(hexData, playerColor)
         table.insert(info, "Notes: " .. hexData.notes)
     end
 
-    printToColor(table.concat(info, "\n"), playerColor, {0, 1, 1})
+    printToColor(table.concat(info, "\n"), playerColor, {0.60, 0.60, 0.60})
 end
 
 -- ============================================================================
@@ -191,7 +191,7 @@ function MapView.changeMapSkin(skinKey)
 
     if success then
         MapView.campaign.mapConfig.currentMapSkin = skinKey
-        broadcastToAll("Map skin changed to: " .. skinKey, {0, 1, 0})
+        broadcastToAll("Map skin changed to: " .. skinKey, {0.30, 0.69, 0.31})
     end
 
     return success
@@ -206,7 +206,7 @@ function MapView.toggleHexGuides(show)
         MapView.campaign.mapConfig.showHexGuides = show
     end
 
-    broadcastToAll("Hex guides: " .. (show and "ON" or "OFF"), {0, 1, 1})
+    broadcastToAll("Hex guides: " .. (show and "ON" or "OFF"), {0.60, 0.60, 0.60})
 end
 
 --- Toggle dormant overlays
@@ -250,7 +250,7 @@ function MapView.claimHex(hexCoord, playerId)
     local hexData = MapView.campaign.mapConfig.hexes[hexKey]
 
     if not hexData or not hexData.active then
-        broadcastToAll("Cannot claim dormant hex", {1, 0, 0})
+        broadcastToAll("Cannot claim dormant hex", {0.80, 0.33, 0.33})
         return false
     end
 
@@ -273,9 +273,9 @@ function MapView.claimHex(hexCoord, playerId)
     -- Log event
     if previousOwner then
         local prevPlayer = MapView.campaign.players[previousOwner]
-        broadcastToAll(player.name .. " captured " .. hexData.name .. " from " .. prevPlayer.name, {1, 1, 0})
+        broadcastToAll(player.name .. " captured " .. hexData.name .. " from " .. prevPlayer.name, {0.83, 0.66, 0.26})
     else
-        broadcastToAll(player.name .. " claimed " .. hexData.name, {0, 1, 0})
+        broadcastToAll(player.name .. " claimed " .. hexData.name, {0.30, 0.69, 0.31})
     end
 
     log("Hex " .. hexKey .. " claimed by " .. player.name)
@@ -304,7 +304,7 @@ function MapView.toggleHexActive(hexCoord)
     -- Update overlay
     TerritoryOverlays.updateHexOverlay(hexData)
 
-    broadcastToAll("Hex " .. hexData.name .. " is now " .. (hexData.active and "ACTIVE" or "DORMANT"), {0, 1, 1})
+    broadcastToAll("Hex " .. hexData.name .. " is now " .. (hexData.active and "ACTIVE" or "DORMANT"), {0.60, 0.60, 0.60})
 
     return true
 end

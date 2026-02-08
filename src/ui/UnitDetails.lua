@@ -409,7 +409,7 @@ end
 --- Save the unit (create or update)
 function UnitDetails.saveUnit()
     if not UnitDetails.workingUnit then
-        broadcastToAll("No unit to save", {1, 0, 0})
+        broadcastToAll("No unit to save", {0.80, 0.33, 0.33})
         return
     end
 
@@ -438,12 +438,12 @@ function UnitDetails.validateUnit()
 
     -- Check required fields
     if not unit.name or unit.name == "" then
-        broadcastToAll("Unit name is required", {1, 0, 0})
+        broadcastToAll("Unit name is required", {0.80, 0.33, 0.33})
         return false
     end
 
     if not unit.pointsCost or unit.pointsCost <= 0 then
-        broadcastToAll("Points cost must be greater than 0", {1, 0, 0})
+        broadcastToAll("Points cost must be greater than 0", {0.80, 0.33, 0.33})
         return false
     end
 
@@ -456,7 +456,7 @@ function UnitDetails.createUnit()
     local player = UnitDetails.campaign.players[UnitDetails.playerId]
 
     if not player then
-        broadcastToAll("Player not found", {1, 0, 0})
+        broadcastToAll("Player not found", {0.80, 0.33, 0.33})
         return
     end
 
@@ -491,7 +491,7 @@ function UnitDetails.createUnit()
         description = string.format("Added unit: %s (%d PL)", unit.name, unit.pointsCost)
     })
 
-    broadcastToAll(string.format("Unit '%s' added to %s's roster", unit.name, player.name), {0, 1, 0})
+    broadcastToAll(string.format("Unit '%s' added to %s's roster", unit.name, player.name), {0.30, 0.69, 0.31})
 
     log("Unit created: " .. unit.name)
 end
@@ -502,13 +502,13 @@ function UnitDetails.updateUnit()
     local originalUnit = UnitDetails.campaign.units[UnitDetails.unitId]
 
     if not originalUnit then
-        broadcastToAll("Original unit not found", {1, 0, 0})
+        broadcastToAll("Original unit not found", {0.80, 0.33, 0.33})
         return
     end
 
     local player = UnitDetails.campaign.players[workingUnit.ownerId]
     if not player then
-        broadcastToAll("Player not found", {1, 0, 0})
+        broadcastToAll("Player not found", {0.80, 0.33, 0.33})
         return
     end
 
@@ -540,7 +540,7 @@ function UnitDetails.updateUnit()
         description = string.format("Updated unit: %s", workingUnit.name)
     })
 
-    broadcastToAll(string.format("Unit '%s' updated", workingUnit.name), {0, 1, 0})
+    broadcastToAll(string.format("Unit '%s' updated", workingUnit.name), {0.30, 0.69, 0.31})
 
     log("Unit updated: " .. workingUnit.name)
 end
@@ -553,7 +553,7 @@ function UnitDetails.cancel()
     -- Close panel
     -- UICore.hidePanel("unitDetails")
 
-    broadcastToAll("Unit editing cancelled", {1, 1, 0})
+    broadcastToAll("Unit editing cancelled", {0.83, 0.66, 0.26})
 
     log("Unit editing cancelled")
 end
@@ -578,7 +578,7 @@ function UnitDetails.addBattleHonour(honourData)
     end
 
     if #unit.battleHonours >= maxHonours then
-        broadcastToAll("Unit has reached maximum Battle Honours", {1, 0, 0})
+        broadcastToAll("Unit has reached maximum Battle Honours", {0.80, 0.33, 0.33})
         return
     end
 
@@ -592,7 +592,7 @@ function UnitDetails.addBattleHonour(honourData)
     UnitDetails.updateCrusadePointsDisplay()
     UnitDetails.updateHonoursSection()
 
-    broadcastToAll("Battle Honour added: " .. honour.name, {0, 1, 0})
+    broadcastToAll("Battle Honour added: " .. honour.name, {0.30, 0.69, 0.31})
 
     log("Added honour: " .. honour.name)
 end
@@ -609,7 +609,7 @@ function UnitDetails.removeBattleHonour(honourId)
     for i, honour in ipairs(unit.battleHonours) do
         if honour.id == honourId then
             table.remove(unit.battleHonours, i)
-            broadcastToAll("Battle Honour removed: " .. honour.name, {1, 1, 0})
+            broadcastToAll("Battle Honour removed: " .. honour.name, {0.83, 0.66, 0.26})
 
             -- Recalculate CP
             UnitDetails.updateCrusadePointsDisplay()
@@ -632,7 +632,7 @@ function UnitDetails.addBattleScar(scarData)
 
     -- Check scar limit
     if #unit.battleScars >= 3 then
-        broadcastToAll("Unit has reached maximum Battle Scars (3)", {1, 0, 0})
+        broadcastToAll("Unit has reached maximum Battle Scars (3)", {0.80, 0.33, 0.33})
         return
     end
 
@@ -646,7 +646,7 @@ function UnitDetails.addBattleScar(scarData)
     UnitDetails.updateCrusadePointsDisplay()
     UnitDetails.updateScarsSection()
 
-    broadcastToAll("Battle Scar added: " .. scar.name, {1, 0, 0})
+    broadcastToAll("Battle Scar added: " .. scar.name, {0.80, 0.33, 0.33})
 
     log("Added scar: " .. scar.name)
 end
@@ -663,7 +663,7 @@ function UnitDetails.removeBattleScar(scarId)
     for i, scar in ipairs(unit.battleScars) do
         if scar.id == scarId then
             table.remove(unit.battleScars, i)
-            broadcastToAll("Battle Scar removed: " .. scar.name, {0, 1, 0})
+            broadcastToAll("Battle Scar removed: " .. scar.name, {0.30, 0.69, 0.31})
 
             -- Recalculate CP
             UnitDetails.updateCrusadePointsDisplay()
@@ -692,11 +692,11 @@ function UnitDetails.handleClick(player, value, id)
 
     elseif id == "unitDetails_addHonour" then
         -- Open honour selection panel
-        broadcastToAll("Honour selection coming soon!", {0, 1, 1})
+        broadcastToAll("Honour selection coming soon!", {0.60, 0.60, 0.60})
 
     elseif id == "unitDetails_addScar" then
         -- Open scar selection panel
-        broadcastToAll("Scar selection coming soon!", {0, 1, 1})
+        broadcastToAll("Scar selection coming soon!", {0.60, 0.60, 0.60})
 
     elseif string.match(id, "^unitDetails_removeHonour_") then
         local honourId = string.gsub(id, "^unitDetails_removeHonour_", "")

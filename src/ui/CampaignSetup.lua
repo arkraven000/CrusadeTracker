@@ -122,12 +122,12 @@ function CampaignSetup.validateStep(stepNum)
     if stepNum == 1 then
         -- Step 1: Campaign Name & Settings
         if not CampaignSetup.wizardData.campaignName or CampaignSetup.wizardData.campaignName == "" then
-            broadcastToAll("Please enter a campaign name", {1, 0, 0})
+            broadcastToAll("Please enter a campaign name", {0.80, 0.33, 0.33})
             return false
         end
 
         if CampaignSetup.wizardData.supplyLimit < 500 then
-            broadcastToAll("Supply limit must be at least 500", {1, 0, 0})
+            broadcastToAll("Supply limit must be at least 500", {0.80, 0.33, 0.33})
             return false
         end
 
@@ -140,12 +140,12 @@ function CampaignSetup.validateStep(stepNum)
         end
 
         if CampaignSetup.wizardData.mapWidth < 3 or CampaignSetup.wizardData.mapWidth > 15 then
-            broadcastToAll("Map width must be between 3 and 15 hexes", {1, 0, 0})
+            broadcastToAll("Map width must be between 3 and 15 hexes", {0.80, 0.33, 0.33})
             return false
         end
 
         if CampaignSetup.wizardData.mapHeight < 3 or CampaignSetup.wizardData.mapHeight > 15 then
-            broadcastToAll("Map height must be between 3 and 15 hexes", {1, 0, 0})
+            broadcastToAll("Map height must be between 3 and 15 hexes", {0.80, 0.33, 0.33})
             return false
         end
 
@@ -154,12 +154,12 @@ function CampaignSetup.validateStep(stepNum)
     elseif stepNum == 3 then
         -- Step 3: Add Players
         if #CampaignSetup.wizardData.players < 2 then
-            broadcastToAll("Campaign must have at least 2 players", {1, 0, 0})
+            broadcastToAll("Campaign must have at least 2 players", {0.80, 0.33, 0.33})
             return false
         end
 
         if #CampaignSetup.wizardData.players > Constants.MAX_PLAYERS then
-            broadcastToAll("Maximum " .. Constants.MAX_PLAYERS .. " players allowed", {1, 0, 0})
+            broadcastToAll("Maximum " .. Constants.MAX_PLAYERS .. " players allowed", {0.80, 0.33, 0.33})
             return false
         end
 
@@ -252,7 +252,7 @@ function CampaignSetup.addPlayer(playerName, playerColor, faction, forceName, su
     -- Check for duplicate colors
     for _, player in ipairs(CampaignSetup.wizardData.players) do
         if player.color == playerColor then
-            broadcastToAll("Player color " .. playerColor .. " already in use", {1, 0, 0})
+            broadcastToAll("Player color " .. playerColor .. " already in use", {0.80, 0.33, 0.33})
             return false
         end
     end
@@ -268,7 +268,7 @@ function CampaignSetup.addPlayer(playerName, playerColor, faction, forceName, su
 
     table.insert(CampaignSetup.wizardData.players, playerConfig)
 
-    broadcastToAll("Player added: " .. playerName .. " (" .. faction .. ")", {0, 1, 0})
+    broadcastToAll("Player added: " .. playerName .. " (" .. faction .. ")", {0.30, 0.69, 0.31})
     CampaignSetup.refreshPlayerList()
 
     return true
@@ -283,7 +283,7 @@ function CampaignSetup.removePlayer(index)
     end
 
     local removedPlayer = table.remove(CampaignSetup.wizardData.players, index)
-    broadcastToAll("Player removed: " .. removedPlayer.name, {1, 1, 0})
+    broadcastToAll("Player removed: " .. removedPlayer.name, {0.83, 0.66, 0.26})
 
     CampaignSetup.refreshPlayerList()
 end
@@ -373,7 +373,7 @@ function CampaignSetup.createCampaign()
     -- Validate all steps
     for step = 1, CampaignSetup.maxSteps do
         if not CampaignSetup.validateStep(step) then
-            broadcastToAll("Campaign validation failed at step " .. step, {1, 0, 0})
+            broadcastToAll("Campaign validation failed at step " .. step, {0.80, 0.33, 0.33})
             CampaignSetup.goToStep(step)
             return false
         end
@@ -425,8 +425,8 @@ function CampaignSetup.createCampaign()
         log("Added player: " .. playerConfig.name)
     end
 
-    broadcastToAll("Campaign created: " .. campaign.name, {0, 1, 0})
-    broadcastToAll("Players: " .. #wd.players, {0, 1, 1})
+    broadcastToAll("Campaign created: " .. campaign.name, {0.30, 0.69, 0.31})
+    broadcastToAll("Players: " .. #wd.players, {0.60, 0.60, 0.60})
 
     log("Campaign creation complete!")
     log(CampaignSetup.getCampaignSummary())
@@ -1104,9 +1104,9 @@ function CampaignSetup.handleClick(player, value, id)
     elseif id == "campaignSetup_addPlayer" then
         local pf = CampaignSetup._playerForm
         if pf.name == "" then
-            broadcastToAll("Please enter a player name", {1, 0, 0})
+            broadcastToAll("Please enter a player name", {0.80, 0.33, 0.33})
         elseif pf.faction == "" then
-            broadcastToAll("Please enter a faction", {1, 0, 0})
+            broadcastToAll("Please enter a faction", {0.80, 0.33, 0.33})
         else
             CampaignSetup.addPlayer(
                 pf.name, pf.color, pf.faction,

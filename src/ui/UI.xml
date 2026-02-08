@@ -14,16 +14,16 @@
     <!-- Input defaults -->
     <InputField fontSize="14"
                 characterLimit="100"
-                color="#222222"
-                textColor="#FFFFFF"
+                color="#1A1A2E"
+                textColor="#EEEEEE"
                 placeholder="..." />
 
     <!-- Dropdown defaults -->
     <Dropdown fontSize="14"
-              color="#333333"
-              textColor="#FFFFFF"
-              itemTextColor="#FFFFFF"
-              itemBackgroundColors="#333333|#555555" />
+              color="#1A1A2E"
+              textColor="#EEEEEE"
+              itemTextColor="#EEEEEE"
+              itemBackgroundColors="#1A1A2E|#333355" />
 </Defaults>
 
 <!-- Main UI Container -->
@@ -173,7 +173,9 @@
 
         <VerticalLayout spacing="10" padding="15">
             <Text id="mainPanel_campaignName"
-                  fontSize="18"
+                  fontSize="20"
+                  fontStyle="Bold"
+                  color="#D4A843"
                   alignment="MiddleCenter">
                 Campaign Name
             </Text>
@@ -182,64 +184,75 @@
 
             <!-- Quick Stats -->
             <HorizontalLayout spacing="10" height="60">
-                <Panel width="33%" color="rgba(50,50,50,0.8)" padding="5">
+                <Panel width="33%" color="rgba(30,30,40,0.9)" padding="5">
                     <VerticalLayout>
-                        <Text id="mainPanel_playerCount" fontSize="16">2 Players</Text>
-                        <Text fontSize="10" color="#AAAAAA">Active</Text>
+                        <Text id="mainPanel_playerCount" fontSize="16" color="#EEEEEE">2 Players</Text>
+                        <Text fontSize="10" color="#888888">Active</Text>
                     </VerticalLayout>
                 </Panel>
 
-                <Panel width="33%" color="rgba(50,50,50,0.8)" padding="5">
+                <Panel width="33%" color="rgba(30,30,40,0.9)" padding="5">
                     <VerticalLayout>
-                        <Text id="mainPanel_battleCount" fontSize="16">5 Battles</Text>
-                        <Text fontSize="10" color="#AAAAAA">Fought</Text>
+                        <Text id="mainPanel_battleCount" fontSize="16" color="#EEEEEE">5 Battles</Text>
+                        <Text fontSize="10" color="#888888">Fought</Text>
                     </VerticalLayout>
                 </Panel>
 
-                <Panel width="33%" color="rgba(50,50,50,0.8)" padding="5">
+                <Panel width="33%" color="rgba(30,30,40,0.9)" padding="5">
                     <VerticalLayout>
-                        <Text id="mainPanel_territoryCount" fontSize="16">12 Hexes</Text>
-                        <Text fontSize="10" color="#AAAAAA">Controlled</Text>
+                        <Text id="mainPanel_territoryCount" fontSize="16" color="#EEEEEE">12 Hexes</Text>
+                        <Text fontSize="10" color="#888888">Controlled</Text>
                     </VerticalLayout>
                 </Panel>
             </HorizontalLayout>
 
             <!-- Action Buttons -->
             <VerticalLayout spacing="8">
+                <Button id="mainPanel_recordBattle"
+                        height="45"
+                        fontStyle="Bold"
+                        colors="#8B6914|#D4A843|#6B5010|#44340A"
+                        textColor="#FFFFFF"
+                        onClick="onUIButtonClick">
+                    Record Battle
+                </Button>
+
                 <Button id="mainPanel_playerMgmt"
                         height="45"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
                         onClick="onUIButtonClick">
                     Manage Players
                 </Button>
 
                 <Button id="mainPanel_map"
                         height="45"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
                         onClick="onUIButtonClick">
                     View Map
                 </Button>
 
-                <Button id="mainPanel_log"
-                        height="45"
-                        onClick="onUIButtonClick">
-                    Campaign Log
-                </Button>
-
-                <Button id="mainPanel_recordBattle"
-                        height="45"
-                        colors="#FF8800|#FFAA33|#CC6600|#664400"
-                        textColor="#FFFFFF"
-                        onClick="onUIButtonClick">
-                    Record Battle
-                </Button>
-
                 <Button id="mainPanel_battleLog"
                         height="45"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
                         onClick="onUIButtonClick">
                     Battle History
                 </Button>
 
+                <Button id="mainPanel_log"
+                        height="45"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">
+                    Campaign Log
+                </Button>
+
                 <Button id="mainPanel_settings"
                         height="45"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
                         onClick="onUIButtonClick">
                     Settings
                 </Button>
@@ -248,7 +261,7 @@
 
                 <Button id="mainPanel_save"
                         height="45"
-                        colors="#00AA00|#00CC00|#008800|#004400"
+                        colors="#2E6B3A|#3D8B4D|#1E4B2A|#152E1A"
                         textColor="#FFFFFF"
                         onClick="onUIButtonClick">
                     Save Campaign
@@ -264,29 +277,38 @@
            active="false">
 
         <VerticalLayout spacing="10" padding="15">
-            <Text fontSize="18">Settings</Text>
+            <Text fontSize="20" fontStyle="Bold" color="#D4A843">Settings</Text>
 
             <!-- Tab Buttons -->
             <HorizontalLayout spacing="5" height="35">
-                <Button id="settings_tabGeneral" onClick="onUIButtonClick">General</Button>
-                <Button id="settings_tabMap" onClick="onUIButtonClick">Map</Button>
-                <Button id="settings_tabDisplay" onClick="onUIButtonClick">Display</Button>
+                <Button id="settings_tabGeneral"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">General</Button>
+                <Button id="settings_tabMap"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">Map</Button>
+                <Button id="settings_tabDisplay"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">Display</Button>
             </HorizontalLayout>
 
             <!-- Map Skin Section -->
-            <Text fontSize="14">Map Skin</Text>
+            <Text fontSize="13" color="#D4A843">MAP SKIN</Text>
             <VerticalLayout spacing="5">
-                <Button id="settings_mapSkin_forgeWorld" onClick="onUIButtonClick">Forge World</Button>
-                <Button id="settings_mapSkin_deathWorld" onClick="onUIButtonClick">Death World</Button>
-                <Button id="settings_mapSkin_hiveCity" onClick="onUIButtonClick">Hive City</Button>
-                <Button id="settings_mapSkin_spaceHulk" onClick="onUIButtonClick">Space Hulk</Button>
-                <Button id="settings_mapSkin_iceWorld" onClick="onUIButtonClick">Ice World</Button>
-                <Button id="settings_mapSkin_desert" onClick="onUIButtonClick">Desert</Button>
+                <Button id="settings_mapSkin_forgeWorld" colors="#444444|#666666|#333333|#222222" textColor="#CCCCCC" onClick="onUIButtonClick">Forge World</Button>
+                <Button id="settings_mapSkin_deathWorld" colors="#444444|#666666|#333333|#222222" textColor="#CCCCCC" onClick="onUIButtonClick">Death World</Button>
+                <Button id="settings_mapSkin_hiveCity" colors="#444444|#666666|#333333|#222222" textColor="#CCCCCC" onClick="onUIButtonClick">Hive City</Button>
+                <Button id="settings_mapSkin_spaceHulk" colors="#444444|#666666|#333333|#222222" textColor="#CCCCCC" onClick="onUIButtonClick">Space Hulk</Button>
+                <Button id="settings_mapSkin_iceWorld" colors="#444444|#666666|#333333|#222222" textColor="#CCCCCC" onClick="onUIButtonClick">Ice World</Button>
+                <Button id="settings_mapSkin_desert" colors="#444444|#666666|#333333|#222222" textColor="#CCCCCC" onClick="onUIButtonClick">Desert</Button>
             </VerticalLayout>
 
             <!-- Display Options -->
             <Panel height="10" />
-            <Text fontSize="14">Display Options</Text>
+            <Text fontSize="13" color="#D4A843">DISPLAY OPTIONS</Text>
             <Toggle id="settings_toggleHexGuides"
                     onValueChanged="onUIButtonClick">
                 Show Hex Guides
@@ -295,6 +317,8 @@
             <Panel height="20" />
 
             <Button id="settings_close"
+                    colors="#444444|#666666|#333333|#222222"
+                    textColor="#CCCCCC"
                     onClick="onUIButtonClick">
                 Close
             </Button>
@@ -308,27 +332,29 @@
            active="false">
 
         <VerticalLayout spacing="10" padding="15">
-            <Text fontSize="18">Campaign Log</Text>
+            <Text fontSize="20" fontStyle="Bold" color="#D4A843">Campaign Log</Text>
 
             <!-- Filter Buttons -->
             <HorizontalLayout spacing="5" height="30">
-                <Button id="campaignLog_filterAll" onClick="onUIButtonClick">All</Button>
-                <Button id="campaignLog_filterBattles" onClick="onUIButtonClick">Battles</Button>
-                <Button id="campaignLog_filterUnits" onClick="onUIButtonClick">Units</Button>
-                <Button id="campaignLog_filterPlayers" onClick="onUIButtonClick">Players</Button>
+                <Button id="campaignLog_filterAll" colors="#444444|#666666|#333333|#222222" textColor="#CCCCCC" onClick="onUIButtonClick">All</Button>
+                <Button id="campaignLog_filterBattles" colors="#444444|#666666|#333333|#222222" textColor="#CCCCCC" onClick="onUIButtonClick">Battles</Button>
+                <Button id="campaignLog_filterUnits" colors="#444444|#666666|#333333|#222222" textColor="#CCCCCC" onClick="onUIButtonClick">Units</Button>
+                <Button id="campaignLog_filterPlayers" colors="#444444|#666666|#333333|#222222" textColor="#CCCCCC" onClick="onUIButtonClick">Players</Button>
             </HorizontalLayout>
 
             <!-- Log Content Area -->
             <Panel id="campaignLog_content"
                    width="100%"
                    height="450"
-                   color="rgba(20,20,20,0.9)">
-                <Text fontSize="12" color="#AAAAAA">
+                   color="rgba(20,20,30,0.9)">
+                <Text fontSize="12" color="#888888">
                     Campaign events will appear here...
                 </Text>
             </Panel>
 
             <Button id="campaignLog_close"
+                    colors="#444444|#666666|#333333|#222222"
+                    textColor="#CCCCCC"
                     onClick="onUIButtonClick">
                 Close
             </Button>
@@ -342,11 +368,11 @@
            active="false">
 
         <VerticalLayout spacing="10" padding="15">
-            <Text fontSize="18">Manage Forces - Order of Battle</Text>
+            <Text fontSize="20" fontStyle="Bold" color="#D4A843">Order of Battle</Text>
 
             <!-- Player Selector -->
             <HorizontalLayout spacing="10" height="40">
-                <Text width="25%">Player:</Text>
+                <Text width="25%" color="#BBBBBB">Player:</Text>
                 <Dropdown id="manageForces_playerSelect"
                          width="75%"
                          onChange="onUIButtonClick">
@@ -357,16 +383,16 @@
             <Panel id="manageForces_supplyPanel"
                    width="100%"
                    height="50"
-                   color="rgba(20,20,20,0.9)"
+                   color="rgba(20,20,30,0.9)"
                    padding="10">
                 <VerticalLayout spacing="5">
-                    <Text id="manageForces_supplyText" fontSize="14">
+                    <Text id="manageForces_supplyText" fontSize="14" color="#BBBBBB">
                         Supply: 0 / 50 PL
                     </Text>
                     <Panel id="manageForces_supplyBar"
                            width="100%"
                            height="10"
-                           color="#00FF00" />
+                           color="#4CAF50" />
                 </VerticalLayout>
             </Panel>
 
@@ -391,8 +417,8 @@
             <Panel id="manageForces_unitList"
                    width="100%"
                    height="300"
-                   color="rgba(20,20,20,0.9)">
-                <Text fontSize="12" color="#AAAAAA">
+                   color="rgba(20,20,30,0.9)">
+                <Text fontSize="12" color="#888888">
                     No units in roster. Click "Add Unit" to begin.
                 </Text>
             </Panel>
@@ -401,14 +427,18 @@
             <HorizontalLayout spacing="10" height="30">
                 <Button id="manageForces_prevPage"
                         width="30%"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
                         onClick="onUIButtonClick">
                     Previous
                 </Button>
-                <Text id="manageForces_pageInfo" width="40%" alignment="MiddleCenter">
+                <Text id="manageForces_pageInfo" width="40%" alignment="MiddleCenter" color="#888888">
                     Page 1 / 1 (0 units)
                 </Text>
                 <Button id="manageForces_nextPage"
                         width="30%"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
                         onClick="onUIButtonClick">
                     Next
                 </Button>
@@ -418,16 +448,23 @@
             <HorizontalLayout spacing="10" height="40">
                 <Button id="manageForces_addUnit"
                         width="33%"
+                        fontStyle="Bold"
+                        colors="#8B6914|#D4A843|#6B5010|#44340A"
+                        textColor="#FFFFFF"
                         onClick="onUIButtonClick">
                     Add Unit
                 </Button>
                 <Button id="manageForces_import"
                         width="33%"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
                         onClick="onUIButtonClick">
                     Import
                 </Button>
                 <Button id="manageForces_close"
                         width="33%"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
                         onClick="onUIButtonClick">
                     Close
                 </Button>
@@ -442,15 +479,15 @@
            active="false">
 
         <VerticalLayout spacing="10" padding="15">
-            <Text id="unitDetails_title" fontSize="18">Unit Editor</Text>
+            <Text id="unitDetails_title" fontSize="20" fontStyle="Bold" color="#D4A843">Unit Editor</Text>
 
             <!-- Basic Info Section -->
-            <Panel width="100%" height="200" color="rgba(20,20,20,0.9)" padding="10">
+            <Panel width="100%" height="200" color="rgba(20,20,30,0.9)" padding="10">
                 <VerticalLayout spacing="8">
-                    <Text fontSize="14" color="#FFFF00">Basic Information</Text>
+                    <Text fontSize="13" color="#D4A843" fontStyle="Bold">BASIC INFORMATION</Text>
 
                     <HorizontalLayout spacing="5" height="30">
-                        <Text width="30%">Unit Name:</Text>
+                        <Text width="30%" color="#BBBBBB">Unit Name:</Text>
                         <InputField id="unitDetails_name"
                                    width="70%"
                                    placeholder="Enter unit name..."
@@ -458,7 +495,7 @@
                     </HorizontalLayout>
 
                     <HorizontalLayout spacing="5" height="30">
-                        <Text width="30%">Unit Type:</Text>
+                        <Text width="30%" color="#BBBBBB">Unit Type:</Text>
                         <InputField id="unitDetails_unitType"
                                    width="70%"
                                    placeholder="e.g., Intercessor Squad"
@@ -466,7 +503,7 @@
                     </HorizontalLayout>
 
                     <HorizontalLayout spacing="5" height="30">
-                        <Text width="30%">Role:</Text>
+                        <Text width="30%" color="#BBBBBB">Role:</Text>
                         <Dropdown id="unitDetails_role"
                                   width="70%"
                                   onValueChanged="onUIButtonClick">
@@ -483,12 +520,12 @@
                     </HorizontalLayout>
 
                     <HorizontalLayout spacing="5" height="30">
-                        <Text width="30%">Points:</Text>
+                        <Text width="30%" color="#BBBBBB">Points:</Text>
                         <InputField id="unitDetails_points"
                                    width="30%"
                                    characterLimit="4"
                                    onValueChanged="onUIButtonClick" />
-                        <Text width="40%" fontSize="12" color="#CCCCCC">Power Level / Points Cost</Text>
+                        <Text width="40%" fontSize="10" color="#666666">Power Level / Points Cost</Text>
                     </HorizontalLayout>
 
                     <HorizontalLayout spacing="10" height="25">
@@ -500,38 +537,40 @@
             </Panel>
 
             <!-- Progression Section -->
-            <Panel width="100%" height="120" color="rgba(20,20,20,0.9)" padding="10">
+            <Panel width="100%" height="120" color="rgba(20,20,30,0.9)" padding="10">
                 <VerticalLayout spacing="8">
-                    <Text fontSize="14" color="#FFFF00">Progression</Text>
+                    <Text fontSize="13" color="#D4A843" fontStyle="Bold">PROGRESSION</Text>
 
                     <HorizontalLayout spacing="10" height="25">
-                        <Text id="unitDetails_xpText" width="40%">Experience: 0 XP</Text>
-                        <Text id="unitDetails_rankText" width="60%">Rank: 1 - Battle-Ready</Text>
+                        <Text id="unitDetails_xpText" width="40%" color="#BBBBBB">Experience: 0 XP</Text>
+                        <Text id="unitDetails_rankText" width="60%" color="#BBBBBB">Rank: 1 - Battle-Ready</Text>
                     </HorizontalLayout>
 
-                    <Text id="unitDetails_crusadePoints" fontSize="16" color="#00FF00" alignment="MiddleCenter">
+                    <Text id="unitDetails_crusadePoints" fontSize="16" color="#4CAF50" alignment="MiddleCenter">
                         Crusade Points: 0
                     </Text>
 
-                    <Text id="unitDetails_cpBreakdown" fontSize="10" color="#AAAAAA">
+                    <Text id="unitDetails_cpBreakdown" fontSize="10" color="#888888">
                         Honours: 0 CP | Scars: -0 CP
                     </Text>
                 </VerticalLayout>
             </Panel>
 
             <!-- Battle Honours Section -->
-            <Panel width="100%" height="80" color="rgba(20,20,20,0.9)" padding="10">
+            <Panel width="100%" height="80" color="rgba(20,20,30,0.9)" padding="10">
                 <VerticalLayout spacing="5">
                     <HorizontalLayout spacing="10" height="30">
-                        <Text id="unitDetails_honoursHeader" width="70%">Battle Honours (0 / 3)</Text>
+                        <Text id="unitDetails_honoursHeader" width="70%" color="#BBBBBB">Battle Honours (0 / 3)</Text>
                         <Button id="unitDetails_addHonour"
                                 width="30%"
+                                colors="#8B6914|#D4A843|#6B5010|#44340A"
+                                textColor="#FFFFFF"
                                 onClick="onUIButtonClick">
                             Add
                         </Button>
                     </HorizontalLayout>
                     <Panel id="unitDetails_honoursList" width="100%" height="40">
-                        <Text fontSize="10" color="#888888">No honours yet</Text>
+                        <Text fontSize="10" color="#666666">No honours yet</Text>
                     </Panel>
                 </VerticalLayout>
             </Panel>
@@ -540,13 +579,16 @@
             <HorizontalLayout spacing="10" height="40">
                 <Button id="unitDetails_cancel"
                         width="50%"
+                        colors="#3A2222|#553333|#2A1515|#221111"
+                        textColor="#CC8888"
                         onClick="onUIButtonClick">
                     Cancel
                 </Button>
                 <Button id="unitDetails_save"
                         width="50%"
+                        fontStyle="Bold"
                         onClick="onUIButtonClick"
-                        colors="#00CC00|#00FF00|#009900|#004400"
+                        colors="#2E6B3A|#3D8B4D|#1E4B2A|#152E1A"
                         textColor="#FFFFFF">
                     Save Unit
                 </Button>
@@ -561,9 +603,9 @@
            active="false">
 
         <VerticalLayout spacing="10" padding="15">
-            <Text fontSize="18">Import from New Recruit</Text>
+            <Text fontSize="20" fontStyle="Bold" color="#D4A843">Import from New Recruit</Text>
 
-            <Text fontSize="12" color="#CCCCCC">
+            <Text fontSize="12" color="#BBBBBB">
                 Paste the JSON export from newrecruit.eu below:
             </Text>
 
@@ -577,7 +619,7 @@
                        onValueChanged="onUIButtonClick" />
 
             <!-- Import Status -->
-            <Text id="newRecruit_status" fontSize="12" color="#FFFF00">
+            <Text id="newRecruit_status" fontSize="12" color="#D4A843">
                 Ready to import
             </Text>
 
@@ -585,13 +627,16 @@
             <HorizontalLayout spacing="10" height="40">
                 <Button id="newRecruit_cancel"
                         width="50%"
+                        colors="#3A2222|#553333|#2A1515|#221111"
+                        textColor="#CC8888"
                         onClick="onUIButtonClick">
                     Cancel
                 </Button>
                 <Button id="newRecruit_import"
                         width="50%"
+                        fontStyle="Bold"
                         onClick="onUIButtonClick"
-                        colors="#00CC00|#00FF00|#009900|#004400"
+                        colors="#8B6914|#D4A843|#6B5010|#44340A"
                         textColor="#FFFFFF">
                     Import Units
                 </Button>
@@ -605,22 +650,22 @@
            height="100%"
            active="false">
 
-        <VerticalLayout spacing="10" padding="15">
-            <Text fontSize="20" alignment="MiddleCenter">
-                Record Battle
+        <VerticalLayout spacing="8" padding="12 15 12 15">
+            <Text fontSize="22" alignment="MiddleCenter" fontStyle="Bold" color="#D4A843">
+                RECORD BATTLE
             </Text>
 
-            <!-- Step Indicator -->
-            <HorizontalLayout spacing="5" height="30">
-                <Panel id="recordBattleStep1Indicator" width="33%" height="100%" color="#FFFF00" />
-                <Panel id="recordBattleStep2Indicator" width="33%" height="100%" color="#CCCCCC" />
-                <Panel id="recordBattleStep3Indicator" width="33%" height="100%" color="#CCCCCC" />
-            </HorizontalLayout>
-
-            <HorizontalLayout spacing="10" height="20">
-                <Text width="33%" alignment="MiddleCenter" fontSize="10">Setup</Text>
-                <Text width="33%" alignment="MiddleCenter" fontSize="10">Results</Text>
-                <Text width="33%" alignment="MiddleCenter" fontSize="10">Post-Battle</Text>
+            <!-- Step Indicator with Labels -->
+            <HorizontalLayout spacing="3" height="36">
+                <Panel id="recordBattleStep1Indicator" width="33%" height="100%" color="#D4A843">
+                    <Text id="recordBattleStep1Label" text="1 Setup" fontSize="10" color="#000000" alignment="MiddleCenter" fontStyle="Bold" />
+                </Panel>
+                <Panel id="recordBattleStep2Indicator" width="33%" height="100%" color="#333333">
+                    <Text id="recordBattleStep2Label" text="2 Results" fontSize="10" color="#666666" alignment="MiddleCenter" />
+                </Panel>
+                <Panel id="recordBattleStep3Indicator" width="33%" height="100%" color="#333333">
+                    <Text id="recordBattleStep3Label" text="3 Post-Battle" fontSize="10" color="#666666" alignment="MiddleCenter" />
+                </Panel>
             </HorizontalLayout>
 
             <!-- Step 1: Battle Setup -->
@@ -630,11 +675,11 @@
                    active="true">
 
                 <VerticalLayout spacing="10">
-                    <Text fontSize="16">Battle Setup</Text>
+                    <Text fontSize="13" color="#D4A843" fontStyle="Bold">BATTLE SETUP</Text>
 
                     <!-- Battle Size -->
                     <HorizontalLayout spacing="10" height="30">
-                        <Text width="30%">Battle Size:</Text>
+                        <Text width="30%" color="#BBBBBB">Battle Size:</Text>
                         <Dropdown id="recordBattle_battleSize"
                                   width="70%"
                                   onValueChanged="onRecordBattleDropdownChange">
@@ -646,7 +691,7 @@
 
                     <!-- Mission Type -->
                     <HorizontalLayout spacing="10" height="30">
-                        <Text width="30%">Mission:</Text>
+                        <Text width="30%" color="#BBBBBB">Mission:</Text>
                         <InputField id="recordBattle_missionType"
                                     width="70%"
                                     placeholder="Mission name"
@@ -655,7 +700,7 @@
 
                     <!-- Mission Pack -->
                     <HorizontalLayout spacing="10" height="30">
-                        <Text width="30%">Mission Pack:</Text>
+                        <Text width="30%" color="#888888">Mission Pack:</Text>
                         <InputField id="recordBattle_missionPack"
                                     width="70%"
                                     placeholder="Optional"
@@ -664,7 +709,7 @@
 
                     <!-- Hex Location -->
                     <HorizontalLayout spacing="10" height="30">
-                        <Text width="30%">Hex Location:</Text>
+                        <Text width="30%" color="#888888">Hex Location:</Text>
                         <InputField id="recordBattle_hexLocation"
                                     width="70%"
                                     placeholder="e.g., 0,0"
@@ -672,7 +717,7 @@
                     </HorizontalLayout>
 
                     <Panel height="10" />
-                    <Text fontSize="14">Participants (will be populated dynamically)</Text>
+                    <Text fontSize="13" color="#D4A843">PARTICIPANTS</Text>
                     <Panel id="recordBattle_participantsContainer" height="150" />
                 </VerticalLayout>
             </Panel>
@@ -684,22 +729,22 @@
                    active="false">
 
                 <VerticalLayout spacing="10">
-                    <Text fontSize="16">Battle Results</Text>
+                    <Text fontSize="13" color="#D4A843" fontStyle="Bold">BATTLE RESULTS</Text>
 
-                    <Text fontSize="12" color="#AAAAAA">
+                    <Text fontSize="11" color="#888888">
                         Enter battle outcome, victory points, and casualties
                     </Text>
 
                     <Panel height="10" />
-                    <Text fontSize="14">Winner Selection (will be populated dynamically)</Text>
+                    <Text fontSize="13" color="#BBBBBB">Winner Selection</Text>
                     <Panel id="recordBattle_winnerContainer" height="80" />
 
                     <Panel height="10" />
-                    <Text fontSize="14">Destroyed Units (will be populated dynamically)</Text>
+                    <Text fontSize="13" color="#BBBBBB">Destroyed Units</Text>
                     <Panel id="recordBattle_destroyedContainer" height="150" />
 
                     <Panel height="10" />
-                    <Text fontSize="14">Combat Tallies (will be populated dynamically)</Text>
+                    <Text fontSize="13" color="#BBBBBB">Combat Tallies</Text>
                     <Panel id="recordBattle_talliesContainer" height="100" />
                 </VerticalLayout>
             </Panel>
@@ -711,44 +756,54 @@
                    active="false">
 
                 <VerticalLayout spacing="10">
-                    <Text fontSize="16">Post-Battle</Text>
+                    <Text fontSize="13" color="#D4A843" fontStyle="Bold">POST-BATTLE</Text>
 
-                    <Text fontSize="12" color="#AAAAAA">
+                    <Text fontSize="11" color="#888888">
                         XP awards, Out of Action tests, and agendas
                     </Text>
 
                     <Panel height="10" />
-                    <Text fontSize="14">Marked for Greatness (will be populated dynamically)</Text>
+                    <Text fontSize="13" color="#BBBBBB">Marked for Greatness</Text>
                     <Panel id="recordBattle_markedContainer" height="100" />
 
                     <Panel height="10" />
-                    <Text fontSize="14">Out of Action Tests (will be populated dynamically)</Text>
+                    <Text fontSize="13" color="#BBBBBB">Out of Action Tests</Text>
                     <Panel id="recordBattle_outOfActionContainer" height="150" />
 
                     <Panel height="10" />
-                    <Text fontSize="14">Battle Summary</Text>
-                    <Text id="recordBattle_summary" fontSize="12" color="#00FF00">
+                    <Text fontSize="13" color="#D4A843">BATTLE SUMMARY</Text>
+                    <Text id="recordBattle_summary" fontSize="12" color="#4CAF50">
                         XP and Out of Action results will appear here
                     </Text>
                 </VerticalLayout>
             </Panel>
 
             <!-- Navigation Buttons -->
-            <HorizontalLayout spacing="10" height="40">
+            <HorizontalLayout spacing="8" height="42">
                 <Button id="recordBattle_cancel"
-                        width="30%"
+                        width="25%"
+                        fontSize="13"
+                        colors="#3A2222|#553333|#2A1515|#221111"
+                        textColor="#CC8888"
                         onClick="onRecordBattleButtonClick">
                     Cancel
                 </Button>
 
                 <Button id="recordBattle_previous"
                         width="30%"
+                        fontSize="13"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#AAAAAA"
                         onClick="onRecordBattleButtonClick">
                     Previous
                 </Button>
 
                 <Button id="recordBattle_next"
-                        width="40%"
+                        width="45%"
+                        fontSize="15"
+                        fontStyle="Bold"
+                        colors="#8B6914|#D4A843|#6B5010|#44340A"
+                        textColor="#FFFFFF"
                         onClick="onRecordBattleButtonClick">
                     Next
                 </Button>
@@ -763,26 +818,26 @@
            active="false">
 
         <VerticalLayout spacing="10" padding="15">
-            <Text fontSize="20" alignment="MiddleCenter">
+            <Text fontSize="20" fontStyle="Bold" color="#D4A843" alignment="MiddleCenter">
                 Campaign Map
             </Text>
 
             <!-- Hex Info Display -->
-            <Panel width="100%" height="120" color="rgba(20,20,20,0.9)" padding="10">
+            <Panel width="100%" height="120" color="rgba(20,20,30,0.9)" padding="10">
                 <VerticalLayout spacing="5">
-                    <Text fontSize="14" color="#FFFF00">Selected Hex</Text>
-                    <Text id="mapHexInfo" fontSize="12" color="#CCCCCC">
+                    <Text fontSize="13" color="#D4A843" fontStyle="Bold">SELECTED HEX</Text>
+                    <Text id="mapHexInfo" fontSize="12" color="#BBBBBB">
                         Click a hex on the map to view details.
                     </Text>
-                    <Text id="mapHexBonuses" fontSize="11" color="#AAAAAA">
+                    <Text id="mapHexBonuses" fontSize="11" color="#888888">
                     </Text>
                 </VerticalLayout>
             </Panel>
 
             <!-- Map Display Options -->
-            <Panel width="100%" height="80" color="rgba(20,20,20,0.9)" padding="10">
+            <Panel width="100%" height="80" color="rgba(20,20,30,0.9)" padding="10">
                 <VerticalLayout spacing="5">
-                    <Text fontSize="14" color="#FFFF00">Display Options</Text>
+                    <Text fontSize="13" color="#D4A843" fontStyle="Bold">DISPLAY OPTIONS</Text>
                     <HorizontalLayout spacing="10" height="25">
                         <Toggle id="mapView_toggleHexGuides"
                                 onValueChanged="onUIButtonClick">
@@ -804,11 +859,15 @@
             <HorizontalLayout spacing="10" height="40">
                 <Button id="mapView_openControls"
                         width="50%"
+                        colors="#8B6914|#D4A843|#6B5010|#44340A"
+                        textColor="#FFFFFF"
                         onClick="onUIButtonClick">
                     Territory Controls
                 </Button>
                 <Button id="mapView_changeSkin"
                         width="50%"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
                         onClick="onUIButtonClick">
                     Change Map Skin
                 </Button>
@@ -816,6 +875,8 @@
 
             <Button id="mapView_close"
                     height="40"
+                    colors="#444444|#666666|#333333|#222222"
+                    textColor="#CCCCCC"
                     onClick="onUIButtonClick">
                 Close
             </Button>
@@ -829,15 +890,15 @@
            active="false">
 
         <VerticalLayout spacing="10" padding="15">
-            <Text fontSize="20" alignment="MiddleCenter">
+            <Text fontSize="20" fontStyle="Bold" color="#D4A843" alignment="MiddleCenter">
                 Territory Controls
             </Text>
 
             <!-- Selected Hex Info -->
-            <Panel width="100%" height="80" color="rgba(20,20,20,0.9)" padding="10">
+            <Panel width="100%" height="80" color="rgba(20,20,30,0.9)" padding="10">
                 <VerticalLayout spacing="5">
-                    <Text fontSize="14" color="#FFFF00">Selected Territory</Text>
-                    <Text id="mapControls_hexInfo" fontSize="12" color="#CCCCCC">
+                    <Text fontSize="13" color="#D4A843" fontStyle="Bold">SELECTED TERRITORY</Text>
+                    <Text id="mapControls_hexInfo" fontSize="12" color="#BBBBBB">
                         No hex selected. Click a hex on the map.
                     </Text>
                 </VerticalLayout>
@@ -845,7 +906,7 @@
 
             <!-- Player Selection -->
             <HorizontalLayout spacing="10" height="35">
-                <Text width="25%">Player:</Text>
+                <Text width="25%" color="#BBBBBB">Player:</Text>
                 <Dropdown id="mapControls_playerSelect"
                          width="75%"
                          onValueChanged="onUIButtonClick">
@@ -856,7 +917,8 @@
             <VerticalLayout spacing="8">
                 <Button id="mapControlsClaim"
                         height="40"
-                        colors="#FF8800|#FFAA33|#CC6600|#664400"
+                        fontStyle="Bold"
+                        colors="#8B6914|#D4A843|#6B5010|#44340A"
                         textColor="#FFFFFF"
                         onClick="onUIButtonClick">
                     Claim Territory
@@ -864,15 +926,17 @@
 
                 <Button id="mapControls_toggleActive"
                         height="35"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
                         onClick="onUIButtonClick">
                     Toggle Hex Active/Dormant
                 </Button>
             </VerticalLayout>
 
             <!-- Territory Bonuses -->
-            <Panel width="100%" height="100" color="rgba(20,20,20,0.9)" padding="10">
+            <Panel width="100%" height="100" color="rgba(20,20,30,0.9)" padding="10">
                 <VerticalLayout spacing="5">
-                    <Text fontSize="14" color="#FFFF00">Territory Bonuses</Text>
+                    <Text fontSize="13" color="#D4A843" fontStyle="Bold">TERRITORY BONUSES</Text>
                     <HorizontalLayout spacing="5" height="30">
                         <Dropdown id="mapBonusType"
                                   width="40%"
@@ -894,6 +958,8 @@
                     </HorizontalLayout>
                     <Button id="mapAddBonus"
                             height="30"
+                            colors="#2E6B3A|#3D8B4D|#1E4B2A|#152E1A"
+                            textColor="#FFFFFF"
                             onClick="onUIButtonClick">
                         Add Bonus
                     </Button>
@@ -902,6 +968,8 @@
 
             <Button id="mapControlsClose"
                     height="40"
+                    colors="#444444|#666666|#333333|#222222"
+                    textColor="#CCCCCC"
                     onClick="onUIButtonClick">
                 Close
             </Button>
@@ -915,13 +983,13 @@
            active="false">
 
         <VerticalLayout spacing="10" padding="15">
-            <Text fontSize="20" alignment="MiddleCenter">
+            <Text fontSize="20" fontStyle="Bold" color="#D4A843" alignment="MiddleCenter">
                 Battle History
             </Text>
 
             <!-- Filters -->
             <HorizontalLayout spacing="10" height="30">
-                <Text width="20%">Filter:</Text>
+                <Text width="20%" color="#BBBBBB">Filter:</Text>
                 <Dropdown id="battleLog_filterPlayer"
                           width="40%"
                           onValueChanged="onBattleLogDropdownChange">
@@ -940,7 +1008,7 @@
 
             <!-- Sort -->
             <HorizontalLayout spacing="10" height="30">
-                <Text width="20%">Sort by:</Text>
+                <Text width="20%" color="#BBBBBB">Sort by:</Text>
                 <Dropdown id="battleLog_sortBy"
                           width="50%"
                           onValueChanged="onBattleLogDropdownChange">
@@ -952,6 +1020,8 @@
 
                 <Button id="battleLog_clearFilters"
                         width="30%"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
                         onClick="onBattleLogButtonClick">
                     Clear Filters
                 </Button>
@@ -959,10 +1029,10 @@
 
             <!-- Stats -->
             <HorizontalLayout spacing="5" height="40">
-                <Text id="battleLog_battleCount" width="50%" fontSize="12">
+                <Text id="battleLog_battleCount" width="50%" fontSize="12" color="#BBBBBB">
                     Total Battles: 0
                 </Text>
-                <Text id="battleLog_filterIndicator" width="50%" fontSize="12" color="#AAAAAA">
+                <Text id="battleLog_filterIndicator" width="50%" fontSize="12" color="#888888">
                     Filters: None
                 </Text>
             </HorizontalLayout>
@@ -976,7 +1046,7 @@
                    active="true">
 
                 <VerticalLayout spacing="5">
-                    <Text fontSize="14">Battle List (will be populated dynamically)</Text>
+                    <Text fontSize="13" color="#BBBBBB">Battle List</Text>
                     <Panel id="battleLog_battleListContainer" height="300" />
                 </VerticalLayout>
             </Panel>
@@ -989,23 +1059,25 @@
 
                 <VerticalLayout spacing="10">
                     <HorizontalLayout spacing="10" height="30">
-                        <Text id="battleDetails_missionType" width="70%" fontSize="16">
+                        <Text id="battleDetails_missionType" width="70%" fontSize="16" color="#D4A843">
                             Mission Name
                         </Text>
                         <Button id="battleLog_closeBattleDetails"
                                 width="30%"
+                                colors="#444444|#666666|#333333|#222222"
+                                textColor="#CCCCCC"
                                 onClick="onBattleLogButtonClick">
                             Back to List
                         </Button>
                     </HorizontalLayout>
 
-                    <Text id="battleDetails_battleSize" fontSize="12">Battle Size</Text>
-                    <Text id="battleDetails_timestamp" fontSize="12" color="#AAAAAA">Timestamp</Text>
-                    <Text id="battleDetails_winner" fontSize="14" color="#00FF00">Winner</Text>
-                    <Text id="battleDetails_participants" fontSize="12">Participants</Text>
+                    <Text id="battleDetails_battleSize" fontSize="12" color="#BBBBBB">Battle Size</Text>
+                    <Text id="battleDetails_timestamp" fontSize="12" color="#888888">Timestamp</Text>
+                    <Text id="battleDetails_winner" fontSize="14" color="#4CAF50">Winner</Text>
+                    <Text id="battleDetails_participants" fontSize="12" color="#BBBBBB">Participants</Text>
 
                     <Panel height="10" />
-                    <Text fontSize="14">Detailed Information</Text>
+                    <Text fontSize="13" color="#D4A843" fontStyle="Bold">DETAILED INFORMATION</Text>
                     <Panel id="battleDetails_detailsContainer" height="150" />
                 </VerticalLayout>
             </Panel>
@@ -1014,6 +1086,8 @@
             <HorizontalLayout spacing="10" height="35">
                 <Button id="battleLog_previousPage"
                         width="25%"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
                         onClick="onBattleLogButtonClick">
                     &lt; Prev
                 </Button>
@@ -1021,12 +1095,15 @@
                 <Text id="battleLog_pageIndicator"
                       width="50%"
                       alignment="MiddleCenter"
+                      color="#888888"
                       fontSize="12">
                     Page 1 of 1
                 </Text>
 
                 <Button id="battleLog_nextPage"
                         width="25%"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
                         onClick="onBattleLogButtonClick">
                     Next &gt;
                 </Button>
@@ -1035,6 +1112,8 @@
             <!-- Close Button -->
             <Button id="battleLog_close"
                     height="40"
+                    colors="#444444|#666666|#333333|#222222"
+                    textColor="#CCCCCC"
                     onClick="onUIButtonClick">
                 Close
             </Button>

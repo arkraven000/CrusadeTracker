@@ -52,12 +52,12 @@ end
 function BattleHonoursUI.openForUnit(unitId)
     local unit = BattleHonoursUI.campaign.units[unitId]
     if not unit then
-        broadcastToAll("ERROR: Unit not found", {1, 0, 0})
+        broadcastToAll("ERROR: Unit not found", {0.80, 0.33, 0.33})
         return
     end
 
     if not unit.pendingHonourSelection then
-        broadcastToAll("Unit does not have pending honour selection", {1, 1, 0})
+        broadcastToAll("Unit does not have pending honour selection", {0.83, 0.66, 0.26})
         return
     end
 
@@ -143,11 +143,11 @@ function BattleHonoursUI.applyBattleTrait(traitName)
     )
 
     if success then
-        broadcastToAll(message, {0, 1, 0})
+        broadcastToAll(message, {0.30, 0.69, 0.31})
         BattleHonoursUI.selectedUnit = nil
         -- Close panel
     else
-        broadcastToAll("ERROR: " .. message, {1, 0, 0})
+        broadcastToAll("ERROR: " .. message, {0.80, 0.33, 0.33})
     end
 
     BattleHonoursUI.refreshUI()
@@ -170,11 +170,11 @@ function BattleHonoursUI.applyWeaponModifications(weaponName, modIds)
     )
 
     if success then
-        broadcastToAll(message, {0, 1, 0})
+        broadcastToAll(message, {0.30, 0.69, 0.31})
         BattleHonoursUI.selectedUnit = nil
         -- Close panel
     else
-        broadcastToAll("ERROR: " .. message, {1, 0, 0})
+        broadcastToAll("ERROR: " .. message, {0.80, 0.33, 0.33})
     end
 
     BattleHonoursUI.refreshUI()
@@ -194,11 +194,11 @@ function BattleHonoursUI.applyCrusadeRelic(relicName)
     )
 
     if success then
-        broadcastToAll(message, {0, 1, 0})
+        broadcastToAll(message, {0.30, 0.69, 0.31})
         BattleHonoursUI.selectedUnit = nil
         -- Close panel
     else
-        broadcastToAll("ERROR: " .. message, {1, 0, 0})
+        broadcastToAll("ERROR: " .. message, {0.80, 0.33, 0.33})
     end
 
     BattleHonoursUI.refreshUI()
@@ -240,7 +240,7 @@ function BattleHonoursUI.refreshUI()
     -- Update category buttons
     local categories = {"Battle Trait", "Weapon Modification", "Crusade Relic"}
     for _, cat in ipairs(categories) do
-        local color = (cat == BattleHonoursUI.selectedCategory) and "#FFFF00" or "#CCCCCC"
+        local color = (cat == BattleHonoursUI.selectedCategory) and "#D4A843" or "#444444"
         -- UI.setAttribute("battleHonours_cat_" .. cat, "color", color)
     end
 

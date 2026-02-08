@@ -118,12 +118,12 @@ end
 --- Claim the selected hex for the selected player
 function MapControls.claimHex()
     if not MapControls.selectedHex or not MapControls.selectedPlayer then
-        broadcastToAll("Select a hex and a player first", {1, 0, 0})
+        broadcastToAll("Select a hex and a player first", {0.80, 0.33, 0.33})
         return
     end
 
     if not MapControls.campaign.mapConfig then
-        broadcastToAll("No map configured", {1, 0, 0})
+        broadcastToAll("No map configured", {0.80, 0.33, 0.33})
         return
     end
 
@@ -162,7 +162,7 @@ function MapControls.claimHex()
 
     -- Refresh display
     MapControls.displayHexInfo(hex)
-    broadcastToAll("Territory claimed successfully", {0, 1, 0})
+    broadcastToAll("Territory claimed successfully", {0.30, 0.69, 0.31})
 
     -- Update map visualization (if MapView exists)
     local MapView = require("src/ui/MapView")
@@ -181,7 +181,7 @@ end
 -- @param description string Description (for Custom type)
 function MapControls.addHexBonus(bonusType, amount, description)
     if not MapControls.selectedHex then
-        broadcastToAll("Select a hex first", {1, 0, 0})
+        broadcastToAll("Select a hex first", {0.80, 0.33, 0.33})
         return
     end
 
@@ -189,7 +189,7 @@ function MapControls.addHexBonus(bonusType, amount, description)
     local hex = MapControls.campaign.mapConfig.hexes[hexKey]
 
     if not hex then
-        broadcastToAll("Hex not claimed yet", {1, 0, 0})
+        broadcastToAll("Hex not claimed yet", {0.80, 0.33, 0.33})
         return
     end
 
@@ -208,7 +208,7 @@ function MapControls.addHexBonus(bonusType, amount, description)
 
     -- Refresh display
     MapControls.displayHexInfo(hex)
-    broadcastToAll("Territory bonus added", {0, 1, 0})
+    broadcastToAll("Territory bonus added", {0.30, 0.69, 0.31})
 end
 
 --- Remove a bonus from the selected hex
@@ -229,7 +229,7 @@ function MapControls.removeHexBonus(index)
 
     -- Refresh display
     MapControls.displayHexInfo(hex)
-    broadcastToAll("Territory bonus removed", {0, 1, 0})
+    broadcastToAll("Territory bonus removed", {0.30, 0.69, 0.31})
 end
 
 -- ============================================================================
@@ -240,7 +240,7 @@ end
 -- @param battleId string Battle ID
 function MapControls.assignBattleLocation(battleId)
     if not MapControls.selectedHex then
-        broadcastToAll("Select a hex first", {1, 0, 0})
+        broadcastToAll("Select a hex first", {0.80, 0.33, 0.33})
         return
     end
 
@@ -254,7 +254,7 @@ function MapControls.assignBattleLocation(battleId)
     end
 
     if not battle then
-        broadcastToAll("Battle not found", {1, 0, 0})
+        broadcastToAll("Battle not found", {0.80, 0.33, 0.33})
         return
     end
 
@@ -268,7 +268,7 @@ function MapControls.assignBattleLocation(battleId)
         "Battle location set to hex %d,%d",
         MapControls.selectedHex.q,
         MapControls.selectedHex.r
-    ), {0, 1, 0})
+    ), {0.30, 0.69, 0.31})
 end
 
 -- ============================================================================
@@ -280,7 +280,7 @@ end
 -- @param tokenType string Type of token (objective, fortification, etc)
 function MapControls.placeFactionToken(playerId, tokenType)
     if not MapControls.selectedHex then
-        broadcastToAll("Select a hex first", {1, 0, 0})
+        broadcastToAll("Select a hex first", {0.80, 0.33, 0.33})
         return
     end
 
@@ -288,7 +288,7 @@ function MapControls.placeFactionToken(playerId, tokenType)
     local hex = MapControls.campaign.mapConfig.hexes[hexKey]
 
     if not hex then
-        broadcastToAll("Hex not claimed yet", {1, 0, 0})
+        broadcastToAll("Hex not claimed yet", {0.80, 0.33, 0.33})
         return
     end
 
@@ -310,7 +310,7 @@ function MapControls.placeFactionToken(playerId, tokenType)
         "%s placed a %s token",
         player and player.name or "Unknown",
         tokenType
-    ), {0, 1, 0})
+    ), {0.30, 0.69, 0.31})
 end
 
 --- Remove faction tokens from the selected hex
@@ -328,7 +328,7 @@ function MapControls.removeFactionToken(index)
     end
 
     table.remove(hex.tokens, index)
-    broadcastToAll("Faction token removed", {0, 1, 0})
+    broadcastToAll("Faction token removed", {0.30, 0.69, 0.31})
 end
 
 -- ============================================================================
