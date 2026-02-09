@@ -71,6 +71,7 @@ local Statistics = require("src/campaign/Statistics")
 
 -- UI Modules (Phase 7)
 local ExportImport = require("src/ui/ExportImport")
+local SupplementPanel = require("src/ui/SupplementPanel")
 
 -- Map Modules (Phase 8)
 local FactionTokens = require("src/map/FactionTokens")
@@ -516,6 +517,7 @@ function createMainUI()
     UICore.registerModule("statisticsPanel", StatisticsPanel)
     UICore.registerModule("mapControls", MapControls)
     UICore.registerModule("mapView", MapView)
+    UICore.registerModule("supplement", SupplementPanel)
 
     -- Initialize modules with campaign data
     if CrusadeCampaign then
@@ -576,6 +578,14 @@ function createMainUI()
             UI.setAttribute("mainPanel_map", "active", "false")
         end
 
+        -- Initialize supplement panel if a supplement is active
+        SupplementPanel.initialize(CrusadeCampaign)
+        if CrusadeCampaign.crusadeSupplement and CrusadeCampaign.crusadeSupplement ~= "none" then
+            UI.setAttribute("mainPanel_supplement", "active", "true")
+        else
+            UI.setAttribute("mainPanel_supplement", "active", "false")
+        end
+
         -- Show main campaign panel
         UICore.showPanel("mainCampaign")
     else
@@ -615,6 +625,24 @@ function completeCampaignSetup(wizardData)
     if campaign then
         CrusadeCampaign = campaign
 
+        -- Initialize supplement-specific alliances from SUPPLEMENT_DATA
+        local suppData = Constants.SUPPLEMENT_DATA[campaign.crusadeSupplement]
+        if suppData and suppData.allianceTypes and #suppData.allianceTypes > 0 then
+            for _, allianceInfo in ipairs(suppData.allianceTypes) do
+                local alliance = DataModel.createAlliance(allianceInfo.name, {}, {
+                    shareVictory = true,
+                    shareResources = false,
+                    shareTerritory = false
+                })
+                campaign.alliances[alliance.id] = alliance
+            end
+            local allianceNames = {}
+            for _, a in ipairs(suppData.allianceTypes) do
+                table.insert(allianceNames, a.name)
+            end
+            Utils.logInfo("Supplement alliances created: " .. table.concat(allianceNames, ", "))
+        end
+
         -- Create notebooks (ASYNC)
         Notebook.createCampaignNotebooks(campaign.name, function(notebookGUIDs)
             NotebookGUIDs = notebookGUIDs
@@ -629,6 +657,9 @@ function completeCampaignSetup(wizardData)
             startAutosaveTimer()
 
             broadcastToAll("Campaign created: " .. campaign.name, {0, 1, 0})
+            if campaign.crusadeSupplement and campaign.crusadeSupplement ~= "none" then
+                broadcastToAll("Crusade Supplement: " .. (campaign.missionPack or campaign.crusadeSupplement), {0.83, 0.66, 0.26})
+            end
             Utils.logInfo("Campaign setup completed successfully")
         end)
 

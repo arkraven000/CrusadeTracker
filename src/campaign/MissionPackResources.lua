@@ -267,12 +267,109 @@ function getCampaignResourceSummary(campaign)
 end
 
 -- ============================================================================
+-- SUPPLEMENT-SPECIFIC RESOURCE SETUP
+-- ============================================================================
+
+--- Get resource types for a specific crusade supplement
+-- @param supplementId string Supplement ID ("none", "pariah_nexus", etc.)
+-- @return table Array of resource type definitions
+function getSupplementResourceTypes(supplementId)
+    local supplementResources = {
+        tyrannic_war = {
+            {
+                name = "Tyrannic War Veteran Tally",
+                description = "Track enemy kills for upgrade tree progression",
+                isShared = false,
+                initialValue = 0,
+                maxValue = nil
+            }
+        },
+        pariah_nexus = {
+            {
+                name = "Blackstone Fragments",
+                description = "Noctilith shards harvested from the Pariah Nexus",
+                isShared = false,
+                initialValue = 0,
+                maxValue = nil
+            }
+        },
+        nachmund = {
+            {
+                name = "Battle Points",
+                description = "Earned from battle outcomes each campaign phase",
+                isShared = false,
+                initialValue = 0,
+                maxValue = nil
+            },
+            {
+                name = "Strategic Asset Points",
+                description = "Allocated to capture and upgrade Strategic Sites",
+                isShared = false,
+                initialValue = 0,
+                maxValue = nil
+            },
+            {
+                name = "Campaign Victory Points",
+                description = "Accumulated across all phases to determine the winner",
+                isShared = false,
+                initialValue = 0,
+                maxValue = nil
+            }
+        }
+    }
+
+    return supplementResources[supplementId] or {}
+end
+
+--- Initialize supplement resources for all players in a campaign
+-- @param campaign table Campaign object
+function initializeSupplementResources(campaign)
+    local supplementId = campaign.crusadeSupplement
+    if not supplementId or supplementId == "none" then
+        return
+    end
+
+    local resourceTypes = getSupplementResourceTypes(supplementId)
+
+    for _, player in pairs(campaign.players) do
+        for _, resourceType in ipairs(resourceTypes) do
+            initializePlayerResource(player, resourceType.name, resourceType.initialValue)
+        end
+    end
+
+    Utils.logInfo("Supplement resources initialized for: " .. supplementId)
+end
+
+--- Initialize module with campaign data
+-- @param campaign table Campaign object
+function initialize(campaign)
+    if not campaign then
+        Utils.logWarning("MissionPackResources.initialize called with nil campaign")
+        return
+    end
+
+    -- Initialize supplement-specific resources
+    initializeSupplementResources(campaign)
+
+    -- Also initialize any legacy mission pack resources
+    if campaign.missionPack and campaign.missionPack ~= "" then
+        setupMissionPackResources(campaign, campaign.missionPack, campaign.log)
+    end
+
+    Utils.logInfo("MissionPackResources module initialized")
+end
+
+-- ============================================================================
 -- EXPORTS
 -- ============================================================================
 
 return {
+    -- Module lifecycle
+    initialize = initialize,
+
     -- Resource types
     getCommonResourceTypes = getCommonResourceTypes,
+    getSupplementResourceTypes = getSupplementResourceTypes,
 
     -- Resource management
     initializePlayerResource = initializePlayerResource,
@@ -284,7 +381,8 @@ return {
     -- Battle integration
     awardBattleResources = awardBattleResources,
 
-    -- Mission pack setup
+    -- Mission pack / supplement setup
     setupMissionPackResources = setupMissionPackResources,
+    initializeSupplementResources = initializeSupplementResources,
     getCampaignResourceSummary = getCampaignResourceSummary
 }

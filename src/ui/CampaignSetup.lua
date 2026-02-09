@@ -9,7 +9,7 @@ Version: 1.0.0-alpha
 1. Campaign Name & Settings
 2. Map Configuration (optional)
 3. Add Players (with force name, faction, subfaction, detachment)
-4. Mission Pack Selection (optional)
+4. Crusade Supplement Selection (e.g., Pariah Nexus)
 5. Review & Create
 ]]
 
@@ -36,6 +36,7 @@ local CampaignSetup = {
         mapSkin = Constants.DEFAULT_MAP_SKIN,
         players = {}, -- Array of player configs
         missionPack = nil,
+        crusadeSupplement = "none", -- Supplement ID ("none", "pariah_nexus")
         startingRP = Constants.STARTING_RP
     }
 }
@@ -57,6 +58,7 @@ function CampaignSetup.reset()
         mapSkin = Constants.DEFAULT_MAP_SKIN,
         players = {},
         missionPack = nil,
+        crusadeSupplement = "none",
         startingRP = Constants.STARTING_RP
     }
 
@@ -297,7 +299,7 @@ function CampaignSetup.refreshPlayerList()
 end
 
 -- ============================================================================
--- STEP 4: MISSION PACK SELECTION
+-- STEP 4: CRUSADE SUPPLEMENT SELECTION
 -- ============================================================================
 
 --- Set mission pack
@@ -310,6 +312,41 @@ function CampaignSetup.setMissionPack(missionPackName)
     else
         log("No mission pack selected")
     end
+end
+
+--- Set crusade supplement
+-- @param supplementId string Supplement ID ("none", "pariah_nexus")
+function CampaignSetup.setCrusadeSupplement(supplementId)
+    CampaignSetup.wizardData.crusadeSupplement = supplementId or "none"
+
+    -- Also set the missionPack field for backward compatibility
+    if supplementId == "none" then
+        CampaignSetup.wizardData.missionPack = nil
+    else
+        -- Find the display name from Constants
+        for _, supp in ipairs(Constants.CRUSADE_SUPPLEMENTS) do
+            if supp.id == supplementId then
+                CampaignSetup.wizardData.missionPack = supp.name
+                break
+            end
+        end
+    end
+
+    log("Crusade supplement set to: " .. CampaignSetup.wizardData.crusadeSupplement)
+end
+
+--- Get supplement description for UI display
+-- @param supplementId string Supplement ID
+-- @return string Description text
+function CampaignSetup._getSupplementDescription(supplementId)
+    local descriptions = {
+        none = "Standard 10th Edition Crusade rules with no additional supplement mechanics.",
+        tyrannic_war = "The Fourth Tyrannic War - Form alliances, fight across three campaign phases, and unlock Monster Hunter and Striding Behemoth upgrade trees.\n\nThis will track:\n  - Tyrannic War Veteran Tally (per unit)\n  - Alliance assignments (Defenders / Invaders / Raiders)\n  - Campaign Phases (3 phases)\n  - Upgrade Trees (Monster Hunters, Striding Behemoths)",
+        pariah_nexus = "The Nephilim War - Harvest Blackstone Fragments, form alliances of Seekers, Protectors, or Interlopers, and battle across three campaign phases using Strategic Footings.\n\nThis will track:\n  - Blackstone Fragments (per player)\n  - Alliance assignments (Seekers / Protectors / Interlopers)\n  - Campaign Phases (3 phases)\n  - Strategic Footings (Aggressive / Balanced / Defensive)",
+        nachmund = "The Sangua Terran War - Battle for control of Strategic Sites using Tactical Reserves and Surgical Deep Strikes.\n\nThis will track:\n  - Battle Points, Strategic Asset Points, Campaign Victory Points\n  - Alliance assignments (Guardians / Despoilers / Marauders)\n  - Campaign Phases (3 phases)\n  - Strategic Sites and Control Levels",
+        armageddon = "The 4th War for Armageddon - A tree-based campaign system with Hellscapes terrain, Anomalies, and unbound daemon forces.\n\nThis will track:\n  - Tree-based mission progression\n  - Anomalies (warp-spawned battlefield events)\n  - Hellscapes terrain effects"
+    }
+    return descriptions[supplementId] or ""
 end
 
 -- ============================================================================
@@ -357,8 +394,18 @@ function CampaignSetup.getCampaignSummary()
         table.insert(summary, line)
     end
 
+    -- Supplement info
+    table.insert(summary, "")
+    local supplementName = "Core Rules Only"
+    for _, supp in ipairs(Constants.CRUSADE_SUPPLEMENTS) do
+        if supp.id == wd.crusadeSupplement then
+            supplementName = supp.name
+            break
+        end
+    end
+    table.insert(summary, "Crusade Supplement: " .. supplementName)
+
     if wd.missionPack then
-        table.insert(summary, "")
         table.insert(summary, "Mission Pack: " .. wd.missionPack)
     end
 
@@ -386,8 +433,15 @@ function CampaignSetup.createCampaign()
         description = wd.campaignDescription,
         supplyLimit = wd.supplyLimit,
         missionPack = wd.missionPack,
+        crusadeSupplement = wd.crusadeSupplement or "none",
         resources = {}
     }
+
+    -- Set supplement-specific campaign phase count from SUPPLEMENT_DATA
+    local suppData = Constants.SUPPLEMENT_DATA[wd.crusadeSupplement]
+    if suppData and suppData.campaignPhases and suppData.campaignPhases > 0 then
+        campaignConfig.campaignPhaseCount = suppData.campaignPhases
+    end
 
     local campaign = DataModel.createCampaign(
         wd.campaignName,
@@ -469,7 +523,7 @@ CampaignSetup._stepDescriptions = {
     "Name your campaign and set basic rules",
     "Configure the territory hex map",
     "Add the players joining this crusade",
-    "Optionally choose a mission pack",
+    "Choose a Crusade supplement for your campaign",
     "Review your settings and create the campaign"
 }
 
@@ -890,31 +944,86 @@ function CampaignSetup._buildStep3Content()
     return children
 end
 
---- Build Step 4 content: Mission Pack Selection
+--- Build Step 4 content: Crusade Supplement Selection
 function CampaignSetup._buildStep4Content()
     local wd = CampaignSetup.wizardData
-    return {
+    local selectedSupplement = wd.crusadeSupplement or "none"
+
+    local children = {
         { tag = "Text", attributes = {
-            text = "If your group uses a specific mission pack, enter its name below.",
+            text = "Select a Crusade supplement to add campaign-specific rules and tracking.",
             fontSize = "12", color = "#999999"
         } },
         { tag = "Text", attributes = {
-            text = "This is optional - you can skip this step.",
+            text = "Supplements add mechanics like resources, alliances, and special agendas.",
             fontSize = "11", color = "#666666"
         } },
         { tag = "Panel", attributes = { height = "8" } },
-        { tag = "Text", attributes = { text = "Mission Pack Name", fontSize = "13", color = "#BBBBBB" } },
-        { tag = "InputField", attributes = {
-            id = "campaignSetup_missionPackInput",
-            text = wd.missionPack or "",
-            placeholder = "Leave blank to skip",
-            fontSize = "14",
-            preferredHeight = "35",
-            color = "#1A1A2E",
-            textColor = "#EEEEEE",
-            onValueChanged = "onUIButtonClick"
-        } }
+        { tag = "Text", attributes = { text = "Crusade Supplement", fontSize = "13", color = "#D4A843" } },
     }
+
+    -- Build supplement selection buttons
+    for _, supp in ipairs(Constants.CRUSADE_SUPPLEMENTS) do
+        local isSelected = (supp.id == selectedSupplement)
+        local btnColor = isSelected and "#2E6B3A|#3D8B4D|#1E4B2A|#152E1A" or "#333355|#444477|#222244|#111133"
+        local textColor = isSelected and "#FFFFFF" or "#AAAAAA"
+        local prefix = isSelected and "[X] " or "[  ] "
+
+        table.insert(children, { tag = "Button", attributes = {
+            id = "campaignSetup_supplement_" .. supp.id,
+            onClick = "onUIButtonClick",
+            fontSize = "13",
+            height = "32",
+            fontStyle = isSelected and "Bold" or "Normal",
+            colors = btnColor,
+            textColor = textColor
+        }, value = prefix .. supp.name })
+    end
+
+    -- Show description of selected supplement
+    table.insert(children, { tag = "Panel", attributes = { height = "8" } })
+    table.insert(children, { tag = "Panel", attributes = { height = "1", color = "#333333" } })
+    table.insert(children, { tag = "Panel", attributes = { height = "6" } })
+
+    local descText = CampaignSetup._getSupplementDescription(selectedSupplement)
+    if descText ~= "" then
+        table.insert(children, { tag = "Text", attributes = {
+            text = descText,
+            fontSize = "11", color = "#BBBBBB"
+        } })
+    end
+
+    -- Show alliance info for supplements that have alliance types
+    local suppData = Constants.SUPPLEMENT_DATA[selectedSupplement]
+    if suppData and suppData.allianceTypes and #suppData.allianceTypes > 0 then
+        table.insert(children, { tag = "Panel", attributes = { height = "6" } })
+        table.insert(children, { tag = "Text", attributes = {
+            text = "ALLIANCE TYPES",
+            fontSize = "12", color = "#D4A843", fontStyle = "Bold"
+        } })
+
+        for _, allianceInfo in ipairs(suppData.allianceTypes) do
+            table.insert(children, {
+                tag = "HorizontalLayout",
+                attributes = { spacing = "5", height = "22" },
+                children = {
+                    { tag = "Panel", attributes = { width = "4", height = "100%", color = "#8B6914" } },
+                    { tag = "Text", attributes = {
+                        text = allianceInfo.name .. " - " .. allianceInfo.description,
+                        fontSize = "10", color = "#CCCCCC"
+                    } }
+                }
+            })
+        end
+
+        table.insert(children, { tag = "Panel", attributes = { height = "4" } })
+        table.insert(children, { tag = "Text", attributes = {
+            text = "Players will be assigned to alliances after campaign creation.",
+            fontSize = "10", color = "#666666"
+        } })
+    end
+
+    return children
 end
 
 --- Build Step 5 content: Review & Create
@@ -992,12 +1101,38 @@ function CampaignSetup._buildStep5Content()
         end
     end
 
-    -- Mission pack
-    if wd.missionPack then
-        table.insert(children, { tag = "Panel", attributes = { height = "4" } })
+    -- Crusade Supplement
+    table.insert(children, { tag = "Panel", attributes = { height = "4" } })
+    table.insert(children, { tag = "Panel", attributes = { height = "1", color = "#333333" } })
+    table.insert(children, { tag = "Panel", attributes = { height = "4" } })
+
+    local supplementName = "Core Rules Only"
+    for _, supp in ipairs(Constants.CRUSADE_SUPPLEMENTS) do
+        if supp.id == wd.crusadeSupplement then
+            supplementName = supp.name
+            break
+        end
+    end
+
+    table.insert(children, { tag = "Text", attributes = {
+        text = "CRUSADE SUPPLEMENT",
+        fontSize = "13", color = "#D4A843"
+    } })
+    table.insert(children, { tag = "Text", attributes = {
+        text = supplementName,
+        fontSize = "12", color = "#BBBBBB"
+    } })
+
+    local trackingInfo = {
+        tyrannic_war = "Tracks: Veteran Tally, Alliances, Campaign Phases, Upgrade Trees",
+        pariah_nexus = "Tracks: Blackstone Fragments, Alliances, Campaign Phases, Strategic Footings",
+        nachmund = "Tracks: Battle Points, SAP, CVP, Alliances, Strategic Sites",
+        armageddon = "Tracks: Tree-based campaign, Anomalies, Hellscapes"
+    }
+    if trackingInfo[wd.crusadeSupplement] then
         table.insert(children, { tag = "Text", attributes = {
-            text = "Mission Pack: " .. wd.missionPack,
-            fontSize = "12", color = "#BBBBBB"
+            text = trackingInfo[wd.crusadeSupplement],
+            fontSize = "10", color = "#888888"
         } })
     end
 
@@ -1123,7 +1258,14 @@ function CampaignSetup.handleClick(player, value, id)
             }
         end
 
-    -- Step 4: Mission pack
+    -- Step 4: Crusade supplement selection
+    elseif string.match(id, "^campaignSetup_supplement_(.+)") then
+        local supplementId = string.match(id, "^campaignSetup_supplement_(.+)")
+        CampaignSetup.setCrusadeSupplement(supplementId)
+        -- Re-render to update button states and description
+        CampaignSetup.renderStepContent(4)
+
+    -- Step 4: Legacy mission pack input (kept for backward compatibility)
     elseif id == "campaignSetup_missionPackInput" then
         if value and value ~= "" then
             CampaignSetup.setMissionPack(value)

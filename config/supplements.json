@@ -1,0 +1,220 @@
+{
+  "supplements": {
+    "none": {
+      "id": "none",
+      "name": "Core Rules Only",
+      "description": "Standard 10th Edition Crusade rules with no supplement.",
+      "resources": [],
+      "allianceTypes": [],
+      "campaignPhases": 0,
+      "hasStrategicFootings": false
+    },
+    "tyrannic_war": {
+      "id": "tyrannic_war",
+      "name": "Tyrannic War",
+      "description": "The Fourth Tyrannic War. Form alliances, fight across three campaign phases, and unlock Monster Hunter and Striding Behemoth upgrade trees as your forces battle the Tyranid menace.",
+      "resources": [
+        {
+          "name": "Tyrannic War Veteran Tally",
+          "description": "Track enemy kills to unlock upgrade tree abilities. Earn tally marks for destroying enemy units; bonus marks for slaying Striding Behemoths.",
+          "isShared": false,
+          "initialValue": 0,
+          "maxValue": null,
+          "trackPerPlayer": false,
+          "trackPerUnit": true
+        },
+        {
+          "name": "Campaign Points",
+          "description": "Points earned by your alliance during each campaign phase.",
+          "isShared": true,
+          "initialValue": 0,
+          "maxValue": null,
+          "trackPerPlayer": false
+        }
+      ],
+      "allianceTypes": [
+        {
+          "name": "Defenders",
+          "description": "Fight to protect Imperial worlds from the Tyranid menace."
+        },
+        {
+          "name": "Invaders",
+          "description": "Tyranid swarms and Chaos forces exploiting the conflict."
+        },
+        {
+          "name": "Raiders",
+          "description": "Opportunistic xenos and renegades raiding amidst the war."
+        }
+      ],
+      "campaignPhases": 3,
+      "hasStrategicFootings": false,
+      "upgradeTrees": [
+        {
+          "name": "Monster Hunters",
+          "keywords": ["INFANTRY", "MOUNTED"],
+          "cost": "1 RP",
+          "description": "Upgrade INFANTRY or MOUNTED units. Gain Tyrannic War Veteran keyword and the Giantslayers ability (reroll 1s to hit/wound vs VEHICLE and MONSTER). At 10 tally marks, select a new upgrade from the tree."
+        },
+        {
+          "name": "Striding Behemoths",
+          "keywords": ["MONSTER", "WALKER"],
+          "cost": "1 RP",
+          "description": "Upgrade MONSTER or WALKER units. Gain Tyrannic War Veteran keyword and access to the Striding Behemoth upgrade tree. Destructive Impulse earns extra tally marks per kill."
+        }
+      ]
+    },
+    "pariah_nexus": {
+      "id": "pariah_nexus",
+      "name": "Pariah Nexus",
+      "description": "The Nephilim War. Harvest Blackstone Fragments, form alliances of Seekers, Protectors, or Interlopers, and battle across three campaign phases using Strategic Footings.",
+      "resources": [
+        {
+          "name": "Blackstone Fragments",
+          "description": "Noctilith shards harvested from the Pariah Nexus. Spend to purchase Crusade Blessings, Warlord XP, or unique relics.",
+          "isShared": false,
+          "initialValue": 0,
+          "maxValue": null,
+          "trackPerPlayer": true
+        },
+        {
+          "name": "Campaign Points",
+          "description": "Points earned by your alliance during each campaign phase. The alliance with the most at the end of each phase earns Strategic Points.",
+          "isShared": true,
+          "initialValue": 0,
+          "maxValue": null,
+          "trackPerPlayer": false
+        }
+      ],
+      "allianceTypes": [
+        {
+          "name": "Seekers",
+          "description": "Those who seek to harvest the blackstone and end the Stilling. Imperial forces are best suited."
+        },
+        {
+          "name": "Protectors",
+          "description": "Those who wish to protect the blackstone from others. Necrons and those with their own goals for noctilith."
+        },
+        {
+          "name": "Interlopers",
+          "description": "Chaos warlords, Aeldari raiders, Ork marauders, and others drawn to the Pariah Nexus."
+        }
+      ],
+      "campaignPhases": 3,
+      "hasStrategicFootings": true,
+      "strategicFootings": [
+        {
+          "name": "Aggressive",
+          "description": "Commit to an all-out assault."
+        },
+        {
+          "name": "Balanced",
+          "description": "Maintain tactical flexibility."
+        },
+        {
+          "name": "Defensive",
+          "description": "Dig in and hold your ground."
+        }
+      ],
+      "crusadeBlessings": [
+        {
+          "name": "Single-Minded Seeker",
+          "cost": 10,
+          "description": "After each game where the bearer is your Warlord, roll a D6 (add +2 if you won). On a 6+, gain 3 Blackstone Fragments.",
+          "type": "Warlord Upgrade"
+        },
+        {
+          "name": "Neuro-Emitter",
+          "cost": 15,
+          "description": "Once per battle, in your opponent's Shooting phase or at the start of the Fight phase, select up to three friendly units. Until end of phase, those units have Feel No Pain 5+ against Psychic Attacks.",
+          "type": "Equipment"
+        },
+        {
+          "name": "Acquisitive Opportunist",
+          "cost": 15,
+          "description": "Warlord gains ability based on Strategic Footing: Aggressive = Scouts 6\", Balanced = Lone Operative, Defensive = Stealth.",
+          "type": "Warlord Upgrade"
+        },
+        {
+          "name": "Empathic Disinclinator",
+          "cost": 20,
+          "description": "Before battle, select one objective marker. Friendly units within range of that marker have a 5+ invulnerable save.",
+          "type": "Equipment"
+        },
+        {
+          "name": "Empyrically Polarised Blackstone",
+          "cost": 20,
+          "description": "During the Select Strategic Footing step, after selections are revealed, you may change your Strategic Footing. Once per campaign phase.",
+          "type": "Special"
+        }
+      ]
+    },
+    "nachmund": {
+      "id": "nachmund",
+      "name": "Nachmund Gauntlet",
+      "description": "The Sangua Terran War. Battle for control of Strategic Sites across the Nachmund Gauntlet using Tactical Reserves and Surgical Deep Strikes. Form alliances of Guardians, Despoilers, or Marauders.",
+      "resources": [
+        {
+          "name": "Battle Points",
+          "description": "Earned from battle outcomes. The alliance with the most Battle Points each phase collects rewards first.",
+          "isShared": true,
+          "initialValue": 0,
+          "maxValue": null,
+          "trackPerPlayer": false
+        },
+        {
+          "name": "Strategic Asset Points",
+          "description": "Allocated to capture and upgrade Strategic Sites. The alliance with the most SAP collects Strategic Goals rewards first.",
+          "isShared": true,
+          "initialValue": 0,
+          "maxValue": null,
+          "trackPerPlayer": false
+        },
+        {
+          "name": "Campaign Victory Points",
+          "description": "Earned across all phases. The alliance with the most CVP at the end of Phase 3 wins.",
+          "isShared": true,
+          "initialValue": 0,
+          "maxValue": null,
+          "trackPerPlayer": false
+        }
+      ],
+      "allianceTypes": [
+        {
+          "name": "Guardians",
+          "description": "Protect the planet Sangua Terra from the forces of Chaos."
+        },
+        {
+          "name": "Despoilers",
+          "description": "Conquer the Nachmund Gauntlet for Abaddon the Despoiler."
+        },
+        {
+          "name": "Marauders",
+          "description": "Opportunistic raiders and xenos seeking plunder amidst the war."
+        }
+      ],
+      "campaignPhases": 3,
+      "hasStrategicFootings": false,
+      "hasTacticalReserves": true,
+      "hasStrategicSites": true,
+      "strategicSites": [
+        {
+          "name": "Strategic Site",
+          "description": "Controllable locations on the campaign map. Alliances allocate SAP to capture and upgrade sites. Control Level 3 (Secured) grants powerful alliance-wide bonuses.",
+          "controlLevels": 3
+        }
+      ]
+    },
+    "armageddon": {
+      "id": "armageddon",
+      "name": "Armageddon",
+      "description": "The 4th War for Armageddon. A tree-based campaign system where Chaos forces pour through the Red Angel's Gate. Features Hellscapes terrain, Anomalies, and unbound daemon forces.",
+      "resources": [],
+      "allianceTypes": [],
+      "campaignPhases": 0,
+      "hasStrategicFootings": false,
+      "hasTreeCampaign": true,
+      "hasAnomalies": true,
+      "hasHellscapes": true
+    }
+  }
+}

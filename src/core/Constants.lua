@@ -265,6 +265,70 @@ EVENT_TYPES = {
 }
 
 -- ============================================================================
+-- CRUSADE SUPPLEMENTS
+-- ============================================================================
+
+CRUSADE_SUPPLEMENTS = {
+    { id = "none", name = "Core Rules Only" },
+    { id = "tyrannic_war", name = "Tyrannic War" },
+    { id = "pariah_nexus", name = "Pariah Nexus" },
+    { id = "nachmund", name = "Nachmund Gauntlet" },
+    { id = "armageddon", name = "Armageddon" }
+}
+
+-- Supplement-specific data: alliance types, campaign phases, features
+SUPPLEMENT_DATA = {
+    tyrannic_war = {
+        campaignPhases = 3,
+        allianceTypes = {
+            { name = "Defenders", description = "Fight to protect Imperial worlds from the Tyranid menace." },
+            { name = "Invaders", description = "Tyranid swarms and Chaos forces exploiting the conflict." },
+            { name = "Raiders", description = "Opportunistic xenos and renegades raiding amidst the war." }
+        },
+        hasStrategicFootings = false,
+        hasUpgradeTrees = true
+    },
+    pariah_nexus = {
+        campaignPhases = 3,
+        allianceTypes = {
+            { name = "Seekers", description = "Harvest blackstone to end the Stilling. Imperial forces best suited." },
+            { name = "Protectors", description = "Guard the blackstone from outsiders. Necrons and those with their own noctilith goals." },
+            { name = "Interlopers", description = "Chaos raiders, Aeldari, Orks, and others drawn to the Pariah Nexus." }
+        },
+        hasStrategicFootings = true,
+        hasUpgradeTrees = false
+    },
+    nachmund = {
+        campaignPhases = 3,
+        allianceTypes = {
+            { name = "Guardians", description = "Protect the planet Sangua Terra from the forces of Chaos." },
+            { name = "Despoilers", description = "Conquer the Nachmund Gauntlet for Abaddon the Despoiler." },
+            { name = "Marauders", description = "Opportunistic raiders and xenos seeking plunder amidst the war." }
+        },
+        hasStrategicFootings = false,
+        hasStrategicSites = true,
+        hasTacticalReserves = true
+    },
+    armageddon = {
+        campaignPhases = 0, -- Tree-based campaign, not phased
+        allianceTypes = {},
+        hasStrategicFootings = false,
+        hasTreeCampaign = true,
+        hasAnomalies = true
+    }
+}
+
+-- Strategic Footings (Pariah Nexus)
+STRATEGIC_FOOTINGS = {
+    "Aggressive",
+    "Balanced",
+    "Defensive"
+}
+
+-- Backward-compat alias
+PARIAH_NEXUS_ALLIANCES = { "Seekers", "Protectors", "Interlopers" }
+
+-- ============================================================================
 -- BATTLE SIZES
 -- ============================================================================
 
@@ -328,5 +392,9 @@ return {
     RELIC_TIERS = RELIC_TIERS,
     EVENT_TYPES = EVENT_TYPES,
     BATTLE_SIZES = BATTLE_SIZES,
-    BATTLEFIELD_ROLES = BATTLEFIELD_ROLES
+    BATTLEFIELD_ROLES = BATTLEFIELD_ROLES,
+    CRUSADE_SUPPLEMENTS = CRUSADE_SUPPLEMENTS,
+    SUPPLEMENT_DATA = SUPPLEMENT_DATA,
+    PARIAH_NEXUS_ALLIANCES = PARIAH_NEXUS_ALLIANCES,
+    STRATEGIC_FOOTINGS = STRATEGIC_FOOTINGS
 }

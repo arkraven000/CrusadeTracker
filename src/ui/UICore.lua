@@ -65,7 +65,8 @@ function UICore.initialize()
         recordBattle = false,
         battleLog = false,
         battleHonours = false,
-        requisitionsMenu = false
+        requisitionsMenu = false,
+        supplement = false
     }
 
     UICore.initialized = true
@@ -223,6 +224,8 @@ function UICore.onButtonClick(player, value, id)
         UICore.handleNewRecruitClick(player, value, id)
     elseif string.match(id, "^battleLog_") then
         UICore.handleBattleLogClick(player, value, id)
+    elseif string.match(id, "^supplement_") then
+        UICore.handleSupplementClick(player, value, id)
     elseif string.match(id, "^mapView_") then
         UICore.handleMapViewClick(player, value, id)
     elseif string.match(id, "^mapControl") or id == "mapAddBonus" or id == "mapSelectPlayer" then
@@ -270,6 +273,11 @@ function UICore.handleMainPanelClick(player, value, id)
         UICore.showPanel("recordBattle")
     elseif id == "mainPanel_battleLog" then
         UICore.showPanel("battleLog")
+    elseif id == "mainPanel_supplement" then
+        UICore.showPanel("supplement")
+        if UICore.supplementModule then
+            UICore.supplementModule.refresh()
+        end
     elseif id == "mainPanel_settings" then
         UICore.showPanel("settings")
     elseif id == "mainPanel_save" then
@@ -403,6 +411,19 @@ function UICore.handleMapControlsClick(player, value, id)
     end
 end
 
+--- Handle supplement panel clicks
+-- @param player object Player who clicked
+-- @param value string Button value
+-- @param id string Button ID
+function UICore.handleSupplementClick(player, value, id)
+    if id == "supplement_close" then
+        UICore.hidePanel("supplement")
+        UICore.showPanel("mainCampaign")
+    elseif UICore.supplementModule then
+        UICore.supplementModule.handleClick(player, value, id)
+    end
+end
+
 -- ============================================================================
 -- UI UPDATE HELPERS
 -- ============================================================================
@@ -435,6 +456,8 @@ function UICore.refreshPanel(panelName)
         UICore.manageForcesModule.refresh()
     elseif panelName == "unitDetails" and UICore.unitDetailsModule then
         UICore.unitDetailsModule.refresh()
+    elseif panelName == "supplement" and UICore.supplementModule then
+        UICore.supplementModule.refresh()
     end
 end
 
@@ -752,6 +775,8 @@ function UICore.registerModule(moduleName, moduleRef)
         UICore.mapControlsModule = moduleRef
     elseif moduleName == "battleLog" then
         UICore.battleLogModule = moduleRef
+    elseif moduleName == "supplement" then
+        UICore.supplementModule = moduleRef
     end
 
     log("UI module registered: " .. moduleName)
