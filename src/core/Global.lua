@@ -615,17 +615,22 @@ function completeCampaignSetup(wizardData)
     if campaign then
         CrusadeCampaign = campaign
 
-        -- Initialize supplement-specific alliances (e.g., Pariah Nexus)
-        if campaign.crusadeSupplement == "pariah_nexus" then
-            for _, allianceName in ipairs(Constants.PARIAH_NEXUS_ALLIANCES) do
-                local alliance = DataModel.createAlliance(allianceName, {}, {
+        -- Initialize supplement-specific alliances from SUPPLEMENT_DATA
+        local suppData = Constants.SUPPLEMENT_DATA[campaign.crusadeSupplement]
+        if suppData and suppData.allianceTypes and #suppData.allianceTypes > 0 then
+            for _, allianceInfo in ipairs(suppData.allianceTypes) do
+                local alliance = DataModel.createAlliance(allianceInfo.name, {}, {
                     shareVictory = true,
                     shareResources = false,
                     shareTerritory = false
                 })
                 campaign.alliances[alliance.id] = alliance
             end
-            Utils.logInfo("Pariah Nexus alliances created: Seekers, Protectors, Interlopers")
+            local allianceNames = {}
+            for _, a in ipairs(suppData.allianceTypes) do
+                table.insert(allianceNames, a.name)
+            end
+            Utils.logInfo("Supplement alliances created: " .. table.concat(allianceNames, ", "))
         end
 
         -- Create notebooks (ASYNC)

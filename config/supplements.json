@@ -9,6 +9,60 @@
       "campaignPhases": 0,
       "hasStrategicFootings": false
     },
+    "tyrannic_war": {
+      "id": "tyrannic_war",
+      "name": "Tyrannic War",
+      "description": "The Fourth Tyrannic War. Form alliances, fight across three campaign phases, and unlock Monster Hunter and Striding Behemoth upgrade trees as your forces battle the Tyranid menace.",
+      "resources": [
+        {
+          "name": "Tyrannic War Veteran Tally",
+          "description": "Track enemy kills to unlock upgrade tree abilities. Earn tally marks for destroying enemy units; bonus marks for slaying Striding Behemoths.",
+          "isShared": false,
+          "initialValue": 0,
+          "maxValue": null,
+          "trackPerPlayer": false,
+          "trackPerUnit": true
+        },
+        {
+          "name": "Campaign Points",
+          "description": "Points earned by your alliance during each campaign phase.",
+          "isShared": true,
+          "initialValue": 0,
+          "maxValue": null,
+          "trackPerPlayer": false
+        }
+      ],
+      "allianceTypes": [
+        {
+          "name": "Defenders",
+          "description": "Fight to protect Imperial worlds from the Tyranid menace."
+        },
+        {
+          "name": "Invaders",
+          "description": "Tyranid swarms and Chaos forces exploiting the conflict."
+        },
+        {
+          "name": "Raiders",
+          "description": "Opportunistic xenos and renegades raiding amidst the war."
+        }
+      ],
+      "campaignPhases": 3,
+      "hasStrategicFootings": false,
+      "upgradeTrees": [
+        {
+          "name": "Monster Hunters",
+          "keywords": ["INFANTRY", "MOUNTED"],
+          "cost": "1 RP",
+          "description": "Upgrade INFANTRY or MOUNTED units. Gain Tyrannic War Veteran keyword and the Giantslayers ability (reroll 1s to hit/wound vs VEHICLE and MONSTER). At 10 tally marks, select a new upgrade from the tree."
+        },
+        {
+          "name": "Striding Behemoths",
+          "keywords": ["MONSTER", "WALKER"],
+          "cost": "1 RP",
+          "description": "Upgrade MONSTER or WALKER units. Gain Tyrannic War Veteran keyword and access to the Striding Behemoth upgrade tree. Destructive Impulse earns extra tally marks per kill."
+        }
+      ]
+    },
     "pariah_nexus": {
       "id": "pariah_nexus",
       "name": "Pariah Nexus",
@@ -93,6 +147,74 @@
           "type": "Special"
         }
       ]
+    },
+    "nachmund": {
+      "id": "nachmund",
+      "name": "Nachmund Gauntlet",
+      "description": "The Sangua Terran War. Battle for control of Strategic Sites across the Nachmund Gauntlet using Tactical Reserves and Surgical Deep Strikes. Form alliances of Guardians, Despoilers, or Marauders.",
+      "resources": [
+        {
+          "name": "Battle Points",
+          "description": "Earned from battle outcomes. The alliance with the most Battle Points each phase collects rewards first.",
+          "isShared": true,
+          "initialValue": 0,
+          "maxValue": null,
+          "trackPerPlayer": false
+        },
+        {
+          "name": "Strategic Asset Points",
+          "description": "Allocated to capture and upgrade Strategic Sites. The alliance with the most SAP collects Strategic Goals rewards first.",
+          "isShared": true,
+          "initialValue": 0,
+          "maxValue": null,
+          "trackPerPlayer": false
+        },
+        {
+          "name": "Campaign Victory Points",
+          "description": "Earned across all phases. The alliance with the most CVP at the end of Phase 3 wins.",
+          "isShared": true,
+          "initialValue": 0,
+          "maxValue": null,
+          "trackPerPlayer": false
+        }
+      ],
+      "allianceTypes": [
+        {
+          "name": "Guardians",
+          "description": "Protect the planet Sangua Terra from the forces of Chaos."
+        },
+        {
+          "name": "Despoilers",
+          "description": "Conquer the Nachmund Gauntlet for Abaddon the Despoiler."
+        },
+        {
+          "name": "Marauders",
+          "description": "Opportunistic raiders and xenos seeking plunder amidst the war."
+        }
+      ],
+      "campaignPhases": 3,
+      "hasStrategicFootings": false,
+      "hasTacticalReserves": true,
+      "hasStrategicSites": true,
+      "strategicSites": [
+        {
+          "name": "Strategic Site",
+          "description": "Controllable locations on the campaign map. Alliances allocate SAP to capture and upgrade sites. Control Level 3 (Secured) grants powerful alliance-wide bonuses.",
+          "controlLevels": 3
+        }
+      ]
+    },
+    "armageddon": {
+      "id": "armageddon",
+      "name": "Armageddon",
+      "description": "The 4th War for Armageddon. A tree-based campaign system where Chaos forces pour through the Red Angel's Gate. Features Hellscapes terrain, Anomalies, and unbound daemon forces.",
+      "resources": [],
+      "allianceTypes": [],
+      "campaignPhases": 0,
+      "hasStrategicFootings": false,
+      "hasTreeCampaign": true,
+      "hasAnomalies": true,
+      "hasHellscapes": true
     }
   }
 }

@@ -341,7 +341,10 @@ end
 function CampaignSetup._getSupplementDescription(supplementId)
     local descriptions = {
         none = "Standard 10th Edition Crusade rules with no additional supplement mechanics.",
-        pariah_nexus = "The Nephilim War - Harvest Blackstone Fragments, form alliances of Seekers, Protectors, or Interlopers, and battle across three campaign phases using Strategic Footings.\n\nThis will track:\n  - Blackstone Fragments (per player)\n  - Alliance assignments (Seekers / Protectors / Interlopers)\n  - Campaign Phases (3 phases)\n  - Strategic Footings (Aggressive / Balanced / Defensive)"
+        tyrannic_war = "The Fourth Tyrannic War - Form alliances, fight across three campaign phases, and unlock Monster Hunter and Striding Behemoth upgrade trees.\n\nThis will track:\n  - Tyrannic War Veteran Tally (per unit)\n  - Alliance assignments (Defenders / Invaders / Raiders)\n  - Campaign Phases (3 phases)\n  - Upgrade Trees (Monster Hunters, Striding Behemoths)",
+        pariah_nexus = "The Nephilim War - Harvest Blackstone Fragments, form alliances of Seekers, Protectors, or Interlopers, and battle across three campaign phases using Strategic Footings.\n\nThis will track:\n  - Blackstone Fragments (per player)\n  - Alliance assignments (Seekers / Protectors / Interlopers)\n  - Campaign Phases (3 phases)\n  - Strategic Footings (Aggressive / Balanced / Defensive)",
+        nachmund = "The Sangua Terran War - Battle for control of Strategic Sites using Tactical Reserves and Surgical Deep Strikes.\n\nThis will track:\n  - Battle Points, Strategic Asset Points, Campaign Victory Points\n  - Alliance assignments (Guardians / Despoilers / Marauders)\n  - Campaign Phases (3 phases)\n  - Strategic Sites and Control Levels",
+        armageddon = "The 4th War for Armageddon - A tree-based campaign system with Hellscapes terrain, Anomalies, and unbound daemon forces.\n\nThis will track:\n  - Tree-based mission progression\n  - Anomalies (warp-spawned battlefield events)\n  - Hellscapes terrain effects"
     }
     return descriptions[supplementId] or ""
 end
@@ -434,9 +437,10 @@ function CampaignSetup.createCampaign()
         resources = {}
     }
 
-    -- Set supplement-specific campaign phase count
-    if wd.crusadeSupplement == "pariah_nexus" then
-        campaignConfig.campaignPhaseCount = 3
+    -- Set supplement-specific campaign phase count from SUPPLEMENT_DATA
+    local suppData = Constants.SUPPLEMENT_DATA[wd.crusadeSupplement]
+    if suppData and suppData.campaignPhases and suppData.campaignPhases > 0 then
+        campaignConfig.campaignPhaseCount = suppData.campaignPhases
     end
 
     local campaign = DataModel.createCampaign(
@@ -989,28 +993,23 @@ function CampaignSetup._buildStep4Content()
         } })
     end
 
-    -- Show Pariah Nexus alliance info if selected
-    if selectedSupplement == "pariah_nexus" then
+    -- Show alliance info for supplements that have alliance types
+    local suppData = Constants.SUPPLEMENT_DATA[selectedSupplement]
+    if suppData and suppData.allianceTypes and #suppData.allianceTypes > 0 then
         table.insert(children, { tag = "Panel", attributes = { height = "6" } })
         table.insert(children, { tag = "Text", attributes = {
             text = "ALLIANCE TYPES",
             fontSize = "12", color = "#D4A843", fontStyle = "Bold"
         } })
 
-        local allianceDescriptions = {
-            Seekers = "Harvest blackstone to end the Stilling. Imperial forces best suited.",
-            Protectors = "Guard the blackstone from outsiders. Necrons and those with their own noctilith goals.",
-            Interlopers = "Chaos raiders, Aeldari, Orks, and others drawn to the Pariah Nexus."
-        }
-
-        for _, allianceName in ipairs(Constants.PARIAH_NEXUS_ALLIANCES) do
+        for _, allianceInfo in ipairs(suppData.allianceTypes) do
             table.insert(children, {
                 tag = "HorizontalLayout",
                 attributes = { spacing = "5", height = "22" },
                 children = {
                     { tag = "Panel", attributes = { width = "4", height = "100%", color = "#8B6914" } },
                     { tag = "Text", attributes = {
-                        text = allianceName .. " - " .. allianceDescriptions[allianceName],
+                        text = allianceInfo.name .. " - " .. allianceInfo.description,
                         fontSize = "10", color = "#CCCCCC"
                     } }
                 }
@@ -1124,9 +1123,15 @@ function CampaignSetup._buildStep5Content()
         fontSize = "12", color = "#BBBBBB"
     } })
 
-    if wd.crusadeSupplement == "pariah_nexus" then
+    local trackingInfo = {
+        tyrannic_war = "Tracks: Veteran Tally, Alliances, Campaign Phases, Upgrade Trees",
+        pariah_nexus = "Tracks: Blackstone Fragments, Alliances, Campaign Phases, Strategic Footings",
+        nachmund = "Tracks: Battle Points, SAP, CVP, Alliances, Strategic Sites",
+        armageddon = "Tracks: Tree-based campaign, Anomalies, Hellscapes"
+    }
+    if trackingInfo[wd.crusadeSupplement] then
         table.insert(children, { tag = "Text", attributes = {
-            text = "Tracks: Blackstone Fragments, Alliances, Campaign Phases, Strategic Footings",
+            text = trackingInfo[wd.crusadeSupplement],
             fontSize = "10", color = "#888888"
         } })
     end

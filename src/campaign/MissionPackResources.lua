@@ -271,11 +271,20 @@ end
 -- ============================================================================
 
 --- Get resource types for a specific crusade supplement
--- @param supplementId string Supplement ID ("none", "pariah_nexus")
+-- @param supplementId string Supplement ID ("none", "pariah_nexus", etc.)
 -- @return table Array of resource type definitions
 function getSupplementResourceTypes(supplementId)
-    if supplementId == "pariah_nexus" then
-        return {
+    local supplementResources = {
+        tyrannic_war = {
+            {
+                name = "Tyrannic War Veteran Tally",
+                description = "Track enemy kills for upgrade tree progression",
+                isShared = false,
+                initialValue = 0,
+                maxValue = nil
+            }
+        },
+        pariah_nexus = {
             {
                 name = "Blackstone Fragments",
                 description = "Noctilith shards harvested from the Pariah Nexus",
@@ -283,10 +292,33 @@ function getSupplementResourceTypes(supplementId)
                 initialValue = 0,
                 maxValue = nil
             }
+        },
+        nachmund = {
+            {
+                name = "Battle Points",
+                description = "Earned from battle outcomes each campaign phase",
+                isShared = false,
+                initialValue = 0,
+                maxValue = nil
+            },
+            {
+                name = "Strategic Asset Points",
+                description = "Allocated to capture and upgrade Strategic Sites",
+                isShared = false,
+                initialValue = 0,
+                maxValue = nil
+            },
+            {
+                name = "Campaign Victory Points",
+                description = "Accumulated across all phases to determine the winner",
+                isShared = false,
+                initialValue = 0,
+                maxValue = nil
+            }
         }
-    end
+    }
 
-    return {}
+    return supplementResources[supplementId] or {}
 end
 
 --- Initialize supplement resources for all players in a campaign
