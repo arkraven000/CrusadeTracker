@@ -615,6 +615,19 @@ function completeCampaignSetup(wizardData)
     if campaign then
         CrusadeCampaign = campaign
 
+        -- Initialize supplement-specific alliances (e.g., Pariah Nexus)
+        if campaign.crusadeSupplement == "pariah_nexus" then
+            for _, allianceName in ipairs(Constants.PARIAH_NEXUS_ALLIANCES) do
+                local alliance = DataModel.createAlliance(allianceName, {}, {
+                    shareVictory = true,
+                    shareResources = false,
+                    shareTerritory = false
+                })
+                campaign.alliances[alliance.id] = alliance
+            end
+            Utils.logInfo("Pariah Nexus alliances created: Seekers, Protectors, Interlopers")
+        end
+
         -- Create notebooks (ASYNC)
         Notebook.createCampaignNotebooks(campaign.name, function(notebookGUIDs)
             NotebookGUIDs = notebookGUIDs
@@ -629,6 +642,9 @@ function completeCampaignSetup(wizardData)
             startAutosaveTimer()
 
             broadcastToAll("Campaign created: " .. campaign.name, {0, 1, 0})
+            if campaign.crusadeSupplement and campaign.crusadeSupplement ~= "none" then
+                broadcastToAll("Crusade Supplement: " .. (campaign.missionPack or campaign.crusadeSupplement), {0.83, 0.66, 0.26})
+            end
             Utils.logInfo("Campaign setup completed successfully")
         end)
 

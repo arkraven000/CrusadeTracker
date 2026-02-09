@@ -36,6 +36,14 @@ function createCampaign(name, config)
         battleSizes = config.battleSizes or {},
         missionPack = config.missionPack or nil,
 
+        -- Crusade Supplement (e.g., "none", "pariah_nexus")
+        crusadeSupplement = config.crusadeSupplement or "none",
+        supplementConfig = config.supplementConfig or {},
+
+        -- Campaign Phase tracking (for supplements like Pariah Nexus)
+        currentCampaignPhase = 1,
+        campaignPhaseCount = config.campaignPhaseCount or 0,
+
         -- Organizational Data
         players = {},            -- Keyed by player ID
         alliances = {},          -- Keyed by alliance ID
@@ -93,8 +101,11 @@ function createPlayer(name, color, faction, config)
         battleTally = 0,
         victories = 0,
 
-        -- Mission Pack Resources
+        -- Mission Pack / Supplement Resources
         resources = {},          -- Keyed by resource name
+
+        -- Crusade Blessings (Pariah Nexus supplement)
+        crusadeBlessings = {},   -- Array of purchased blessing names
 
         -- Unit roster (array of unit IDs)
         orderOfBattle = {},

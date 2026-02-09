@@ -265,6 +265,29 @@ EVENT_TYPES = {
 }
 
 -- ============================================================================
+-- CRUSADE SUPPLEMENTS
+-- ============================================================================
+
+CRUSADE_SUPPLEMENTS = {
+    { id = "none", name = "Core Rules Only" },
+    { id = "pariah_nexus", name = "Pariah Nexus" }
+}
+
+-- Pariah Nexus Alliance Types
+PARIAH_NEXUS_ALLIANCES = {
+    "Seekers",
+    "Protectors",
+    "Interlopers"
+}
+
+-- Strategic Footings (Pariah Nexus)
+STRATEGIC_FOOTINGS = {
+    "Aggressive",
+    "Balanced",
+    "Defensive"
+}
+
+-- ============================================================================
 -- BATTLE SIZES
 -- ============================================================================
 
@@ -328,5 +351,8 @@ return {
     RELIC_TIERS = RELIC_TIERS,
     EVENT_TYPES = EVENT_TYPES,
     BATTLE_SIZES = BATTLE_SIZES,
-    BATTLEFIELD_ROLES = BATTLEFIELD_ROLES
+    BATTLEFIELD_ROLES = BATTLEFIELD_ROLES,
+    CRUSADE_SUPPLEMENTS = CRUSADE_SUPPLEMENTS,
+    PARIAH_NEXUS_ALLIANCES = PARIAH_NEXUS_ALLIANCES,
+    STRATEGIC_FOOTINGS = STRATEGIC_FOOTINGS
 }

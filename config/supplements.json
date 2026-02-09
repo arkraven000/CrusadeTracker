@@ -1,0 +1,98 @@
+{
+  "supplements": {
+    "none": {
+      "id": "none",
+      "name": "Core Rules Only",
+      "description": "Standard 10th Edition Crusade rules with no supplement.",
+      "resources": [],
+      "allianceTypes": [],
+      "campaignPhases": 0,
+      "hasStrategicFootings": false
+    },
+    "pariah_nexus": {
+      "id": "pariah_nexus",
+      "name": "Pariah Nexus",
+      "description": "The Nephilim War. Harvest Blackstone Fragments, form alliances of Seekers, Protectors, or Interlopers, and battle across three campaign phases using Strategic Footings.",
+      "resources": [
+        {
+          "name": "Blackstone Fragments",
+          "description": "Noctilith shards harvested from the Pariah Nexus. Spend to purchase Crusade Blessings, Warlord XP, or unique relics.",
+          "isShared": false,
+          "initialValue": 0,
+          "maxValue": null,
+          "trackPerPlayer": true
+        },
+        {
+          "name": "Campaign Points",
+          "description": "Points earned by your alliance during each campaign phase. The alliance with the most at the end of each phase earns Strategic Points.",
+          "isShared": true,
+          "initialValue": 0,
+          "maxValue": null,
+          "trackPerPlayer": false
+        }
+      ],
+      "allianceTypes": [
+        {
+          "name": "Seekers",
+          "description": "Those who seek to harvest the blackstone and end the Stilling. Imperial forces are best suited."
+        },
+        {
+          "name": "Protectors",
+          "description": "Those who wish to protect the blackstone from others. Necrons and those with their own goals for noctilith."
+        },
+        {
+          "name": "Interlopers",
+          "description": "Chaos warlords, Aeldari raiders, Ork marauders, and others drawn to the Pariah Nexus."
+        }
+      ],
+      "campaignPhases": 3,
+      "hasStrategicFootings": true,
+      "strategicFootings": [
+        {
+          "name": "Aggressive",
+          "description": "Commit to an all-out assault."
+        },
+        {
+          "name": "Balanced",
+          "description": "Maintain tactical flexibility."
+        },
+        {
+          "name": "Defensive",
+          "description": "Dig in and hold your ground."
+        }
+      ],
+      "crusadeBlessings": [
+        {
+          "name": "Single-Minded Seeker",
+          "cost": 10,
+          "description": "After each game where the bearer is your Warlord, roll a D6 (add +2 if you won). On a 6+, gain 3 Blackstone Fragments.",
+          "type": "Warlord Upgrade"
+        },
+        {
+          "name": "Neuro-Emitter",
+          "cost": 15,
+          "description": "Once per battle, in your opponent's Shooting phase or at the start of the Fight phase, select up to three friendly units. Until end of phase, those units have Feel No Pain 5+ against Psychic Attacks.",
+          "type": "Equipment"
+        },
+        {
+          "name": "Acquisitive Opportunist",
+          "cost": 15,
+          "description": "Warlord gains ability based on Strategic Footing: Aggressive = Scouts 6\", Balanced = Lone Operative, Defensive = Stealth.",
+          "type": "Warlord Upgrade"
+        },
+        {
+          "name": "Empathic Disinclinator",
+          "cost": 20,
+          "description": "Before battle, select one objective marker. Friendly units within range of that marker have a 5+ invulnerable save.",
+          "type": "Equipment"
+        },
+        {
+          "name": "Empyrically Polarised Blackstone",
+          "cost": 20,
+          "description": "During the Select Strategic Footing step, after selections are revealed, you may change your Strategic Footing. Once per campaign phase.",
+          "type": "Special"
+        }
+      ]
+    }
+  }
+}
