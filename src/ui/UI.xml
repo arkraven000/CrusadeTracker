@@ -249,6 +249,15 @@
                     Campaign Log
                 </Button>
 
+                <Button id="mainPanel_supplement"
+                        height="45"
+                        colors="#4A3A1A|#6B5520|#3A2A10|#2A1A08"
+                        textColor="#D4A843"
+                        onClick="onUIButtonClick"
+                        active="false">
+                    Crusade Supplement
+                </Button>
+
                 <Button id="mainPanel_settings"
                         height="45"
                         colors="#444444|#666666|#333333|#222222"
@@ -973,6 +982,45 @@
                     onClick="onUIButtonClick">
                 Close
             </Button>
+        </VerticalLayout>
+    </Panel>
+
+    <!-- Supplement Panel -->
+    <Panel id="supplementPanel"
+           width="100%"
+           height="100%"
+           active="false">
+
+        <VerticalLayout spacing="6" padding="12 15 12 15">
+            <!-- Header with Back Button -->
+            <HorizontalLayout spacing="10" height="35">
+                <Button id="supplement_close"
+                        width="20%"
+                        fontSize="12"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">
+                    Back
+                </Button>
+                <Text fontSize="20"
+                      fontStyle="Bold"
+                      color="#D4A843"
+                      alignment="MiddleCenter"
+                      width="80%">
+                    Crusade Supplement
+                </Text>
+            </HorizontalLayout>
+
+            <Panel height="2" />
+
+            <!-- Dynamic Content Area (populated by SupplementPanel.refresh) -->
+            <Panel id="supplementContentArea"
+                   width="100%"
+                   height="520">
+                <Text fontSize="12" color="#888888" alignment="MiddleCenter">
+                    Loading supplement data...
+                </Text>
+            </Panel>
         </VerticalLayout>
     </Panel>
 

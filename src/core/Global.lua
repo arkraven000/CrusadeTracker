@@ -71,6 +71,7 @@ local Statistics = require("src/campaign/Statistics")
 
 -- UI Modules (Phase 7)
 local ExportImport = require("src/ui/ExportImport")
+local SupplementPanel = require("src/ui/SupplementPanel")
 
 -- Map Modules (Phase 8)
 local FactionTokens = require("src/map/FactionTokens")
@@ -516,6 +517,7 @@ function createMainUI()
     UICore.registerModule("statisticsPanel", StatisticsPanel)
     UICore.registerModule("mapControls", MapControls)
     UICore.registerModule("mapView", MapView)
+    UICore.registerModule("supplement", SupplementPanel)
 
     -- Initialize modules with campaign data
     if CrusadeCampaign then
@@ -574,6 +576,14 @@ function createMainUI()
         else
             -- Hide "View Map" button when no map is configured
             UI.setAttribute("mainPanel_map", "active", "false")
+        end
+
+        -- Initialize supplement panel if a supplement is active
+        SupplementPanel.initialize(CrusadeCampaign)
+        if CrusadeCampaign.crusadeSupplement and CrusadeCampaign.crusadeSupplement ~= "none" then
+            UI.setAttribute("mainPanel_supplement", "active", "true")
+        else
+            UI.setAttribute("mainPanel_supplement", "active", "false")
         end
 
         -- Show main campaign panel
