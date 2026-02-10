@@ -384,7 +384,7 @@
                 <Text width="25%" color="#BBBBBB">Player:</Text>
                 <Dropdown id="manageForces_playerSelect"
                          width="75%"
-                         onChange="onUIButtonClick">
+                         onValueChanged="onUIButtonClick">
                 </Dropdown>
             </HorizontalLayout>
 
@@ -413,7 +413,7 @@
                            onValueChanged="onUIButtonClick" />
                 <Dropdown id="manageForces_sortBy"
                          width="40%"
-                         onChange="onUIButtonClick">
+                         onValueChanged="onUIButtonClick">
                     <Option value="name">Name</Option>
                     <Option value="role">Role</Option>
                     <Option value="xp">XP</Option>

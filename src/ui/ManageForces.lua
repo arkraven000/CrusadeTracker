@@ -106,8 +106,8 @@ function ManageForces.updatePlayerSelector()
     table.sort(options)
 
     -- Update dropdown
-    -- UICore.setDropdownOptions("manageForces_playerSelect", options)
-    -- UICore.setValue("manageForces_playerSelect", ManageForces.selectedPlayerId)
+    UICore.setDropdownOptions("manageForces_playerSelect", options)
+    UICore.setValue("manageForces_playerSelect", ManageForces.selectedPlayerId)
 end
 
 --- Update supply tracking display
@@ -119,9 +119,9 @@ function ManageForces.updateSupplyDisplay(player)
 
     -- Update text
     local supplyText = string.format("Supply: %d / %d PL", supplyUsed, supplyLimit)
-    -- UICore.setText("manageForces_supplyText", supplyText)
+    UICore.setText("manageForces_supplyText", supplyText)
 
-    -- Update progress bar
+    -- Update progress bar (Note: Panel elements don't support setValue for width, will fix in Phase 4)
     -- UICore.setValue("manageForces_supplyBar", supplyPercent)
 
     -- Change color based on usage
@@ -134,7 +134,7 @@ function ManageForces.updateSupplyDisplay(player)
         color = "#D4A843" -- Gold
     end
 
-    -- UICore.setColor("manageForces_supplyBar", color)
+    UICore.setColor("manageForces_supplyBar", color)
 end
 
 --- Update unit list display using dynamic XML table rendering
@@ -283,8 +283,8 @@ function ManageForces.addNewUnit()
     end
 
     -- Open Unit Details panel in "create" mode
-    -- UICore.showPanel("unitDetails")
-    -- UnitDetails.setMode("create", ManageForces.selectedPlayerId, nil)
+    UICore.showPanel("unitDetails")
+    UnitDetails.setMode("create", ManageForces.selectedPlayerId, nil)
 
     broadcastToAll("Opening unit creation panel...", {0.60, 0.60, 0.60})
     log("Add new unit for player: " .. ManageForces.selectedPlayerId)
@@ -299,8 +299,8 @@ function ManageForces.editUnit(unitId)
     end
 
     -- Open Unit Details panel in "edit" mode
-    -- UICore.showPanel("unitDetails")
-    -- UnitDetails.setMode("edit", ManageForces.selectedPlayerId, unitId)
+    UICore.showPanel("unitDetails")
+    UnitDetails.setMode("edit", ManageForces.selectedPlayerId, unitId)
 
     ManageForces.selectedUnitId = unitId
     broadcastToAll("Opening unit editor...", {0.60, 0.60, 0.60})
@@ -458,7 +458,7 @@ function ManageForces.handleClick(player, value, id)
         ManageForces.refresh()
 
     elseif id == "manageForces_close" then
-        -- UICore.hidePanel("manageForces")
+        UICore.hidePanel("manageForces")
 
     elseif string.match(id, "^manageForces_edit_") then
         local unitId = string.gsub(id, "^manageForces_edit_", "")

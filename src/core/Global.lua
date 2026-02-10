@@ -504,17 +504,17 @@ function createMainUI()
 
     -- Register UI modules
     UICore.registerModule("campaignSetup", CampaignSetup)
-    UICore.registerModule("playerManagement", PlayerManagement)
+    -- UICore.registerModule("playerManagement", PlayerManagement) -- TODO: No XML panel defined yet
     UICore.registerModule("settings", Settings)
     UICore.registerModule("campaignLog", CampaignLog)
     UICore.registerModule("manageForces", ManageForces)
     UICore.registerModule("unitDetails", UnitDetails)
     UICore.registerModule("recordBattle", RecordBattle)
     UICore.registerModule("battleLog", BattleLog)
-    UICore.registerModule("battleHonours", BattleHonours)
-    UICore.registerModule("requisitionsMenu", RequisitionsMenu)
-    UICore.registerModule("exportImport", ExportImport)
-    UICore.registerModule("statisticsPanel", StatisticsPanel)
+    -- UICore.registerModule("battleHonours", BattleHonours) -- TODO: No XML panel defined yet
+    -- UICore.registerModule("requisitionsMenu", RequisitionsMenu) -- TODO: No XML panel defined yet
+    -- UICore.registerModule("exportImport", ExportImport) -- TODO: No XML panel defined yet
+    -- UICore.registerModule("statisticsPanel", StatisticsPanel) -- TODO: No XML panel defined yet
     UICore.registerModule("mapControls", MapControls)
     UICore.registerModule("mapView", MapView)
     UICore.registerModule("supplement", SupplementPanel)
@@ -522,7 +522,7 @@ function createMainUI()
     -- Initialize modules with campaign data
     if CrusadeCampaign then
         MainPanel.initialize(CrusadeCampaign)
-        PlayerManagement.initialize(CrusadeCampaign)
+        -- PlayerManagement.initialize(CrusadeCampaign) -- TODO: Module not registered yet
         Settings.initialize(CrusadeCampaign)
         CampaignLog.initialize(CrusadeCampaign)
 
@@ -540,8 +540,8 @@ function createMainUI()
         BattleLog.initialize(CrusadeCampaign)
 
         -- Initialize Phase 5 modules (Battle Honours & Requisitions)
-        BattleHonours.initialize(CrusadeCampaign)
-        RequisitionsMenu.initialize(CrusadeCampaign)
+        -- BattleHonours.initialize(CrusadeCampaign) -- TODO: Module not registered yet
+        -- RequisitionsMenu.initialize(CrusadeCampaign) -- TODO: Module not registered yet
 
         -- Initialize Phase 6 modules (Territory System)
         TerritoryBonuses.initialize(CrusadeCampaign)
@@ -550,11 +550,11 @@ function createMainUI()
         -- Initialize Phase 7 modules (Polish & Finalization)
         MissionPackResources.initialize(CrusadeCampaign)
         Statistics.initialize(CrusadeCampaign)
-        ExportImport.initialize(CrusadeCampaign)
+        -- ExportImport.initialize(CrusadeCampaign) -- TODO: Module not registered yet
 
         -- Initialize Phase 8 modules (Advanced UI & Map Integration)
         FactionTokens.initialize(CrusadeCampaign)
-        StatisticsPanel.initialize(CrusadeCampaign)
+        -- StatisticsPanel.initialize(CrusadeCampaign) -- TODO: Module not registered yet
         MapControls.initialize(CrusadeCampaign)
 
         -- Initialize Phase 9 modules (Testing & Quality Assurance)

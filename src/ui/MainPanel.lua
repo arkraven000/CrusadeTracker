@@ -45,15 +45,15 @@ function MainPanel.refresh()
     MainPanel.lastRefresh = os.time()
 
     -- Update campaign name
-    -- UICore.setText("mainPanel_campaignName", MainPanel.campaign.name)
+    UICore.setText("mainPanel_campaignName", MainPanel.campaign.name)
 
     -- Update player count
     local playerCount = Utils.tableSize(MainPanel.campaign.players)
-    -- UICore.setText("mainPanel_playerCount", playerCount .. " Players")
+    UICore.setText("mainPanel_playerCount", playerCount .. " Players")
 
     -- Update battle count
     local battleCount = #MainPanel.campaign.battles
-    -- UICore.setText("mainPanel_battleCount", battleCount .. " Battles")
+    UICore.setText("mainPanel_battleCount", battleCount .. " Battles")
 
     -- Update territory control summary
     MainPanel.updateTerritoryDisplay()
@@ -87,67 +87,67 @@ end
 
 --- Open player management panel
 function MainPanel.openPlayerManagement()
-    -- UICore.showPanel("playerManagement")
-    log("Opening player management")
+    broadcastToAll("Player Management panel coming in future release", {0.60, 0.60, 0.60})
+    log("Player Management not yet implemented")
 end
 
 --- Open campaign settings
 function MainPanel.openSettings()
-    -- UICore.showPanel("settings")
+    UICore.showPanel("settings")
     log("Opening settings")
 end
 
 --- Open campaign log
 function MainPanel.openCampaignLog()
-    -- UICore.showPanel("campaignLog")
+    UICore.showPanel("campaignLog")
     log("Opening campaign log")
 end
 
 --- Open map view
 function MainPanel.openMapView()
-    -- UICore.showPanel("mapView")
+    UICore.showPanel("mapView")
     log("Opening map view")
 end
 
 --- Open manage forces panel
 function MainPanel.openManageForces()
-    -- UICore.showPanel("manageForces")
+    UICore.showPanel("manageForces")
     log("Opening manage forces")
 end
 
 --- Open record battle panel
 function MainPanel.openRecordBattle()
-    -- UICore.showPanel("recordBattle")
+    UICore.showPanel("recordBattle")
     log("Opening record battle")
 end
 
 --- Open battle history panel
 function MainPanel.openBattleLog()
-    -- UICore.showPanel("battleLog")
+    UICore.showPanel("battleLog")
     log("Opening battle history")
 end
 
 --- Open battle honours panel
 function MainPanel.openBattleHonours()
-    -- UICore.showPanel("battleHonours")
-    log("Opening battle honours")
+    broadcastToAll("Battle Honours panel coming in future release", {0.60, 0.60, 0.60})
+    log("Battle Honours not yet implemented")
 end
 
 --- Open requisitions menu
 function MainPanel.openRequisitionsMenu()
-    -- UICore.showPanel("requisitionsMenu")
-    log("Opening requisitions menu")
+    broadcastToAll("Requisitions Menu panel coming in future release", {0.60, 0.60, 0.60})
+    log("Requisitions Menu not yet implemented")
 end
 
 --- Open statistics panel
 function MainPanel.openStatistics()
-    -- UICore.showPanel("statisticsPanel")
-    log("Opening statistics panel")
+    broadcastToAll("Statistics panel coming in future release", {0.60, 0.60, 0.60})
+    log("Statistics not yet implemented")
 end
 
 --- Open map controls
 function MainPanel.openMapControls()
-    -- UICore.showPanel("mapControls")
+    UICore.showPanel("mapControls")
     log("Opening map controls")
 end
 
@@ -155,13 +155,13 @@ end
 function MainPanel.saveCampaign()
     -- Call SaveLoad module
     broadcastToAll("Saving campaign...", {0.60, 0.60, 0.60})
-    -- local success = SaveLoad.saveCampaign(MainPanel.campaign)
+    local success = SaveLoad.saveCampaign(MainPanel.campaign)
 
-    -- if success then
-    --     broadcastToAll("Campaign saved successfully", {0.30, 0.69, 0.31})
-    -- else
-    --     broadcastToAll("Campaign save failed", {0.80, 0.33, 0.33})
-    -- end
+    if success then
+        broadcastToAll("Campaign saved successfully", {0.30, 0.69, 0.31})
+    else
+        broadcastToAll("Campaign save failed", {0.80, 0.33, 0.33})
+    end
 
     log("Save campaign requested")
 end
