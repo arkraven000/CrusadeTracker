@@ -171,18 +171,18 @@ end
 function UnitDetails.updateBasicInfo()
     local unit = UnitDetails.workingUnit
 
-    -- UICore.setValue("unitDetails_name", unit.name or "")
-    -- UICore.setValue("unitDetails_unitType", unit.unitType or "")
-    -- UICore.setValue("unitDetails_role", unit.battlefieldRole or "")
-    -- UICore.setValue("unitDetails_points", unit.pointsCost or 0)
+    UICore.setValue("unitDetails_name", unit.name or "")
+    UICore.setValue("unitDetails_unitType", unit.unitType or "")
+    UICore.setValue("unitDetails_role", unit.battlefieldRole or "")
+    UICore.setValue("unitDetails_points", unit.pointsCost or 0)
 
     -- Update checkboxes
-    -- UICore.setValue("unitDetails_isCharacter", unit.isCharacter or false)
-    -- UICore.setValue("unitDetails_isTitanic", unit.isTitanic or false)
-    -- UICore.setValue("unitDetails_isEpicHero", unit.isEpicHero or false)
-    -- UICore.setValue("unitDetails_isBattleline", unit.isBattleline or false)
-    -- UICore.setValue("unitDetails_isTransport", unit.isDedicatedTransport or false)
-    -- UICore.setValue("unitDetails_canGainXP", unit.canGainXP ~= false)
+    UICore.setValue("unitDetails_isCharacter", unit.isCharacter or false)
+    UICore.setValue("unitDetails_isTitanic", unit.isTitanic or false)
+    UICore.setValue("unitDetails_isEpicHero", unit.isEpicHero or false)
+    UICore.setValue("unitDetails_isBattleline", unit.isBattleline or false)
+    UICore.setValue("unitDetails_isTransport", unit.isDedicatedTransport or false)
+    UICore.setValue("unitDetails_canGainXP", unit.canGainXP ~= false)
 end
 
 --- Update progression information section
@@ -191,7 +191,7 @@ function UnitDetails.updateProgressionInfo()
 
     -- Display XP
     local xpText = string.format("Experience Points: %d", unit.experiencePoints or 0)
-    -- UICore.setText("unitDetails_xpText", xpText)
+    UICore.setText("unitDetails_xpText", xpText)
 
     -- Display rank
     local rankName = "Battle-Ready"
@@ -199,7 +199,7 @@ function UnitDetails.updateProgressionInfo()
         rankName = Experience.getRankName(unit.rank or 1)
     end
     local rankText = string.format("Rank: %d - %s", unit.rank or 1, rankName)
-    -- UICore.setText("unitDetails_rankText", rankText)
+    UICore.setText("unitDetails_rankText", rankText)
 
     -- Show max rank limits
     local maxRank = 3 -- Battle-Hardened for non-CHARACTER
@@ -207,12 +207,12 @@ function UnitDetails.updateProgressionInfo()
         maxRank = 5 -- Legendary
     end
     local maxRankText = string.format("(Max Rank: %d)", maxRank)
-    -- UICore.setText("unitDetails_maxRankText", maxRankText)
+    UICore.setText("unitDetails_maxRankText", maxRankText)
 
     -- Show Legendary Veterans flag for non-CHARACTER
     if not unit.isCharacter then
         local lvText = unit.hasLegendaryVeterans and "Yes" or "No"
-        -- UICore.setText("unitDetails_legendaryVeterans", "Legendary Veterans: " .. lvText)
+        UICore.setText("unitDetails_legendaryVeterans", "Legendary Veterans: " .. lvText)
     end
 end
 
@@ -228,7 +228,7 @@ function UnitDetails.updateHonoursSection()
     end
 
     local headerText = string.format("Battle Honours (%d / %d)", honoursCount, maxHonours)
-    -- UICore.setText("unitDetails_honoursHeader", headerText)
+    UICore.setText("unitDetails_honoursHeader", headerText)
 
     -- Build honours list
     -- This would populate a list showing each honour with remove button
@@ -244,7 +244,7 @@ function UnitDetails.updateScarsSection()
     local maxScars = 3
 
     local headerText = string.format("Battle Scars (%d / %d)", scarsCount, maxScars)
-    -- UICore.setText("unitDetails_scarsHeader", headerText)
+    UICore.setText("unitDetails_scarsHeader", headerText)
 
     -- Build scars list
     log(string.format("Unit has %d/%d scars", scarsCount, maxScars))
@@ -258,7 +258,7 @@ function UnitDetails.updateRelicsSection()
     local relicsCount = #relics
 
     local headerText = string.format("Crusade Relics (%d)", relicsCount)
-    -- UICore.setText("unitDetails_relicsHeader", headerText)
+    UICore.setText("unitDetails_relicsHeader", headerText)
 
     -- Build relics list with tier indicators
     log(string.format("Unit has %d relics", relicsCount))
@@ -272,8 +272,8 @@ function UnitDetails.updateTalliesSection()
     local battlesText = string.format("Battles: %d", tallies.battlesParticipated or 0)
     local killsText = string.format("Kills: %d", tallies.unitsDestroyed or 0)
 
-    -- UICore.setText("unitDetails_battles", battlesText)
-    -- UICore.setText("unitDetails_kills", killsText)
+    UICore.setText("unitDetails_battles", battlesText)
+    UICore.setText("unitDetails_kills", killsText)
 
     -- Show custom tallies if any
     log("Combat tallies updated")
@@ -297,7 +297,7 @@ function UnitDetails.updateCrusadePointsDisplay()
 
     -- Build display text
     local cpText = string.format("Crusade Points: %d", cp)
-    -- UICore.setText("unitDetails_crusadePoints", cpText)
+    UICore.setText("unitDetails_crusadePoints", cpText)
 
     -- Show breakdown
     local breakdownText = string.format(
@@ -307,7 +307,7 @@ function UnitDetails.updateCrusadePointsDisplay()
         breakdown.honoursCrusadePoints,
         breakdown.scarsCrusadePoints
     )
-    -- UICore.setText("unitDetails_cpBreakdown", breakdownText)
+    UICore.setText("unitDetails_cpBreakdown", breakdownText)
 
     log(string.format("Crusade Points calculated: %d", cp))
 end
@@ -425,10 +425,10 @@ function UnitDetails.saveUnit()
     end
 
     -- Close panel
-    -- UICore.hidePanel("unitDetails")
+    UICore.hidePanel("unitDetails")
 
     -- Refresh Manage Forces panel
-    -- ManageForces.refresh()
+    ManageForces.refresh()
 end
 
 --- Validate unit data
@@ -551,7 +551,7 @@ function UnitDetails.cancel()
     UnitDetails.workingUnit = nil
 
     -- Close panel
-    -- UICore.hidePanel("unitDetails")
+    UICore.hidePanel("unitDetails")
 
     broadcastToAll("Unit editing cancelled", {0.83, 0.66, 0.26})
 

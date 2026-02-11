@@ -343,7 +343,7 @@ function MapControls.onButtonClick(player, value, id)
     if id == "mapControlsClaim" then
         MapControls.claimHex()
     elseif id == "mapControlsClose" then
-        UI.hide("mapControlsPanel")
+        UICore.hidePanel("mapControls")
     elseif id:match("^mapSelectPlayer") then
         -- Extract player ID from button
         local playerId = UI.getAttribute(id, "value")
