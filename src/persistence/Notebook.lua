@@ -24,7 +24,7 @@ local Constants = require("src/core/Constants")
 -- ============================================================================
 
 --- Notebook types and their purposes
-NOTEBOOK_TYPES = {
+local NOTEBOOK_TYPES = {
     CORE = {
         name = "Campaign_Core",
         description = "Campaign configuration and core data",
@@ -59,7 +59,7 @@ NOTEBOOK_TYPES = {
 --- Create all required notebooks for a new campaign (ASYNC with callback)
 -- @param campaignName string The campaign name
 -- @param callback function Callback function(notebookGUIDs) called when all notebooks created
-function createCampaignNotebooks(campaignName, callback)
+local function createCampaignNotebooks(campaignName, callback)
     Utils.logInfo("Creating campaign notebooks for: " .. campaignName)
 
     local notebooks = {}
@@ -118,7 +118,7 @@ end
 -- @param name string Notebook name
 -- @param description string Notebook description
 -- @param callback function Callback function(notebook) called when ready
-function spawnNotebook(name, description, callback)
+local function spawnNotebook(name, description, callback)
     spawnObject({
         type = "Notebook",
         position = {x = 0, y = 5, z = 0}, -- Will be moved to storage area
@@ -143,7 +143,7 @@ end
 -- @param title string Tab title
 -- @param body string Tab content
 -- @return boolean Success
-function createNotebookTab(notebook, title, body)
+local function createNotebookTab(notebook, title, body)
     if not notebook then
         return false
     end
@@ -167,7 +167,7 @@ end
 --- Get notebook by GUID
 -- @param guid string Notebook GUID
 -- @return object TTS Notebook object or nil
-function getNotebook(guid)
+local function getNotebook(guid)
     if not guid then
         return nil
     end
@@ -189,7 +189,7 @@ end
 -- @param campaign table The campaign data
 -- @param notebookGUIDs table Notebook GUIDs collection
 -- @return boolean Success
-function saveCampaignToNotebooks(campaign, notebookGUIDs)
+local function saveCampaignToNotebooks(campaign, notebookGUIDs)
     if not campaign or not notebookGUIDs then
         Utils.logError("Cannot save to notebooks: Invalid parameters")
         return false
@@ -219,7 +219,7 @@ end
 -- @param campaign table The campaign data
 -- @param notebookGUID string Notebook GUID
 -- @return boolean Success
-function saveCoreData(campaign, notebookGUID)
+local function saveCoreData(campaign, notebookGUID)
     local notebook = getNotebook(notebookGUID)
     if not notebook then
         return false
@@ -252,7 +252,7 @@ end
 -- @param campaign table The campaign data
 -- @param notebookGUID string Notebook GUID
 -- @return boolean Success
-function saveMapData(campaign, notebookGUID)
+local function saveMapData(campaign, notebookGUID)
     local notebook = getNotebook(notebookGUID)
     if not notebook then
         return false
@@ -271,7 +271,7 @@ end
 -- @param campaign table The campaign data
 -- @param notebookGUID string Notebook GUID
 -- @return boolean Success
-function saveUnitsData(campaign, notebookGUID)
+local function saveUnitsData(campaign, notebookGUID)
     local notebook = getNotebook(notebookGUID)
     if not notebook then
         return false
@@ -302,7 +302,7 @@ end
 -- @param campaign table The campaign data
 -- @param notebookGUID string Notebook GUID
 -- @return boolean Success
-function saveHistoryData(campaign, notebookGUID)
+local function saveHistoryData(campaign, notebookGUID)
     local notebook = getNotebook(notebookGUID)
     if not notebook then
         return false
@@ -322,7 +322,7 @@ end
 -- @param campaign table The campaign data
 -- @param notebookGUID string Notebook GUID
 -- @return boolean Success
-function saveResourcesData(campaign, notebookGUID)
+local function saveResourcesData(campaign, notebookGUID)
     local notebook = getNotebook(notebookGUID)
     if not notebook then
         return false
@@ -344,7 +344,7 @@ end
 -- @param tabTitle string Tab title to update
 -- @param content string New content
 -- @return boolean Success
-function updateNotebookTab(notebook, tabTitle, content)
+local function updateNotebookTab(notebook, tabTitle, content)
     if not notebook then
         return false
     end
@@ -396,7 +396,7 @@ end
 --- Load campaign data from notebooks
 -- @param notebookGUIDs table Notebook GUIDs collection
 -- @return table Campaign data or nil
-function loadCampaignFromNotebooks(notebookGUIDs)
+local function loadCampaignFromNotebooks(notebookGUIDs)
     if not notebookGUIDs then
         Utils.logError("Cannot load from notebooks: No GUIDs provided")
         return nil
@@ -441,7 +441,7 @@ end
 --- Load core campaign data
 -- @param notebookGUID string Notebook GUID
 -- @return table Core data or nil
-function loadCoreData(notebookGUID)
+local function loadCoreData(notebookGUID)
     local notebook = getNotebook(notebookGUID)
     if not notebook then
         return nil
@@ -483,7 +483,7 @@ end
 --- Load hex map data
 -- @param notebookGUID string Notebook GUID
 -- @return table Map config or nil
-function loadMapData(notebookGUID)
+local function loadMapData(notebookGUID)
     local notebook = getNotebook(notebookGUID)
     if not notebook then
         return nil
@@ -501,7 +501,7 @@ end
 --- Load units data
 -- @param notebookGUID string Notebook GUID
 -- @return table Units collection {unitId -> unit}
-function loadUnitsData(notebookGUID)
+local function loadUnitsData(notebookGUID)
     local notebook = getNotebook(notebookGUID)
     if not notebook then
         return {}
@@ -529,7 +529,7 @@ end
 --- Load battle history and event log
 -- @param notebookGUID string Notebook GUID
 -- @return table History data {battles, log}
-function loadHistoryData(notebookGUID)
+local function loadHistoryData(notebookGUID)
     local notebook = getNotebook(notebookGUID)
     if not notebook then
         return {battles = {}, log = {}}
@@ -560,7 +560,7 @@ end
 --- Load mission resources and libraries
 -- @param notebookGUID string Notebook GUID
 -- @return table Resources data {types, shared}
-function loadResourcesData(notebookGUID)
+local function loadResourcesData(notebookGUID)
     local notebook = getNotebook(notebookGUID)
     if not notebook then
         return {types = {}, shared = {}}
@@ -579,7 +579,7 @@ end
 -- @param notebook object TTS Notebook object
 -- @param tabTitle string Tab title
 -- @return string Tab content or nil
-function getNotebookTabContent(notebook, tabTitle)
+local function getNotebookTabContent(notebook, tabTitle)
     if not notebook then
         return nil
     end
@@ -602,7 +602,7 @@ end
 -- @param notebookGUIDs table Notebook GUIDs collection
 -- @return boolean Valid
 -- @return string Error message if invalid
-function validateNotebookStructure(notebookGUIDs)
+local function validateNotebookStructure(notebookGUIDs)
     if not notebookGUIDs then
         return false, "No notebook GUIDs provided"
     end
@@ -627,7 +627,7 @@ end
 -- @param notebookGUIDs table Notebook GUIDs collection
 -- @return boolean Corrupted
 -- @return string Details if corrupted
-function checkNotebookCorruption(notebookGUIDs)
+local function checkNotebookCorruption(notebookGUIDs)
     local valid, err = validateNotebookStructure(notebookGUIDs)
     if not valid then
         return true, err

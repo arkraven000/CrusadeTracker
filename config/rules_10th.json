@@ -82,7 +82,7 @@
     }
   },
 
-  "crusadePointsFormula": "floor(XP / 5) + Battle Honours - Battle Scars",
+  "crusadePointsFormula": "Battle Honours CP - Battle Scars count",
   "crusadePointsNotes": [
     "Battle Honours: +1 each (or +2 if TITANIC)",
     "Crusade Relics: +1 (Artificer), +2 (Antiquity), +3 (Legendary)",

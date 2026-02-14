@@ -32,7 +32,7 @@ local RULES_10TH = {
 
     requisitions = Constants.REQUISITION_COSTS,
 
-    crusadePointsFormula = "floor(XP / 5) + Battle Honours - Battle Scars",
+    crusadePointsFormula = "Battle Honours CP - Battle Scars count",
 
     crusadePointsNotes = {
         "Battle Honours: +1 each (or +2 if TITANIC)",
@@ -122,7 +122,7 @@ local activeEdition = nil
 --- Load rules configuration for an edition
 -- @param edition string Edition identifier ("10th", etc.)
 -- @return boolean Success
-function loadRulesConfig(edition)
+local function loadRulesConfig(edition)
     edition = edition or "10th"
 
     Utils.logInfo("Loading rules configuration for edition: " .. edition)
@@ -144,7 +144,7 @@ end
 
 --- Get active rules configuration
 -- @return table Rules configuration or nil
-function getRulesConfig()
+local function getRulesConfig()
     if not activeRulesConfig then
         -- Auto-load default edition
         loadRulesConfig("10th")
@@ -154,7 +154,7 @@ end
 
 --- Get active edition
 -- @return string Edition identifier or nil
-function getActiveEdition()
+local function getActiveEdition()
     return activeEdition or "10th"
 end
 
@@ -165,7 +165,7 @@ end
 --- Get rank threshold by rank number
 -- @param rank number Rank number (1-5)
 -- @return table Rank threshold data or nil
-function getRankThreshold(rank)
+local function getRankThreshold(rank)
     local config = getRulesConfig()
     for _, threshold in ipairs(config.rules.rankThresholds) do
         if threshold.rank == rank then
@@ -178,7 +178,7 @@ end
 --- Get requisition configuration by name
 -- @param requisitionName string Requisition name
 -- @return table Requisition config or nil
-function getRequisitionConfig(requisitionName)
+local function getRequisitionConfig(requisitionName)
     local config = getRulesConfig()
     return config.rules.requisitions[requisitionName]
 end
@@ -186,7 +186,7 @@ end
 --- Get XP award type configuration
 -- @param awardType string "Battle Experience", "Every Third Kill", or "Marked for Greatness"
 -- @return table XP award config or nil
-function getXPAwardConfig(awardType)
+local function getXPAwardConfig(awardType)
     local config = getRulesConfig()
     return config.rules.xpAwardTypes[awardType]
 end
@@ -194,14 +194,14 @@ end
 --- Get battle scar by ID
 -- @param scarId number Scar ID (1-6)
 -- @return table Battle Scar definition or nil
-function getBattleScarConfig(scarId)
+local function getBattleScarConfig(scarId)
     local config = getRulesConfig()
     return config.battleScars.battleScars[scarId]
 end
 
 --- Get all battle scars
 -- @return table Array of battle scar definitions
-function getAllBattleScars()
+local function getAllBattleScars()
     local config = getRulesConfig()
     return config.battleScars.battleScars
 end
@@ -209,7 +209,7 @@ end
 --- Get weapon modification by ID
 -- @param modId number Mod ID (1-6)
 -- @return table Weapon modification definition or nil
-function getWeaponModConfig(modId)
+local function getWeaponModConfig(modId)
     local config = getRulesConfig()
     for _, mod in ipairs(config.weaponMods.weaponModifications) do
         if mod.id == modId then
@@ -221,7 +221,7 @@ end
 
 --- Get all weapon modifications
 -- @return table Array of weapon modification definitions
-function getAllWeaponMods()
+local function getAllWeaponMods()
     local config = getRulesConfig()
     return config.weaponMods.weaponModifications
 end
@@ -229,7 +229,7 @@ end
 --- Get max value for a game constant
 -- @param constantName string Constant name
 -- @return number Max value or nil
-function getMaxValue(constantName)
+local function getMaxValue(constantName)
     local config = getRulesConfig()
     return config.rules.maxValues[constantName]
 end
@@ -241,7 +241,7 @@ end
 --- Add custom battle scar
 -- @param scarDef table Battle Scar definition
 -- @return boolean Success
-function addCustomBattleScar(scarDef)
+local function addCustomBattleScar(scarDef)
     if not scarDef or not scarDef.name then
         return false
     end
@@ -263,7 +263,7 @@ end
 -- @param requisitionName string Requisition name
 -- @param requisitionConfig table Requisition configuration
 -- @return boolean Success
-function addCustomRequisition(requisitionName, requisitionConfig)
+local function addCustomRequisition(requisitionName, requisitionConfig)
     if not requisitionName or not requisitionConfig then
         return false
     end
@@ -283,7 +283,7 @@ end
 -- @param rulesConfig table Rules configuration to validate
 -- @return boolean Valid
 -- @return string Error message if invalid
-function validateRulesConfig(rulesConfig)
+local function validateRulesConfig(rulesConfig)
     if not rulesConfig then
         return false, "No rules configuration provided"
     end
@@ -334,7 +334,7 @@ end
 
 --- Get rules configuration summary
 -- @return table Summary of active rules config
-function getRulesConfigSummary()
+local function getRulesConfigSummary()
     local config = getRulesConfig()
 
     return {

@@ -102,8 +102,8 @@ function DataValidator.validateCampaignStructure(campaign, report)
         table.insert(report.errors, "Campaign.battles must be a table")
     end
 
-    -- Check campaign ID format
-    if campaign.id and not string.match(campaign.id, "^[a-f0-9%-]+$") then
+    -- Check campaign ID format (GUIDs are timestamp_counter_random_random)
+    if campaign.id and not string.match(campaign.id, "^[%d_]+$") then
         table.insert(report.warnings, "Campaign ID has unexpected format: " .. campaign.id)
     end
 end
@@ -275,8 +275,8 @@ function DataValidator.validateBattles(campaign, report)
     end
 
     for i, battle in ipairs(campaign.battles) do
-        -- Required battle fields
-        local requiredBattleFields = {"id", "date", "participants", "missionType"}
+        -- Required battle fields (DataModel uses 'timestamp' not 'date')
+        local requiredBattleFields = {"id", "timestamp", "participants", "missionType"}
 
         for _, field in ipairs(requiredBattleFields) do
             if battle[field] == nil then
@@ -284,20 +284,21 @@ function DataValidator.validateBattles(campaign, report)
             end
         end
 
-        -- Validate participants
+        -- Validate participants (participant objects have .playerId, not bare IDs)
         if battle.participants and type(battle.participants) ~= "table" then
             table.insert(report.errors, string.format("Battle #%d participants must be a table", i))
         elseif battle.participants then
-            for _, participantId in ipairs(battle.participants) do
-                if not campaign.players[participantId] then
-                    table.insert(report.warnings, string.format("Battle #%d has invalid participant: %s", i, participantId))
+            for _, participant in ipairs(battle.participants) do
+                local pid = type(participant) == "table" and participant.playerId or participant
+                if pid and not campaign.players[pid] then
+                    table.insert(report.warnings, string.format("Battle #%d has invalid participant: %s", i, tostring(pid)))
                 end
             end
         end
 
-        -- Validate winner
-        if battle.winnerId and not campaign.players[battle.winnerId] then
-            table.insert(report.warnings, string.format("Battle #%d has invalid winner: %s", i, battle.winnerId))
+        -- Validate winner (DataModel uses 'winner' not 'winnerId')
+        if battle.winner and not campaign.players[battle.winner] then
+            table.insert(report.warnings, string.format("Battle #%d has invalid winner: %s", i, battle.winner))
         end
     end
 end
@@ -316,17 +317,18 @@ function DataValidator.validateMapConfig(campaign, report)
         return
     end
 
-    -- Check required map fields
-    if not mapConfig.width or not mapConfig.height then
-        table.insert(report.errors, "Map config missing width or height")
+    -- Check required map fields (DataModel stores dimensions in mapConfig.dimensions)
+    local dims = mapConfig.dimensions
+    if not dims or not dims.width or not dims.height then
+        table.insert(report.errors, "Map config missing dimensions.width or dimensions.height")
     end
 
-    if mapConfig.width and (mapConfig.width < 1 or mapConfig.width > 50) then
-        table.insert(report.warnings, string.format("Map width unusual: %d", mapConfig.width))
+    if dims and dims.width and (dims.width < 1 or dims.width > 50) then
+        table.insert(report.warnings, string.format("Map width unusual: %d", dims.width))
     end
 
-    if mapConfig.height and (mapConfig.height < 1 or mapConfig.height > 50) then
-        table.insert(report.warnings, string.format("Map height unusual: %d", mapConfig.height))
+    if dims and dims.height and (dims.height < 1 or dims.height > 50) then
+        table.insert(report.warnings, string.format("Map height unusual: %d", dims.height))
     end
 
     -- Validate hexes

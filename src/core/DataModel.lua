@@ -20,7 +20,7 @@ local Constants = require("src/core/Constants")
 -- @param name string Campaign name
 -- @param config table Optional configuration overrides
 -- @return table Campaign object
-function createCampaign(name, config)
+local function createCampaign(name, config)
     config = config or {}
 
     return {
@@ -74,7 +74,7 @@ end
 -- @param faction string Faction name
 -- @param config table Optional configuration
 -- @return table Player object
-function createPlayer(name, color, faction, config)
+local function createPlayer(name, color, faction, config)
     config = config or {}
 
     return {
@@ -123,7 +123,7 @@ end
 -- @param ownerId string Player ID
 -- @param unitData table Unit configuration
 -- @return table Unit object
-function createUnit(ownerId, unitData)
+local function createUnit(ownerId, unitData)
     return {
         id = Utils.generateGUID(),
         ownerId = ownerId,
@@ -202,7 +202,7 @@ end
 -- @param category string "Battle Trait" | "Weapon Modification" | "Crusade Relic"
 -- @param data table Honour-specific data
 -- @return table Battle Honour object
-function createBattleHonour(category, data)
+local function createBattleHonour(category, data)
     local honour = {
         id = data.id or Utils.generateGUID(),
         name = data.name,
@@ -234,7 +234,7 @@ end
 --- Create a Battle Scar
 -- @param scarData table Scar configuration
 -- @return table Battle Scar object
-function createBattleScar(scarData)
+local function createBattleScar(scarData)
     return {
         id = scarData.id or Utils.generateGUID(),
         name = scarData.name,
@@ -252,7 +252,7 @@ end
 --- Create an Enhancement
 -- @param enhancementData table Enhancement configuration
 -- @return table Enhancement object
-function createEnhancement(enhancementData)
+local function createEnhancement(enhancementData)
     return {
         id = enhancementData.id or Utils.generateGUID(),
         name = enhancementData.name,
@@ -273,7 +273,7 @@ end
 -- @param weaponName string Name of weapon
 -- @param modifications table Array of 2 modification names
 -- @return table Weapon Modification object
-function createWeaponModification(modelIndex, weaponName, modifications)
+local function createWeaponModification(modelIndex, weaponName, modifications)
     return {
         id = Utils.generateGUID(),
         modelIndex = modelIndex,
@@ -290,7 +290,7 @@ end
 --- Create a Crusade Relic
 -- @param relicData table Relic configuration
 -- @return table Crusade Relic object
-function createCrusadeRelic(relicData)
+local function createCrusadeRelic(relicData)
     return {
         id = relicData.id or Utils.generateGUID(),
         name = relicData.name,
@@ -310,7 +310,7 @@ end
 --- Create a Battle Record
 -- @param battleData table Battle configuration
 -- @return table Battle Record object
-function createBattleRecord(battleData)
+local function createBattleRecord(battleData)
     return {
         id = Utils.generateGUID(),
         timestamp = Utils.getUnixTimestamp(),
@@ -359,7 +359,7 @@ end
 -- @param width number Map width in hexes
 -- @param height number Map height in hexes
 -- @return table Hex Map Configuration
-function createHexMapConfig(width, height)
+local function createHexMapConfig(width, height)
     return {
         dimensions = {
             width = width,
@@ -383,7 +383,7 @@ end
 -- @param r number Axial R coordinate
 -- @param config table Optional configuration
 -- @return table Hex object
-function createHex(q, r, config)
+local function createHex(q, r, config)
     config = config or {}
 
     return {
@@ -403,7 +403,7 @@ end
 -- @param bonusType string "RP", "Resource", "BattleHonour", "Custom"
 -- @param value any Bonus value
 -- @return table Bonus object
-function createTerritoryBonus(description, bonusType, value)
+local function createTerritoryBonus(description, bonusType, value)
     return {
         id = Utils.generateGUID(),
         description = description,
@@ -421,7 +421,7 @@ end
 -- @param members table Array of player IDs
 -- @param settings table Alliance settings
 -- @return table Alliance object
-function createAlliance(name, members, settings)
+local function createAlliance(name, members, settings)
     settings = settings or {}
 
     return {
@@ -443,7 +443,7 @@ end
 -- @param eventType string Event type from EVENT_TYPES constant
 -- @param details table Event-specific details
 -- @return table Event Log Entry
-function createEventLogEntry(eventType, details)
+local function createEventLogEntry(eventType, details)
     return {
         timestamp = Utils.getUnixTimestamp(),
         timestampFormatted = Utils.getTimestamp(),
@@ -462,7 +462,7 @@ end
 -- @param isShared boolean Whether resource is shared pool
 -- @param initialValue number Starting value
 -- @return table Resource Type object
-function createResourceType(name, isShared, initialValue)
+local function createResourceType(name, isShared, initialValue)
     return {
         id = Utils.generateGUID(),
         name = name,
@@ -482,7 +482,7 @@ end
 -- @param unitsDeployed table Array of unit IDs
 -- @param agendas table Array of selected agendas
 -- @return table Participant object
-function createBattleParticipant(playerId, unitsDeployed, agendas)
+local function createBattleParticipant(playerId, unitsDeployed, agendas)
     return {
         playerId = playerId,
         unitsDeployed = unitsDeployed or {},

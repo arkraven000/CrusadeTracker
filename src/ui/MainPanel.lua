@@ -11,6 +11,7 @@ Provides quick access to campaign information and navigation.
 
 local Utils = require("src/core/Utils")
 local Constants = require("src/core/Constants")
+local SaveLoad = require("src/persistence/SaveLoad")
 
 -- ============================================================================
 -- MODULE STATE
