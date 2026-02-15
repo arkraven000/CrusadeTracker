@@ -60,7 +60,26 @@ function PlayerManagement.removePlayer(playerId)
 end
 
 function PlayerManagement.handleClick(player, value, id)
-    log("Player management click: " .. id)
+    if id == "playerMgmt_addPlayer" then
+        local name = UI.getAttribute("playerMgmt_nameInput", "text")
+        local color = UI.getValue("playerMgmt_colorSelect") or "White"
+        local faction = UI.getAttribute("playerMgmt_factionInput", "text")
+
+        if not name or name == "" then
+            broadcastToAll("Please enter a player name", {0.83, 0.66, 0.26})
+            return
+        end
+
+        PlayerManagement.addPlayer(name, color, faction)
+
+    elseif id == "playerMgmt_close" then
+        -- Handled by UICore routing, but keep for safety
+        log("Player management close requested")
+
+    elseif id:match("^playerMgmt_remove_") then
+        local playerId = id:gsub("^playerMgmt_remove_", "")
+        PlayerManagement.removePlayer(playerId)
+    end
 end
 
 return PlayerManagement

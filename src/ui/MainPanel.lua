@@ -88,8 +88,8 @@ end
 
 --- Open player management panel
 function MainPanel.openPlayerManagement()
-    broadcastToAll("Player Management panel coming in future release", {0.60, 0.60, 0.60})
-    log("Player Management not yet implemented")
+    UICore.showPanel("playerManagement")
+    log("Opening player management")
 end
 
 --- Open campaign settings
@@ -130,20 +130,20 @@ end
 
 --- Open battle honours panel
 function MainPanel.openBattleHonours()
-    broadcastToAll("Battle Honours panel coming in future release", {0.60, 0.60, 0.60})
-    log("Battle Honours not yet implemented")
+    UICore.showPanel("battleHonours")
+    log("Opening battle honours")
 end
 
 --- Open requisitions menu
 function MainPanel.openRequisitionsMenu()
-    broadcastToAll("Requisitions Menu panel coming in future release", {0.60, 0.60, 0.60})
-    log("Requisitions Menu not yet implemented")
+    UICore.showPanel("requisitionsMenu")
+    log("Opening requisitions menu")
 end
 
 --- Open statistics panel
 function MainPanel.openStatistics()
-    broadcastToAll("Statistics panel coming in future release", {0.60, 0.60, 0.60})
-    log("Statistics not yet implemented")
+    UICore.showPanel("statisticsPanel")
+    log("Opening statistics")
 end
 
 --- Open map controls

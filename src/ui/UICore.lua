@@ -66,6 +66,8 @@ function UICore.initialize()
         battleLog = false,
         battleHonours = false,
         requisitionsMenu = false,
+        exportImport = false,
+        statisticsPanel = false,
         supplement = false
     }
 
@@ -230,6 +232,14 @@ function UICore.onButtonClick(player, value, id)
         UICore.handleMapViewClick(player, value, id)
     elseif string.match(id, "^mapControl") or id == "mapAddBonus" or id == "mapSelectPlayer" then
         UICore.handleMapControlsClick(player, value, id)
+    elseif string.match(id, "^battleHonours_") then
+        UICore.handleBattleHonoursClick(player, value, id)
+    elseif string.match(id, "^requisitions_") then
+        UICore.handleRequisitionsClick(player, value, id)
+    elseif string.match(id, "^exportImport_") then
+        UICore.handleExportImportClick(player, value, id)
+    elseif string.match(id, "^statistics") then
+        UICore.handleStatisticsClick(player, value, id)
     else
         log("WARNING: Unhandled button click: " .. id)
     end
@@ -248,9 +258,9 @@ function UICore.handleMainMenuClick(player, value, id)
             UICore.showPanel("campaignSetup")
         end
     elseif id == "mainMenu_loadCampaign" then
-        -- Load campaign from notebook
-        broadcastToAll("Loading campaign from notebook...", {0.60, 0.60, 0.60})
-        -- TODO: Implement load
+        -- Scan for existing campaign notebooks and attempt to load
+        broadcastToAll("Scanning for saved campaign notebooks...", {0.60, 0.60, 0.60})
+        UICore.attemptLoadCampaign()
     elseif id == "mainMenu_settings" then
         UICore.showPanel("settings")
     elseif id == "mainMenu_exit" then
@@ -278,6 +288,15 @@ function UICore.handleMainPanelClick(player, value, id)
         if UICore.supplementModule then
             UICore.supplementModule.refresh()
         end
+    elseif id == "mainPanel_requisitions" then
+        UICore.showPanel("requisitionsMenu")
+    elseif id == "mainPanel_statistics" then
+        UICore.showPanel("statisticsPanel")
+        if UICore.statisticsPanelModule then
+            UICore.statisticsPanelModule.refresh()
+        end
+    elseif id == "mainPanel_exportImport" then
+        UICore.showPanel("exportImport")
     elseif id == "mainPanel_settings" then
         UICore.showPanel("settings")
     elseif id == "mainPanel_save" then
@@ -330,8 +349,10 @@ end
 -- @param value string Button value
 -- @param id string Button ID
 function UICore.handlePlayerManagementClick(player, value, id)
-    -- Delegated to PlayerManagement.lua module
-    if UICore.playerManagementModule then
+    if id == "playerMgmt_close" then
+        UICore.hidePanel("playerManagement")
+        UICore.showPanel("mainCampaign")
+    elseif UICore.playerManagementModule then
         UICore.playerManagementModule.handleClick(player, value, id)
     end
 end
@@ -424,6 +445,108 @@ function UICore.handleSupplementClick(player, value, id)
     end
 end
 
+--- Handle battle honours panel clicks
+-- @param player object Player who clicked
+-- @param value string Button value
+-- @param id string Button ID
+function UICore.handleBattleHonoursClick(player, value, id)
+    if id == "battleHonours_close" then
+        UICore.hidePanel("battleHonours")
+        UICore.showPanel("unitDetails")
+    elseif UICore.battleHonoursModule then
+        UICore.battleHonoursModule.onButtonClick(player, value, id)
+    end
+end
+
+--- Handle requisitions menu clicks
+-- @param player object Player who clicked
+-- @param value string Button value
+-- @param id string Button ID
+function UICore.handleRequisitionsClick(player, value, id)
+    if id == "requisitions_close" then
+        UICore.hidePanel("requisitionsMenu")
+        UICore.showPanel("mainCampaign")
+    elseif UICore.requisitionsMenuModule then
+        UICore.requisitionsMenuModule.onButtonClick(player, value, id)
+    end
+end
+
+--- Handle export/import panel clicks
+-- @param player object Player who clicked
+-- @param value string Button value
+-- @param id string Button ID
+function UICore.handleExportImportClick(player, value, id)
+    if id == "exportImport_close" then
+        UICore.hidePanel("exportImport")
+        UICore.showPanel("mainCampaign")
+    elseif UICore.exportImportModule then
+        UICore.exportImportModule.onButtonClick(player, value, id)
+    end
+end
+
+--- Handle statistics panel clicks
+-- @param player object Player who clicked
+-- @param value string Button value
+-- @param id string Button ID
+function UICore.handleStatisticsClick(player, value, id)
+    if id == "statisticsClose" then
+        UICore.hidePanel("statisticsPanel")
+        UICore.showPanel("mainCampaign")
+    elseif UICore.statisticsPanelModule then
+        UICore.statisticsPanelModule.onButtonClick(player, value, id)
+    end
+end
+
+--- Attempt to load a campaign from existing notebook objects
+function UICore.attemptLoadCampaign()
+    -- Search for Campaign_Core notebook in the scene
+    local allObjects = getAllObjects()
+    local notebookGUIDs = {}
+
+    for _, obj in ipairs(allObjects) do
+        if obj.type == "Notebook" then
+            local name = obj.getName()
+            if name == "Campaign_Core" then
+                notebookGUIDs.core = obj.getGUID()
+            elseif name == "Campaign_Map" then
+                notebookGUIDs.map = obj.getGUID()
+            elseif name == "Campaign_Units" then
+                notebookGUIDs.units = obj.getGUID()
+            elseif name == "Campaign_History" then
+                notebookGUIDs.history = obj.getGUID()
+            elseif name == "Campaign_Resources" then
+                notebookGUIDs.resources = obj.getGUID()
+            end
+        end
+    end
+
+    if notebookGUIDs.core then
+        broadcastToAll("Found campaign notebooks. Loading...", {0.30, 0.69, 0.31})
+
+        -- Load via SaveLoad module
+        local SaveLoad = require("src/persistence/SaveLoad")
+        local campaign = SaveLoad.loadCampaign(notebookGUIDs)
+
+        if campaign then
+            _G.CrusadeCampaign = campaign
+            _G.NotebookGUIDs = notebookGUIDs
+            broadcastToAll("Campaign loaded: " .. (campaign.name or "Unnamed"), {0.30, 0.69, 0.31})
+
+            -- Reinitialize UI with loaded campaign
+            if _G.createMainUI then
+                _G.createMainUI()
+            end
+            if _G.startAutosaveTimer then
+                _G.startAutosaveTimer()
+            end
+        else
+            broadcastToAll("Failed to load campaign from notebooks", {0.80, 0.33, 0.33})
+        end
+    else
+        broadcastToAll("No saved campaign notebooks found in scene", {0.83, 0.66, 0.26})
+    end
+end
+
 -- ============================================================================
 -- UI UPDATE HELPERS
 -- ============================================================================
@@ -458,6 +581,14 @@ function UICore.refreshPanel(panelName)
         UICore.unitDetailsModule.refresh()
     elseif panelName == "supplement" and UICore.supplementModule then
         UICore.supplementModule.refresh()
+    elseif panelName == "battleHonours" and UICore.battleHonoursModule then
+        UICore.battleHonoursModule.refreshUI()
+    elseif panelName == "requisitionsMenu" and UICore.requisitionsMenuModule then
+        UICore.requisitionsMenuModule.refreshUI()
+    elseif panelName == "exportImport" and UICore.exportImportModule then
+        UICore.exportImportModule.refreshUI()
+    elseif panelName == "statisticsPanel" and UICore.statisticsPanelModule then
+        UICore.statisticsPanelModule.refresh()
     end
 end
 
@@ -777,6 +908,14 @@ function UICore.registerModule(moduleName, moduleRef)
         UICore.battleLogModule = moduleRef
     elseif moduleName == "supplement" then
         UICore.supplementModule = moduleRef
+    elseif moduleName == "battleHonours" then
+        UICore.battleHonoursModule = moduleRef
+    elseif moduleName == "requisitionsMenu" then
+        UICore.requisitionsMenuModule = moduleRef
+    elseif moduleName == "exportImport" then
+        UICore.exportImportModule = moduleRef
+    elseif moduleName == "statisticsPanel" then
+        UICore.statisticsPanelModule = moduleRef
     end
 
     log("UI module registered: " .. moduleName)
