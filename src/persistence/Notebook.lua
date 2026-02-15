@@ -123,11 +123,15 @@ createCampaignNotebooks = function(campaignName, callback)
 end
 
 --- Spawn a new Notebook object (ASYNC with callback)
+-- NOTE: "Notebook" is not a documented spawnObject type in the TTS API.
+-- If this fails in your TTS version, consider migrating to the built-in
+-- Notes API: Notes.addNotebookTab({title, body, color}) which does not
+-- require spawning physical objects. See TTS API: https://api.tabletopsimulator.com/notes/
 -- @param name string Notebook name
 -- @param description string Notebook description
 -- @param callback function Callback function(notebook) called when ready
 spawnNotebook = function(name, description, callback)
-    spawnObject({
+    local ok, err = pcall(spawnObject, {
         type = "Notebook",
         position = {x = 0, y = 5, z = 0}, -- Will be moved to storage area
         rotation = {x = 0, y = 0, z = 0},
@@ -144,6 +148,10 @@ spawnNotebook = function(name, description, callback)
             end
         end
     })
+    if not ok then
+        Utils.logError("Failed to spawn notebook '" .. name .. "': " .. tostring(err))
+        if callback then callback(nil) end
+    end
 end
 
 --- Create a tab in a notebook

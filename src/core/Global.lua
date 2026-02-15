@@ -210,6 +210,43 @@ function onSave()
 end
 
 -- ============================================================================
+-- TTS OBJECT LIFECYCLE CALLBACKS
+-- ============================================================================
+
+--- Detect when notebook objects are destroyed (e.g., accidentally deleted by a player)
+-- @param dying_object object The object being destroyed
+function onObjectDestroy(dying_object)
+    if not NotebookGUIDs then
+        return
+    end
+
+    local guid = dying_object.getGUID()
+    local isNotebook = false
+    local notebookType = nil
+
+    for nbType, nbGUID in pairs(NotebookGUIDs) do
+        if nbGUID == guid then
+            isNotebook = true
+            notebookType = nbType
+            break
+        end
+    end
+
+    if isNotebook then
+        Utils.logError("Campaign notebook deleted: " .. tostring(notebookType) ..
+            " (GUID: " .. guid .. ")")
+        broadcastToAll(
+            "WARNING: Campaign notebook '" .. tostring(notebookType) ..
+            "' was deleted! Campaign data may be lost. Save immediately or undo.",
+            {1, 0.2, 0.2}
+        )
+
+        -- Clear the GUID so future saves don't try to use a dead reference
+        NotebookGUIDs[notebookType] = nil
+    end
+end
+
+-- ============================================================================
 -- CAMPAIGN MANAGEMENT
 -- ============================================================================
 

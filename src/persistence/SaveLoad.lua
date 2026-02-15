@@ -14,6 +14,13 @@ local Constants = require("src/core/Constants")
 local Notebook = require("src/persistence/Notebook")
 local Backup = require("src/persistence/Backup")
 
+-- Forward declarations for local functions (required for forward references in Lua 5.1)
+local saveCampaign, autosave, manualSave
+local loadCampaign, loadFromBackup
+local exportCampaignJSON, importCampaignJSON, writeExportToNotebook
+local prepareTTSSaveData, processTTSLoadData
+local attemptRecovery, getRecoveryStatus
+
 -- ============================================================================
 -- SAVE SYSTEM
 -- ============================================================================
@@ -23,7 +30,7 @@ local Backup = require("src/persistence/Backup")
 -- @param notebookGUIDs table Notebook GUIDs collection
 -- @param createBackup boolean Whether to create a backup (default true)
 -- @return boolean Success
-function saveCampaign(campaign, notebookGUIDs, createBackup)
+saveCampaign = function(campaign, notebookGUIDs, createBackup)
     if not campaign then
         Utils.logError("Cannot save: No campaign data")
         return false
@@ -45,18 +52,25 @@ function saveCampaign(campaign, notebookGUIDs, createBackup)
         return false
     end
 
-    -- Save to notebooks
-    local success = Notebook.saveCampaignToNotebooks(campaign, notebookGUIDs)
-    if not success then
+    -- Save to notebooks (with pcall protection)
+    local ok, result = pcall(Notebook.saveCampaignToNotebooks, campaign, notebookGUIDs)
+    if not ok then
+        Utils.logError("Notebook save threw error: " .. tostring(result))
+        return false
+    end
+    if not result then
         Utils.logError("Failed to save campaign to notebooks")
         return false
     end
 
-    -- Create backup if requested
+    -- Create backup if requested (with pcall protection)
     if createBackup then
         local historyNotebook = Notebook.getNotebook(notebookGUIDs.history)
         if historyNotebook then
-            Backup.createBackupWithPruning(campaign, historyNotebook)
+            local backupOk, backupErr = pcall(Backup.createBackupWithPruning, campaign, historyNotebook)
+            if not backupOk then
+                Utils.logWarning("Backup creation failed: " .. tostring(backupErr))
+            end
         end
     end
 
@@ -69,7 +83,7 @@ end
 
 --- Autosave campaign (called by timer)
 -- @return boolean Success
-function autosave()
+autosave = function()
     if not CrusadeCampaign or not NotebookGUIDs then
         Utils.logDebug("Autosave skipped: No campaign loaded")
         return false
@@ -91,7 +105,7 @@ end
 
 --- Manual save campaign (user-triggered)
 -- @return boolean Success
-function manualSave()
+manualSave = function()
     if not CrusadeCampaign or not NotebookGUIDs then
         broadcastToAll("No campaign loaded", {1, 0, 0})
         return false
@@ -117,7 +131,7 @@ end
 --- Load campaign from notebooks
 -- @param notebookGUIDs table Notebook GUIDs collection
 -- @return table Campaign data or nil
-function loadCampaign(notebookGUIDs)
+loadCampaign = function(notebookGUIDs)
     if not notebookGUIDs then
         Utils.logError("Cannot load: No notebook GUIDs")
         return nil
@@ -140,8 +154,13 @@ function loadCampaign(notebookGUIDs)
         return loadFromBackup(notebookGUIDs)
     end
 
-    -- Load from notebooks
-    local campaign = Notebook.loadCampaignFromNotebooks(notebookGUIDs)
+    -- Load from notebooks (with pcall protection)
+    local ok, campaign = pcall(Notebook.loadCampaignFromNotebooks, notebookGUIDs)
+    if not ok then
+        Utils.logError("Notebook load threw error: " .. tostring(campaign))
+        Utils.logWarning("Attempting to restore from backup...")
+        return loadFromBackup(notebookGUIDs)
+    end
     if not campaign then
         Utils.logError("Failed to load campaign from notebooks")
         Utils.logWarning("Attempting to restore from backup...")
@@ -156,7 +175,7 @@ end
 -- @param notebookGUIDs table Notebook GUIDs collection
 -- @param backupIndex number Optional specific backup index (default: latest)
 -- @return table Campaign data or nil
-function loadFromBackup(notebookGUIDs, backupIndex)
+loadFromBackup = function(notebookGUIDs, backupIndex)
     if not notebookGUIDs or not notebookGUIDs.history then
         Utils.logError("Cannot load from backup: No history notebook GUID")
         return nil
@@ -194,7 +213,7 @@ end
 --- Export campaign to JSON string
 -- @param campaign table The campaign data
 -- @return string JSON string or nil
-function exportCampaignJSON(campaign)
+exportCampaignJSON = function(campaign)
     if not campaign then
         Utils.logError("Cannot export: No campaign data")
         return nil
@@ -224,7 +243,7 @@ end
 -- @param jsonString string JSON export data
 -- @return table Campaign data or nil
 -- @return string Error message if failed
-function importCampaignJSON(jsonString)
+importCampaignJSON = function(jsonString)
     if not jsonString or jsonString == "" then
         return nil, "No JSON data provided"
     end
@@ -270,7 +289,7 @@ end
 -- @param campaign table The campaign data
 -- @param notebookGUIDs table Notebook GUIDs collection
 -- @return boolean Success
-function writeExportToNotebook(campaign, notebookGUIDs)
+writeExportToNotebook = function(campaign, notebookGUIDs)
     if not campaign or not notebookGUIDs then
         return false
     end
@@ -307,7 +326,7 @@ end
 -- @param campaign table The campaign data
 -- @param notebookGUIDs table Notebook GUIDs collection
 -- @return string Serialized save data
-function prepareTTSSaveData(campaign, notebookGUIDs)
+prepareTTSSaveData = function(campaign, notebookGUIDs)
     local saveData = {
         version = Constants.CAMPAIGN_VERSION,
         campaignName = campaign and campaign.name or "Unknown",
@@ -322,7 +341,7 @@ end
 -- @param savedData string Serialized save data from TTS
 -- @return table Notebook GUIDs or nil
 -- @return string Campaign name or nil
-function processTTSLoadData(savedData)
+processTTSLoadData = function(savedData)
     if not savedData or savedData == "" then
         return nil, nil
     end
@@ -352,7 +371,7 @@ end
 --- Attempt to recover from corrupted state
 -- @param notebookGUIDs table Notebook GUIDs collection
 -- @return table Recovered campaign or nil
-function attemptRecovery(notebookGUIDs)
+attemptRecovery = function(notebookGUIDs)
     Utils.logWarning("Attempting emergency recovery...")
 
     -- Try loading from latest backup
@@ -390,7 +409,7 @@ end
 --- Get recovery status information
 -- @param notebookGUIDs table Notebook GUIDs collection
 -- @return table Recovery status {canRecover, backupCount, latestBackup}
-function getRecoveryStatus(notebookGUIDs)
+getRecoveryStatus = function(notebookGUIDs)
     local status = {
         canRecover = false,
         backupCount = 0,

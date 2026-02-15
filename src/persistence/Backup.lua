@@ -19,8 +19,14 @@ local Constants = require("src/core/Constants")
 -- BACKUP CONFIGURATION
 -- ============================================================================
 
-BACKUP_TAB_PREFIX = "backup_"
-MAX_BACKUPS = Constants.MAX_BACKUP_VERSIONS or 10
+local BACKUP_TAB_PREFIX = "backup_"
+local MAX_BACKUPS = Constants.MAX_BACKUP_VERSIONS or 10
+
+-- Forward declarations for local functions
+local createBackup, createBackupFromGlobal, createBackupWithPruning
+local restoreFromBackup, restoreFromLatestBackup, restoreWithPreBackup
+local listBackups, deleteBackup, deleteAllBackups, pruneOldBackups
+local validateBackup, getBackupStatistics
 
 -- ============================================================================
 -- BACKUP CREATION
@@ -31,7 +37,7 @@ MAX_BACKUPS = Constants.MAX_BACKUP_VERSIONS or 10
 -- @param historyNotebook object The history notebook object
 -- @return boolean Success
 -- @return number Backup index
-function createBackup(campaign, historyNotebook)
+createBackup = function(campaign, historyNotebook)
     if not campaign or not historyNotebook then
         Utils.logError("Cannot create backup: Invalid parameters")
         return false, nil
@@ -116,7 +122,7 @@ end
 -- @param notebookGUIDs table Notebook GUIDs collection
 -- @return boolean Success
 -- @return number Backup index
-function createBackupFromGlobal(notebookGUIDs)
+createBackupFromGlobal = function(notebookGUIDs)
     if not CrusadeCampaign then
         Utils.logError("No campaign loaded")
         return false, nil
@@ -145,7 +151,7 @@ end
 -- @param backupIndex number Backup index to restore (1-10)
 -- @param historyNotebook object The history notebook object
 -- @return table Restored campaign data or nil
-function restoreFromBackup(backupIndex, historyNotebook)
+restoreFromBackup = function(backupIndex, historyNotebook)
     if not backupIndex or backupIndex < 1 or backupIndex > MAX_BACKUPS then
         Utils.logError("Invalid backup index: " .. tostring(backupIndex))
         return nil
@@ -187,7 +193,7 @@ end
 --- Restore from most recent backup
 -- @param historyNotebook object The history notebook object
 -- @return table Restored campaign data or nil
-function restoreFromLatestBackup(historyNotebook)
+restoreFromLatestBackup = function(historyNotebook)
     if not historyNotebook then
         Utils.logError("History notebook not provided")
         return nil
@@ -227,7 +233,7 @@ end
 --- Get list of all available backups
 -- @param historyNotebook object The history notebook object
 -- @return table Array of backup info {index, timestamp, name, stats}
-function listBackups(historyNotebook)
+listBackups = function(historyNotebook)
     if not historyNotebook then
         return {}
     end
@@ -265,7 +271,7 @@ end
 -- @param backupIndex number Backup index to delete
 -- @param historyNotebook object The history notebook object
 -- @return boolean Success
-function deleteBackup(backupIndex, historyNotebook)
+deleteBackup = function(backupIndex, historyNotebook)
     if not backupIndex or not historyNotebook then
         return false
     end
@@ -290,7 +296,7 @@ end
 --- Delete all backups
 -- @param historyNotebook object The history notebook object
 -- @return number Count of deleted backups
-function deleteAllBackups(historyNotebook)
+deleteAllBackups = function(historyNotebook)
     if not historyNotebook then
         return 0
     end
@@ -316,7 +322,7 @@ end
 --- Delete oldest backups beyond the limit
 -- @param historyNotebook object The history notebook object
 -- @return number Count of deleted backups
-function pruneOldBackups(historyNotebook)
+pruneOldBackups = function(historyNotebook)
     if not historyNotebook then
         return 0
     end
@@ -349,7 +355,7 @@ end
 -- @param historyNotebook object The history notebook object
 -- @return boolean Valid
 -- @return string Error message if invalid
-function validateBackup(backupIndex, historyNotebook)
+validateBackup = function(backupIndex, historyNotebook)
     if not backupIndex or not historyNotebook then
         return false, "Invalid parameters"
     end
@@ -388,7 +394,7 @@ end
 --- Get backup statistics
 -- @param historyNotebook object The history notebook object
 -- @return table Backup stats {count, oldest, newest, totalSize}
-function getBackupStatistics(historyNotebook)
+getBackupStatistics = function(historyNotebook)
     if not historyNotebook then
         return {
             count = 0,
@@ -432,7 +438,7 @@ end
 -- @param historyNotebook object The history notebook object
 -- @return boolean Success
 -- @return number Backup index
-function createBackupWithPruning(campaign, historyNotebook)
+createBackupWithPruning = function(campaign, historyNotebook)
     -- Create the new backup
     local success, backupIndex = createBackup(campaign, historyNotebook)
 
@@ -448,7 +454,7 @@ end
 -- @param backupIndex number Backup index to restore
 -- @param historyNotebook object The history notebook object
 -- @return table Restored campaign or nil
-function restoreWithPreBackup(backupIndex, historyNotebook)
+restoreWithPreBackup = function(backupIndex, historyNotebook)
     -- Create backup of current state before restoring
     if CrusadeCampaign then
         createBackup(CrusadeCampaign, historyNotebook)
