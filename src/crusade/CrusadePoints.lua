@@ -17,6 +17,12 @@ Formula: CP = Battle Honours CP - Battle Scars count
 
 local Utils = require("src/core/Utils")
 
+-- Forward declarations for local functions (required for forward references in Lua 5.1)
+local calculateCrusadePoints, calculateHonoursCrusadePoints
+local updateUnitCrusadePoints, recalculatePlayerCrusadePoints
+local getCrusadePointsBreakdown, validateCrusadePointsCalculation
+local sortUnitsByCrusadePoints, calculateSupplyUsed, checkSupplyLimit
+
 -- ============================================================================
 -- CRUSADE POINTS CALCULATION (10TH EDITION)
 -- ============================================================================
@@ -26,7 +32,7 @@ local Utils = require("src/core/Utils")
 -- Note: Unlike 9th Edition, XP does NOT contribute to CP in 10th Edition
 -- @param unit table The unit object
 -- @return number Crusade Points (can be negative)
-function calculateCrusadePoints(unit)
+calculateCrusadePoints = function(unit)
     if not unit then
         Utils.logError("calculateCrusadePoints: unit is nil")
         return 0
@@ -52,7 +58,7 @@ end
 --- Calculate Crusade Points contribution from Battle Honours
 -- @param unit table The unit object
 -- @return number CP from honours (can be higher for TITANIC)
-function calculateHonoursCrusadePoints(unit)
+calculateHonoursCrusadePoints = function(unit)
     local cp = 0
     local isTitanic = unit.isTitanic or false
 
@@ -77,7 +83,7 @@ end
 -- @param unit table The unit object
 -- @param eventType string Optional event type that triggered update
 -- @return number New Crusade Points value
-function updateUnitCrusadePoints(unit, eventType)
+updateUnitCrusadePoints = function(unit, eventType)
     if not unit then
         Utils.logError("updateUnitCrusadePoints: unit is nil")
         return 0
@@ -107,7 +113,7 @@ end
 -- @param player table The player object
 -- @param campaignUnits table Campaign's units collection (keyed by unit ID)
 -- @return number Total Crusade Points for player
-function recalculatePlayerCrusadePoints(player, campaignUnits)
+recalculatePlayerCrusadePoints = function(player, campaignUnits)
     if not player or not campaignUnits then
         Utils.logError("recalculatePlayerCrusadePoints: invalid parameters")
         return 0
@@ -129,7 +135,7 @@ end
 --- Get detailed Crusade Points breakdown for a unit
 -- @param unit table The unit object
 -- @return table Breakdown of CP calculation
-function getCrusadePointsBreakdown(unit)
+getCrusadePointsBreakdown = function(unit)
     if not unit then
         return {
             total = 0,
@@ -188,7 +194,7 @@ end
 --- Validate Crusade Points calculation for debugging
 -- @param unit table The unit object
 -- @return boolean True if calculation is correct, false otherwise
-function validateCrusadePointsCalculation(unit)
+validateCrusadePointsCalculation = function(unit)
     if not unit then
         return false
     end
@@ -213,7 +219,7 @@ end
 -- @param units table Array of unit objects
 -- @param descending boolean Sort descending (highest first) if true
 -- @return table Sorted array of units
-function sortUnitsByCrusadePoints(units, descending)
+sortUnitsByCrusadePoints = function(units, descending)
     -- Shallow copy to avoid mutating caller's array; units themselves are references
     local sortedUnits = {}
     for i, u in ipairs(units) do sortedUnits[i] = u end
@@ -237,7 +243,7 @@ end
 -- @param campaignUnits table Campaign's units collection
 -- @return number Total supply used (0 on error)
 -- @return string|nil Error message if validation failed
-function calculateSupplyUsed(player, campaignUnits)
+calculateSupplyUsed = function(player, campaignUnits)
     -- Enhanced input validation (P11)
     if not player then
         Utils.logError("calculateSupplyUsed: player parameter is nil")
@@ -289,7 +295,7 @@ end
 -- @return boolean True if over limit
 -- @return number Supply used
 -- @return number Supply limit
-function checkSupplyLimit(player, campaignUnits)
+checkSupplyLimit = function(player, campaignUnits)
     local supplyUsed = calculateSupplyUsed(player, campaignUnits)
     local supplyLimit = player.supplyLimit or 1000
     local isOverLimit = supplyUsed > supplyLimit

@@ -18,8 +18,14 @@ Requisition Types (10th Edition):
 
 local Utils = require("src/core/Utils")
 local Constants = require("src/core/Constants")
+local DataModel = require("src/core/DataModel")
 local Experience = require("src/crusade/Experience")
 local OutOfAction = require("src/crusade/OutOfAction")
+
+-- Forward declarations for local functions (required for forward references in Lua 5.1)
+local calculateRenownedHeroesCost, calculateRepairRecuperateCost, calculateFreshRecruitsCost
+local getAllRequisitions, getRequisition, purchaseRequisition
+local getRequisitionCost, canPurchaseRequisition
 
 -- ============================================================================
 -- REQUISITION COST CALCULATION
@@ -29,7 +35,7 @@ local OutOfAction = require("src/crusade/OutOfAction")
 -- @param campaign table Campaign object
 -- @param player table Player object
 -- @return number Cost (1-3 RP)
-function calculateRenownedHeroesCost(campaign, player)
+calculateRenownedHeroesCost = function(campaign, player)
     -- Cost = 1 + number of Enhancements in Order of Battle (max 3)
     local enhancementCount = 0
 
@@ -46,7 +52,7 @@ end
 --- Calculate cost for Repair and Recuperate requisition
 -- @param unit table Unit object
 -- @return number Cost (1-5 RP)
-function calculateRepairRecuperateCost(unit)
+calculateRepairRecuperateCost = function(unit)
     -- Cost = 1 + number of Battle Honours on unit (max 5)
     return math.min(1 + #unit.battleHonours, 5)
 end
@@ -54,7 +60,7 @@ end
 --- Calculate cost for Fresh Recruits requisition
 -- @param unit table Unit object
 -- @return number Cost (1-4 RP)
-function calculateFreshRecruitsCost(unit)
+calculateFreshRecruitsCost = function(unit)
     -- Cost = 1 + ceil(Battle Honours / 2) (max 4)
     return math.min(1 + math.ceil(#unit.battleHonours / 2), 4)
 end
@@ -65,7 +71,7 @@ end
 
 --- Get all requisition definitions
 -- @return table Array of requisition definitions
-function getAllRequisitions()
+getAllRequisitions = function()
     return {
         {
             name = "Increase Supply Limit",
@@ -209,7 +215,7 @@ end
 --- Get requisition by name
 -- @param name string Requisition name
 -- @return table Requisition definition or nil
-function getRequisition(name)
+getRequisition = function(name)
     local allReqs = getAllRequisitions()
     for _, req in ipairs(allReqs) do
         if req.name == name then
@@ -230,7 +236,7 @@ end
 -- @param params table Requisition-specific parameters
 -- @return boolean Success
 -- @return string Message
-function purchaseRequisition(campaign, playerId, requisitionName, params)
+purchaseRequisition = function(campaign, playerId, requisitionName, params)
     local player = campaign.players[playerId]
     if not player then
         return false, "Player not found"
@@ -276,17 +282,16 @@ function purchaseRequisition(campaign, playerId, requisitionName, params)
         player.requisitionPoints = player.requisitionPoints - cost
 
         -- Log event
-        table.insert(campaign.log, {
-            type = "REQUISITION_PURCHASED",
-            timestamp = Utils.getUnixTimestamp(),
-            details = {
+        table.insert(campaign.log, DataModel.createEventLogEntry(
+            "REQUISITION_PURCHASED",
+            {
                 player = player.name,
                 requisition = requisitionName,
                 cost = cost,
                 remainingRP = player.requisitionPoints,
                 message = message
             }
-        })
+        ))
 
         local fullMessage = string.format(
             "%s purchased %s for %d RP. %s (Remaining RP: %d)",
@@ -310,7 +315,7 @@ end
 -- @param requisitionName string Name of requisition
 -- @param unit table Unit object (optional, for unit-specific costs)
 -- @return number Cost or nil
-function getRequisitionCost(campaign, player, requisitionName, unit)
+getRequisitionCost = function(campaign, player, requisitionName, unit)
     local req = getRequisition(requisitionName)
     if not req then
         return nil
@@ -336,7 +341,7 @@ end
 -- @param params table Requisition-specific parameters
 -- @return boolean Can purchase
 -- @return string Reason if cannot
-function canPurchaseRequisition(campaign, playerId, requisitionName, params)
+canPurchaseRequisition = function(campaign, playerId, requisitionName, params)
     local player = campaign.players[playerId]
     if not player then
         return false, "Player not found"

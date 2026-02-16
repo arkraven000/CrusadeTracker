@@ -15,6 +15,13 @@ for narrative purposes and potential XP/honour bonuses.
 local Utils = require("src/core/Utils")
 local Constants = require("src/core/Constants")
 
+-- Forward declarations for local functions (required for forward references in Lua 5.1)
+local createAgenda, createPlayerAgendas, addAgenda, removeAgenda
+local getPlayerAgendas, getUnitAgendas, completeAgenda, uncompleteAgenda
+local updateAgendaNotes, countCompletedAgendas, countTotalAgendas
+local getAgendaCompletionRate, getAgendaSummary, getCommonAgendas
+local getAgendasByCategory, createAgendaFromTemplate, validateAgenda
+
 -- ============================================================================
 -- AGENDA DATA STRUCTURES
 -- ============================================================================
@@ -24,7 +31,7 @@ local Constants = require("src/core/Constants")
 -- @param agendaName string Name of the agenda
 -- @param description string Agenda description
 -- @return table Agenda object
-function createAgenda(unitId, agendaName, description)
+createAgenda = function(unitId, agendaName, description)
     return {
         id = Utils.generateGUID(),
         unitId = unitId,
@@ -38,7 +45,7 @@ end
 --- Create player agendas for a battle
 -- @param playerId string Player ID
 -- @return table Player agenda collection
-function createPlayerAgendas(playerId)
+createPlayerAgendas = function(playerId)
     return {
         playerId = playerId,
         agendas = {} -- Array of agenda objects
@@ -53,7 +60,7 @@ end
 -- @param battleRecord table Battle record
 -- @param playerId string Player ID
 -- @param agenda table Agenda object
-function addAgenda(battleRecord, playerId, agenda)
+addAgenda = function(battleRecord, playerId, agenda)
     if not battleRecord.agendas[playerId] then
         battleRecord.agendas[playerId] = createPlayerAgendas(playerId)
     end
@@ -66,7 +73,7 @@ end
 -- @param playerId string Player ID
 -- @param agendaId string Agenda ID
 -- @return boolean Success
-function removeAgenda(battleRecord, playerId, agendaId)
+removeAgenda = function(battleRecord, playerId, agendaId)
     if not battleRecord.agendas[playerId] then
         return false
     end
@@ -85,7 +92,7 @@ end
 -- @param battleRecord table Battle record
 -- @param playerId string Player ID
 -- @return table Array of agendas
-function getPlayerAgendas(battleRecord, playerId)
+getPlayerAgendas = function(battleRecord, playerId)
     if not battleRecord.agendas[playerId] then
         return {}
     end
@@ -98,7 +105,7 @@ end
 -- @param playerId string Player ID
 -- @param unitId string Unit ID
 -- @return table Array of agendas for the unit
-function getUnitAgendas(battleRecord, playerId, unitId)
+getUnitAgendas = function(battleRecord, playerId, unitId)
     local playerAgendas = getPlayerAgendas(battleRecord, playerId)
     local unitAgendas = {}
 
@@ -117,7 +124,7 @@ end
 -- @param agendaId string Agenda ID
 -- @param notes string Optional completion notes
 -- @return boolean Success
-function completeAgenda(battleRecord, playerId, agendaId, notes)
+completeAgenda = function(battleRecord, playerId, agendaId, notes)
     if not battleRecord.agendas[playerId] then
         return false
     end
@@ -140,7 +147,7 @@ end
 -- @param playerId string Player ID
 -- @param agendaId string Agenda ID
 -- @return boolean Success
-function uncompleteAgenda(battleRecord, playerId, agendaId)
+uncompleteAgenda = function(battleRecord, playerId, agendaId)
     if not battleRecord.agendas[playerId] then
         return false
     end
@@ -161,7 +168,7 @@ end
 -- @param agendaId string Agenda ID
 -- @param notes string Notes text
 -- @return boolean Success
-function updateAgendaNotes(battleRecord, playerId, agendaId, notes)
+updateAgendaNotes = function(battleRecord, playerId, agendaId, notes)
     if not battleRecord.agendas[playerId] then
         return false
     end
@@ -184,7 +191,7 @@ end
 -- @param battleRecord table Battle record
 -- @param playerId string Player ID
 -- @return number Completed count
-function countCompletedAgendas(battleRecord, playerId)
+countCompletedAgendas = function(battleRecord, playerId)
     local playerAgendas = getPlayerAgendas(battleRecord, playerId)
     local count = 0
 
@@ -201,7 +208,7 @@ end
 -- @param battleRecord table Battle record
 -- @param playerId string Player ID
 -- @return number Total count
-function countTotalAgendas(battleRecord, playerId)
+countTotalAgendas = function(battleRecord, playerId)
     local playerAgendas = getPlayerAgendas(battleRecord, playerId)
     return #playerAgendas
 end
@@ -210,7 +217,7 @@ end
 -- @param battleRecord table Battle record
 -- @param playerId string Player ID
 -- @return number Completion percentage (0-100)
-function getAgendaCompletionRate(battleRecord, playerId)
+getAgendaCompletionRate = function(battleRecord, playerId)
     local total = countTotalAgendas(battleRecord, playerId)
     if total == 0 then
         return 0
@@ -224,7 +231,7 @@ end
 -- @param battleRecord table Battle record
 -- @param playerId string Player ID
 -- @return table Agenda summary
-function getAgendaSummary(battleRecord, playerId)
+getAgendaSummary = function(battleRecord, playerId)
     return {
         total = countTotalAgendas(battleRecord, playerId),
         completed = countCompletedAgendas(battleRecord, playerId),
@@ -239,7 +246,7 @@ end
 
 --- Get list of common 10th Edition agendas
 -- @return table Array of agenda templates
-function getCommonAgendas()
+getCommonAgendas = function()
     return {
         {
             name = "Domination",
@@ -307,7 +314,7 @@ end
 --- Get agendas by category
 -- @param category string Category filter ("Combat", "Territorial", "Survival", etc.)
 -- @return table Array of matching agenda templates
-function getAgendasByCategory(category)
+getAgendasByCategory = function(category)
     local allAgendas = getCommonAgendas()
     local filtered = {}
 
@@ -324,7 +331,7 @@ end
 -- @param unitId string Unit ID
 -- @param template table Agenda template
 -- @return table Agenda object
-function createAgendaFromTemplate(unitId, template)
+createAgendaFromTemplate = function(unitId, template)
     return createAgenda(unitId, template.name, template.description)
 end
 
@@ -338,7 +345,7 @@ end
 -- @param campaignUnits table Campaign units collection
 -- @return boolean Valid
 -- @return string Error message if invalid
-function validateAgenda(unitId, agendaName, campaignUnits)
+validateAgenda = function(unitId, agendaName, campaignUnits)
     local unit = campaignUnits[unitId]
     if not unit then
         return false, "Unit not found"

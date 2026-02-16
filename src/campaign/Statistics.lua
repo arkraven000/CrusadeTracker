@@ -12,6 +12,10 @@ Tracks player performance, unit achievements, battle outcomes, and more.
 local Utils = require("src/core/Utils")
 local Constants = require("src/core/Constants")
 
+-- Forward declarations for local functions (required for forward references in Lua 5.1)
+local getCampaignOverview, getPlayerStatistics, getAllPlayerStatistics
+local getUnitStatistics, getTopUnits, getBattleStatistics, getPlayerLeaderboard
+
 -- ============================================================================
 -- CAMPAIGN OVERVIEW STATISTICS
 -- ============================================================================
@@ -19,7 +23,7 @@ local Constants = require("src/core/Constants")
 --- Get campaign overview statistics
 -- @param campaign table Campaign object
 -- @return table Campaign stats
-function getCampaignOverview(campaign)
+getCampaignOverview = function(campaign)
     local stats = {
         campaignName = campaign.name,
         totalPlayers = Utils.tableCount(campaign.players),
@@ -61,7 +65,7 @@ end
 -- @param campaign table Campaign object
 -- @param playerId string Player ID
 -- @return table Player stats
-function getPlayerStatistics(campaign, playerId)
+getPlayerStatistics = function(campaign, playerId)
     local player = campaign.players[playerId]
     if not player then
         return nil
@@ -153,7 +157,7 @@ end
 --- Get all player statistics
 -- @param campaign table Campaign object
 -- @return table Array of player stats
-function getAllPlayerStatistics(campaign)
+getAllPlayerStatistics = function(campaign)
     local allStats = {}
 
     for playerId, player in pairs(campaign.players) do
@@ -173,7 +177,7 @@ end
 -- @param unit table Unit object
 -- @param campaign table Campaign object
 -- @return table Unit stats
-function getUnitStatistics(unit, campaign)
+getUnitStatistics = function(unit, campaign)
     local stats = {
         name = unit.name,
         powerLevel = unit.powerLevel,
@@ -215,7 +219,7 @@ end
 -- @param metric string Metric to sort by ("xp", "kills", "cp", "battles")
 -- @param limit number Number of units to return
 -- @return table Array of unit stats
-function getTopUnits(campaign, metric, limit)
+getTopUnits = function(campaign, metric, limit)
     local allUnits = {}
 
     for unitId, unit in pairs(campaign.units) do
@@ -259,7 +263,7 @@ end
 --- Get battle statistics
 -- @param campaign table Campaign object
 -- @return table Battle stats
-function getBattleStatistics(campaign)
+getBattleStatistics = function(campaign)
     local stats = {
         totalBattles = #campaign.battles,
         incursionBattles = 0,
@@ -328,7 +332,7 @@ end
 -- @param campaign table Campaign object
 -- @param metric string Metric to rank by
 -- @return table Ranked player list
-function getPlayerLeaderboard(campaign, metric)
+getPlayerLeaderboard = function(campaign, metric)
     local players = getAllPlayerStatistics(campaign)
 
     if metric == "victories" then

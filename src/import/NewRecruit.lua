@@ -620,14 +620,15 @@ function NewRecruit.importUnits(jsonString, playerId, campaign)
     if not campaign.log then
         campaign.log = {}
     end
-    table.insert(campaign.log, {
-        timestamp = Utils.getUnixTimestamp(),
-        type = "units_imported",
-        playerId = playerId,
-        playerName = player.name,
-        count = addedCount,
-        description = string.format("Imported %d units from %s", addedCount, source)
-    })
+    table.insert(campaign.log, DataModel.createEventLogEntry(
+        "units_imported",
+        {
+            playerId = playerId,
+            playerName = player.name,
+            count = addedCount,
+            description = string.format("Imported %d units from %s", addedCount, source)
+        }
+    ))
 
     broadcastToAll(string.format("Imported %d units for %s from %s", addedCount, player.name, source), {0, 1, 0})
 

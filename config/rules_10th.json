@@ -1,4 +1,5 @@
 {
+  "_note": "DOCUMENTATION ONLY - This file is not loaded at runtime. The actual game rules are defined in src/core/Constants.lua and accessed via src/core/RulesConfig.lua. Update Constants.lua to change game rules.",
   "edition": "10th",
   "version": "1.0.0",
   "description": "Warhammer 40,000 10th Edition Crusade Rules Configuration",
@@ -82,7 +83,7 @@
     }
   },
 
-  "crusadePointsFormula": "floor(XP / 5) + Battle Honours - Battle Scars",
+  "crusadePointsFormula": "Battle Honours CP - Battle Scars count",
   "crusadePointsNotes": [
     "Battle Honours: +1 each (or +2 if TITANIC)",
     "Crusade Relics: +1 (Artificer), +2 (Antiquity), +3 (Legendary)",

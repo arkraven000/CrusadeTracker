@@ -15,6 +15,7 @@ Dedicated panel for viewing and managing Crusade supplement data:
 
 local Utils = require("src/core/Utils")
 local Constants = require("src/core/Constants")
+local DataModel = require("src/core/DataModel")
 local MissionPackResources = require("src/campaign/MissionPackResources")
 
 -- ============================================================================
@@ -655,15 +656,14 @@ function SupplementPanel.purchaseBlessing(playerId, blessingName, cost)
     table.insert(player.crusadeBlessings, blessingName)
 
     -- Log
-    table.insert(campaign.log, {
-        type = "RESOURCE_SPENT",
-        timestamp = Utils.getUnixTimestamp(),
-        details = {
+    table.insert(campaign.log, DataModel.createEventLogEntry(
+        "RESOURCE_SPENT",
+        {
             player = player.name,
             resource = "Crusade Blessing: " .. blessingName,
             amount = cost
         }
-    })
+    ))
 
     Utils.logInfo(player.name .. " purchased blessing: " .. blessingName)
     broadcastToAll(player.name .. " purchased: " .. blessingName, {0.83, 0.66, 0.26})
@@ -731,13 +731,12 @@ function SupplementPanel.advancePhase()
 
     campaign.currentCampaignPhase = current + 1
 
-    table.insert(campaign.log, {
-        type = "MANUAL_NOTE",
-        timestamp = Utils.getUnixTimestamp(),
-        details = {
+    table.insert(campaign.log, DataModel.createEventLogEntry(
+        "MANUAL_NOTE",
+        {
             message = "Campaign advanced to Phase " .. campaign.currentCampaignPhase .. " of " .. maxPhase
         }
-    })
+    ))
 
     broadcastToAll("Campaign Phase " .. campaign.currentCampaignPhase .. " of " .. maxPhase .. " has begun!", {0.83, 0.66, 0.26})
     Utils.logInfo("Campaign advanced to phase " .. campaign.currentCampaignPhase)

@@ -7,66 +7,66 @@ Version: 1.0.0-alpha
 ]]
 
 -- ============================================================================
--- GLOBAL CONSTANTS
+-- MODULE CONSTANTS (local to prevent global namespace pollution)
 -- ============================================================================
 
-CAMPAIGN_VERSION = "1.0.0-alpha"
-EDITION = "10th"
+local CAMPAIGN_VERSION = "1.0.0-alpha"
+local EDITION = "10th"
 
 -- ============================================================================
 -- CAPACITY LIMITS
 -- ============================================================================
 
-MAX_PLAYERS = 20
-MAX_UNITS_PER_PLAYER = 50
-MAX_HEXES = 50
-MAX_UNITS_ON_MAP = 20
-MAX_RP = 5 -- Per 10th Edition rules, players normally cannot exceed 5 RP
-MAX_BATTLE_HONOURS_NON_CHAR = 3
-MAX_BATTLE_HONOURS_CHAR = 6
-MAX_BATTLE_SCARS = 3
-NON_CHAR_XP_CAP = 30
+local MAX_PLAYERS = 20
+local MAX_UNITS_PER_PLAYER = 50
+local MAX_HEXES = 50
+local MAX_UNITS_ON_MAP = 20
+local MAX_RP = 5 -- Per 10th Edition rules, players normally cannot exceed 5 RP
+local MAX_BATTLE_HONOURS_NON_CHAR = 3
+local MAX_BATTLE_HONOURS_CHAR = 6
+local MAX_BATTLE_SCARS = 3
+local NON_CHAR_XP_CAP = 30
 
 -- ============================================================================
 -- TIMING & PERFORMANCE
 -- ============================================================================
 
-AUTOSAVE_INTERVAL = 300 -- 5 minutes in seconds
-MAX_BACKUP_VERSIONS = 10
-UI_UPDATE_THROTTLE = 0.1 -- seconds between UI batch updates
-MAX_EVENT_LOG_SIZE = 1000
+local AUTOSAVE_INTERVAL = 300 -- 5 minutes in seconds
+local MAX_BACKUP_VERSIONS = 10
+local UI_UPDATE_THROTTLE = 0.1 -- seconds between UI batch updates
+local MAX_EVENT_LOG_SIZE = 1000
 
 -- ============================================================================
 -- HEX MAP DEFAULTS
 -- ============================================================================
 
-HEX_SIZE = 2.0 -- TTS units
-DEFAULT_MAP_WIDTH = 7
-DEFAULT_MAP_HEIGHT = 7
-MAP_CENTER = {x = 0, y = 1, z = 0}
+local HEX_SIZE = 2.0 -- TTS units
+local DEFAULT_MAP_WIDTH = 7
+local DEFAULT_MAP_HEIGHT = 7
+local MAP_CENTER = {x = 0, y = 1, z = 0}
 
 -- Map Skin System (FTC-Inspired Architecture)
-HEX_GRID_BASE_HEIGHT = 1.0 -- Y position for functional hex grid zones
-MAP_SKIN_HEIGHT = 1.05 -- Y position for visual map skins (above base)
-TERRITORY_OVERLAY_HEIGHT = 1.15 -- Y position for territory control overlays (above skin)
+local HEX_GRID_BASE_HEIGHT = 1.0 -- Y position for functional hex grid zones
+local MAP_SKIN_HEIGHT = 1.05 -- Y position for visual map skins (above base)
+local TERRITORY_OVERLAY_HEIGHT = 1.15 -- Y position for territory control overlays (above skin)
 
 -- Map Skin Settings
-DEFAULT_MAP_SKIN = "forgeWorld" -- Default preset skin to load
-OVERLAY_ALPHA_DEFAULT = 0.4 -- Default transparency for territory overlays
+local DEFAULT_MAP_SKIN = "forgeWorld" -- Default preset skin to load
+local OVERLAY_ALPHA_DEFAULT = 0.4 -- Default transparency for territory overlays
 
 -- ============================================================================
 -- CAMPAIGN DEFAULTS
 -- ============================================================================
 
-DEFAULT_SUPPLY_LIMIT = 1000
-SUPPLY_LIMIT_INCREASE = 200
-STARTING_RP = 5
+local DEFAULT_SUPPLY_LIMIT = 1000
+local SUPPLY_LIMIT_INCREASE = 200
+local STARTING_RP = 5
 
 -- ============================================================================
 -- TTS PLAYER COLORS (RGB values)
 -- ============================================================================
 
-PLAYER_COLORS = {
+local PLAYER_COLORS = {
     White = {1, 1, 1, 1},
     Red = {0.86, 0.1, 0.09, 1},
     Orange = {0.96, 0.44, 0.09, 1},
@@ -81,7 +81,7 @@ PLAYER_COLORS = {
     Brown = {0.44, 0.23, 0.09, 1}
 }
 
-PLAYER_COLOR_NAMES = {
+local PLAYER_COLOR_NAMES = {
     "White", "Red", "Orange", "Yellow", "Green", "Teal",
     "Blue", "Purple", "Pink", "Grey", "Black", "Brown"
 }
@@ -90,7 +90,7 @@ PLAYER_COLOR_NAMES = {
 -- 10TH EDITION RANK THRESHOLDS
 -- ============================================================================
 
-RANK_THRESHOLDS = {
+local RANK_THRESHOLDS = {
     {rank = 1, name = "Battle-Ready", minXP = 0, characterOnly = false},
     {rank = 2, name = "Blooded", minXP = 6, characterOnly = false},
     {rank = 3, name = "Battle-Hardened", minXP = 16, characterOnly = false},
@@ -102,7 +102,7 @@ RANK_THRESHOLDS = {
 -- 10TH EDITION REQUISITION COSTS
 -- ============================================================================
 
-REQUISITION_COSTS = {
+local REQUISITION_COSTS = {
     ["Increase Supply Limit"] = {
         baseCost = 1,
         maxCost = 1,
@@ -141,7 +141,7 @@ REQUISITION_COSTS = {
 -- WEAPON MODIFICATION TYPES (10th Edition - 6 types)
 -- ============================================================================
 
-WEAPON_MODIFICATIONS = {
+local WEAPON_MODIFICATIONS = {
     {id = 1, name = "Finely Balanced", effect = "Improve BS or WS by 1"},
     {id = 2, name = "Brutal", effect = "Add 1 to Strength"},
     {id = 3, name = "Armour Piercing", effect = "Improve AP by 1"},
@@ -154,7 +154,7 @@ WEAPON_MODIFICATIONS = {
 -- BATTLE SCAR TYPES (10th Edition - 6 types)
 -- ============================================================================
 
-BATTLE_SCARS = {
+local BATTLE_SCARS = {
     {id = 1, name = "Crippling Damage", effect = "Cannot Advance, -1\" Move"},
     {id = 2, name = "Battle-Weary", effect = "-1 to Battle-shock, Leadership, Desperate Escape, Out of Action tests"},
     {id = 3, name = "Fatigued", effect = "-1 OC, no Charge bonus"},
@@ -167,7 +167,7 @@ BATTLE_SCARS = {
 -- CRUSADE RELIC TIERS
 -- ============================================================================
 
-RELIC_TIERS = {
+local RELIC_TIERS = {
     Artificer = {
         rankRequired = 1,
         crusadePointsCost = 1,
@@ -186,10 +186,44 @@ RELIC_TIERS = {
 }
 
 -- ============================================================================
+-- BATTLE TRAITS
+-- ============================================================================
+
+local GENERIC_BATTLE_TRAITS = {
+    {name = "Inspiring Leader", description = "Units within 6\" of this unit can use this unit's Leadership characteristic instead of their own when taking Battle-shock tests", category = "Leadership"},
+    {name = "Lethal Sharpshooter", description = "Ranged weapons equipped by models in this unit have the [LETHAL HITS] ability", category = "Shooting"},
+    {name = "Melee Expert", description = "Melee weapons equipped by models in this unit have the [LETHAL HITS] ability", category = "Melee"},
+    {name = "Tank Hunter", description = "Each time a model in this unit makes an attack that targets a VEHICLE or MONSTER unit, add 1 to the Wound roll", category = "Anti-Vehicle"},
+    {name = "Fortified Position", description = "While this unit is within range of an objective marker you control, models in this unit have a 5+ invulnerable save", category = "Defensive"},
+    {name = "Rapid Deployment", description = "This unit can make a Normal move of up to 6\" at the start of the first battle round, before the first turn begins", category = "Movement"},
+    {name = "Devastating Charge", description = "Each time this unit makes a Charge move, until the end of the turn, melee weapons equipped by models in this unit have the [DEVASTATING WOUNDS] ability", category = "Melee"},
+    {name = "Marked for Death", description = "At the start of the first battle round, select one enemy unit to be this unit's mark. Each time this unit makes an attack that targets its marked unit, re-roll a Wound roll of 1", category = "Special"},
+    {name = "Stealth Specialist", description = "Each time a ranged attack targets this unit, if this unit is within or wholly within terrain, subtract 1 from the Hit roll", category = "Defensive"},
+    {name = "Never Give Up", description = "This unit is eligible to shoot in a turn in which it Fell Back", category = "Movement"},
+    {name = "Chem-enhanced", description = "Add 1 to the Strength characteristic of weapons equipped by models in this unit", category = "Enhancement"},
+    {name = "Tenacious Survivor", description = "Each time a model in this unit would lose a wound, roll one D6: on a 6, that wound is not lost", category = "Defensive"}
+}
+
+local FACTION_BATTLE_TRAITS = {
+    ["Space Marines"] = {
+        {name = "Tactical Precision", description = "Once per battle, this unit can re-roll all failed Hit rolls when shooting", category = "Shooting"},
+        {name = "And They Shall Know No Fear", description = "This unit automatically passes Battle-shock tests and can re-roll Advance and Charge rolls", category = "Leadership"}
+    },
+    ["Necrons"] = {
+        {name = "Reanimation Protocols", description = "Each time this unit uses its Reanimation Protocols ability, you can re-roll one Reanimation roll", category = "Special"},
+        {name = "Quantum Shielding", description = "Improve this unit's Save characteristic by 1 (to a maximum of 2+) against attacks with a Damage characteristic of 1", category = "Defensive"}
+    },
+    ["Orks"] = {
+        {name = "Mob Rule", description = "While this unit contains 10 or more models, add 1 to the Leadership characteristic of models in this unit", category = "Leadership"},
+        {name = "Dakka Dakka Dakka", description = "Each time this unit shoots, if it remained stationary this turn, add 1 to its ranged weapons' Attacks characteristic", category = "Shooting"}
+    }
+}
+
+-- ============================================================================
 -- EVENT TYPES (for logging)
 -- ============================================================================
 
-EVENT_TYPES = {
+local EVENT_TYPES = {
     -- Campaign
     "CAMPAIGN_CREATED",
     "CAMPAIGN_LOADED",
@@ -268,7 +302,7 @@ EVENT_TYPES = {
 -- CRUSADE SUPPLEMENTS
 -- ============================================================================
 
-CRUSADE_SUPPLEMENTS = {
+local CRUSADE_SUPPLEMENTS = {
     { id = "none", name = "Core Rules Only" },
     { id = "tyrannic_war", name = "Tyrannic War" },
     { id = "pariah_nexus", name = "Pariah Nexus" },
@@ -277,7 +311,7 @@ CRUSADE_SUPPLEMENTS = {
 }
 
 -- Supplement-specific data: alliance types, campaign phases, features
-SUPPLEMENT_DATA = {
+local SUPPLEMENT_DATA = {
     tyrannic_war = {
         campaignPhases = 3,
         allianceTypes = {
@@ -319,20 +353,20 @@ SUPPLEMENT_DATA = {
 }
 
 -- Strategic Footings (Pariah Nexus)
-STRATEGIC_FOOTINGS = {
+local STRATEGIC_FOOTINGS = {
     "Aggressive",
     "Balanced",
     "Defensive"
 }
 
 -- Backward-compat alias
-PARIAH_NEXUS_ALLIANCES = { "Seekers", "Protectors", "Interlopers" }
+local PARIAH_NEXUS_ALLIANCES = { "Seekers", "Protectors", "Interlopers" }
 
 -- ============================================================================
 -- BATTLE SIZES
 -- ============================================================================
 
-BATTLE_SIZES = {
+local BATTLE_SIZES = {
     "Incursion",
     "Strike Force",
     "Onslaught"
@@ -342,7 +376,7 @@ BATTLE_SIZES = {
 -- BATTLEFIELD ROLES
 -- ============================================================================
 
-BATTLEFIELD_ROLES = {
+local BATTLEFIELD_ROLES = {
     "HQ",
     "Troops",
     "Elites",
@@ -396,5 +430,7 @@ return {
     CRUSADE_SUPPLEMENTS = CRUSADE_SUPPLEMENTS,
     SUPPLEMENT_DATA = SUPPLEMENT_DATA,
     PARIAH_NEXUS_ALLIANCES = PARIAH_NEXUS_ALLIANCES,
-    STRATEGIC_FOOTINGS = STRATEGIC_FOOTINGS
+    STRATEGIC_FOOTINGS = STRATEGIC_FOOTINGS,
+    GENERIC_BATTLE_TRAITS = GENERIC_BATTLE_TRAITS,
+    FACTION_BATTLE_TRAITS = FACTION_BATTLE_TRAITS
 }

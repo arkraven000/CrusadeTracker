@@ -13,6 +13,11 @@ local Utils = require("src/core/Utils")
 local Constants = require("src/core/Constants")
 local DataModel = require("src/core/DataModel")
 
+-- Forward declarations for local functions (required for forward references in Lua 5.1)
+local createAlliance, dissolveAlliance, addPlayerToAlliance, removePlayerFromAlliance
+local arePlayersAllied, getPlayerAlliance, isHexControlledByAlly
+local getAllianceTerritory, getAllianceResources, checkAllianceVictory, getAllianceStats
+
 -- ============================================================================
 -- ALLIANCE CREATION & MANAGEMENT
 -- ============================================================================
@@ -24,7 +29,7 @@ local DataModel = require("src/core/DataModel")
 -- @param settings table Alliance settings
 -- @param campaignLog table Campaign log
 -- @return table Alliance object
-function createAlliance(campaign, name, members, settings, campaignLog)
+createAlliance = function(campaign, name, members, settings, campaignLog)
     settings = settings or {}
 
     -- Validate members exist
@@ -49,17 +54,13 @@ function createAlliance(campaign, name, members, settings, campaignLog)
             table.insert(memberNames, campaign.players[playerId].name)
         end
 
-        table.insert(campaignLog, {
-            type = "ALLIANCE_CREATED",
-            timestamp = Utils.getUnixTimestamp(),
-            details = {
-                alliance = name,
-                members = memberNames,
-                shareTerritory = alliance.shareTerritory,
-                shareResources = alliance.shareResources,
-                shareVictory = alliance.shareVictory
-            }
-        })
+        table.insert(campaignLog, DataModel.createEventLogEntry("ALLIANCE_CREATED", {
+            alliance = name,
+            members = memberNames,
+            shareTerritory = alliance.shareTerritory,
+            shareResources = alliance.shareResources,
+            shareVictory = alliance.shareVictory
+        }))
     end
 
     Utils.logInfo("Alliance created: " .. name)
@@ -71,7 +72,7 @@ end
 -- @param allianceId string Alliance ID
 -- @param campaignLog table Campaign log
 -- @return boolean Success
-function dissolveAlliance(campaign, allianceId, campaignLog)
+dissolveAlliance = function(campaign, allianceId, campaignLog)
     if not campaign.alliances or not campaign.alliances[allianceId] then
         return false
     end
@@ -80,13 +81,9 @@ function dissolveAlliance(campaign, allianceId, campaignLog)
 
     -- Log dissolution
     if campaignLog then
-        table.insert(campaignLog, {
-            type = "ALLIANCE_DISSOLVED",
-            timestamp = Utils.getUnixTimestamp(),
-            details = {
-                alliance = alliance.name
-            }
-        })
+        table.insert(campaignLog, DataModel.createEventLogEntry("ALLIANCE_DISSOLVED", {
+            alliance = alliance.name
+        }))
     end
 
     campaign.alliances[allianceId] = nil
@@ -100,7 +97,7 @@ end
 -- @param playerId string Player ID to add
 -- @param campaignLog table Campaign log
 -- @return boolean Success
-function addPlayerToAlliance(campaign, allianceId, playerId, campaignLog)
+addPlayerToAlliance = function(campaign, allianceId, playerId, campaignLog)
     if not campaign.alliances or not campaign.alliances[allianceId] then
         return false, "Alliance not found"
     end
@@ -120,14 +117,10 @@ function addPlayerToAlliance(campaign, allianceId, playerId, campaignLog)
 
     -- Log addition
     if campaignLog then
-        table.insert(campaignLog, {
-            type = "ALLIANCE_MEMBER_ADDED",
-            timestamp = Utils.getUnixTimestamp(),
-            details = {
-                alliance = alliance.name,
-                player = campaign.players[playerId].name
-            }
-        })
+        table.insert(campaignLog, DataModel.createEventLogEntry("ALLIANCE_MEMBER_ADDED", {
+            alliance = alliance.name,
+            player = campaign.players[playerId].name
+        }))
     end
 
     return true
@@ -139,7 +132,7 @@ end
 -- @param playerId string Player ID to remove
 -- @param campaignLog table Campaign log
 -- @return boolean Success
-function removePlayerFromAlliance(campaign, allianceId, playerId, campaignLog)
+removePlayerFromAlliance = function(campaign, allianceId, playerId, campaignLog)
     if not campaign.alliances or not campaign.alliances[allianceId] then
         return false
     end
@@ -152,14 +145,10 @@ function removePlayerFromAlliance(campaign, allianceId, playerId, campaignLog)
 
             -- Log removal
             if campaignLog then
-                table.insert(campaignLog, {
-                    type = "ALLIANCE_MEMBER_REMOVED",
-                    timestamp = Utils.getUnixTimestamp(),
-                    details = {
-                        alliance = alliance.name,
-                        player = campaign.players[playerId].name
-                    }
-                })
+                table.insert(campaignLog, DataModel.createEventLogEntry("ALLIANCE_MEMBER_REMOVED", {
+                    alliance = alliance.name,
+                    player = campaign.players[playerId].name
+                }))
             end
 
             return true
@@ -179,7 +168,7 @@ end
 -- @param playerId2 string Second player ID
 -- @return boolean Are allied
 -- @return table Alliance object if allied
-function arePlayersAllied(campaign, playerId1, playerId2)
+arePlayersAllied = function(campaign, playerId1, playerId2)
     if not campaign.alliances then
         return false, nil
     end
@@ -198,7 +187,7 @@ end
 -- @param campaign table Campaign object
 -- @param playerId string Player ID
 -- @return table Alliance object or nil
-function getPlayerAlliance(campaign, playerId)
+getPlayerAlliance = function(campaign, playerId)
     if not campaign.alliances then
         return nil
     end
@@ -217,7 +206,7 @@ end
 -- @param hex table Hex object
 -- @param playerId string Player ID checking
 -- @return boolean Is controlled by ally
-function isHexControlledByAlly(campaign, hex, playerId)
+isHexControlledByAlly = function(campaign, hex, playerId)
     if not hex.controlledBy or hex.controlledBy == playerId then
         return false
     end
@@ -230,7 +219,7 @@ end
 -- @param campaign table Campaign object
 -- @param allianceId string Alliance ID
 -- @return table Array of hex objects
-function getAllianceTerritory(campaign, allianceId)
+getAllianceTerritory = function(campaign, allianceId)
     if not campaign.alliances or not campaign.alliances[allianceId] then
         return {}
     end
@@ -255,7 +244,7 @@ end
 -- @param campaign table Campaign object
 -- @param allianceId string Alliance ID
 -- @return table Combined resources
-function getAllianceResources(campaign, allianceId)
+getAllianceResources = function(campaign, allianceId)
     if not campaign.alliances or not campaign.alliances[allianceId] then
         return {}
     end
@@ -289,7 +278,7 @@ end
 -- @param allianceId string Alliance ID
 -- @param victoryCondition function Victory condition checker
 -- @return boolean Has won
-function checkAllianceVictory(campaign, allianceId, victoryCondition)
+checkAllianceVictory = function(campaign, allianceId, victoryCondition)
     if not campaign.alliances or not campaign.alliances[allianceId] then
         return false
     end
@@ -318,7 +307,7 @@ end
 -- @param campaign table Campaign object
 -- @param allianceId string Alliance ID
 -- @return table Alliance stats
-function getAllianceStats(campaign, allianceId)
+getAllianceStats = function(campaign, allianceId)
     if not campaign.alliances or not campaign.alliances[allianceId] then
         return nil
     end

@@ -32,7 +32,11 @@ local ManageForces = {
     -- UI state
     scrollPosition = 0,
     unitsPerPage = 10,
-    currentPage = 1
+    currentPage = 1,
+
+    -- Deletion confirmation state
+    pendingDeleteUnitId = nil,
+    pendingDeleteExpiry = 0
 }
 
 -- ============================================================================
@@ -307,7 +311,8 @@ function ManageForces.editUnit(unitId)
     log("Edit unit: " .. unitId)
 end
 
---- Delete a unit from the Order of Battle
+--- Delete a unit from the Order of Battle (two-click confirmation)
+-- First click sets pending state with 10-second timeout; second click confirms.
 -- @param unitId string Unit ID to delete
 function ManageForces.deleteUnit(unitId)
     if not unitId then
@@ -322,14 +327,27 @@ function ManageForces.deleteUnit(unitId)
         return
     end
 
-    -- Show confirmation dialog
-    -- For now, just broadcast warning
-    broadcastToAll("DELETE UNIT: " .. unit.name .. " - This cannot be undone!", {0.80, 0.33, 0.33})
+    local now = os.time()
 
-    -- TODO: Implement confirmation dialog
-    -- When confirmed, call ManageForces.confirmDeleteUnit(unitId)
+    -- Check if this is the confirmation click (same unit, within timeout)
+    if ManageForces.pendingDeleteUnitId == unitId and now < ManageForces.pendingDeleteExpiry then
+        -- Confirmed - execute deletion
+        ManageForces.pendingDeleteUnitId = nil
+        ManageForces.pendingDeleteExpiry = 0
+        ManageForces.confirmDeleteUnit(unitId)
+        return
+    end
 
-    log("Delete requested for unit: " .. unit.name)
+    -- First click - set pending state with 10-second window
+    ManageForces.pendingDeleteUnitId = unitId
+    ManageForces.pendingDeleteExpiry = now + 10
+
+    broadcastToAll(
+        "DELETE '" .. unit.name .. "'? Click delete again within 10 seconds to confirm.",
+        {0.80, 0.33, 0.33}
+    )
+
+    log("Delete confirmation pending for unit: " .. unit.name)
 end
 
 --- Confirm and execute unit deletion
@@ -390,12 +408,10 @@ function ManageForces.importFromNewRecruit()
         return
     end
 
-    broadcastToAll("New Recruit import coming soon!", {0.60, 0.60, 0.60})
+    -- Open the New Recruit import panel
+    UICore.showPanel("newRecruitImport")
 
-    -- TODO: Show New Recruit import panel
-    -- NewRecruit.openImportPanel(ManageForces.selectedPlayerId)
-
-    log("New Recruit import requested")
+    log("New Recruit import panel opened for player: " .. ManageForces.selectedPlayerId)
 end
 
 -- ============================================================================

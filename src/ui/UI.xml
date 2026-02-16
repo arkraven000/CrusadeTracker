@@ -249,6 +249,30 @@
                     Campaign Log
                 </Button>
 
+                <Button id="mainPanel_requisitions"
+                        height="45"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">
+                    Requisitions
+                </Button>
+
+                <Button id="mainPanel_statistics"
+                        height="45"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">
+                    Statistics
+                </Button>
+
+                <Button id="mainPanel_exportImport"
+                        height="45"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">
+                    Export / Import
+                </Button>
+
                 <Button id="mainPanel_supplement"
                         height="45"
                         colors="#4A3A1A|#6B5520|#3A2A10|#2A1A08"
@@ -1021,6 +1045,416 @@
                     Loading supplement data...
                 </Text>
             </Panel>
+        </VerticalLayout>
+    </Panel>
+
+    <!-- Player Management Panel -->
+    <Panel id="playerManagementPanel"
+           width="100%"
+           height="100%"
+           active="false">
+
+        <VerticalLayout spacing="10" padding="15">
+            <Text fontSize="20" fontStyle="Bold" color="#D4A843">Player Management</Text>
+
+            <!-- Player List -->
+            <Panel id="playerMgmt_playerList"
+                   width="100%"
+                   height="250"
+                   color="rgba(20,20,30,0.9)">
+                <Text fontSize="12" color="#888888">
+                    No players in campaign yet.
+                </Text>
+            </Panel>
+
+            <!-- Add Player Section -->
+            <Text fontSize="13" color="#D4A843" fontStyle="Bold">ADD PLAYER</Text>
+
+            <HorizontalLayout spacing="5" height="30">
+                <Text width="25%" color="#BBBBBB">Name:</Text>
+                <InputField id="playerMgmt_nameInput"
+                            width="75%"
+                            placeholder="Player name"
+                            onValueChanged="onUIButtonClick" />
+            </HorizontalLayout>
+
+            <HorizontalLayout spacing="5" height="30">
+                <Text width="25%" color="#BBBBBB">Color:</Text>
+                <Dropdown id="playerMgmt_colorSelect"
+                          width="75%"
+                          onValueChanged="onUIButtonClick">
+                    <Option>White</Option>
+                    <Option>Red</Option>
+                    <Option>Blue</Option>
+                    <Option>Green</Option>
+                    <Option>Yellow</Option>
+                    <Option>Purple</Option>
+                    <Option>Orange</Option>
+                    <Option>Brown</Option>
+                </Dropdown>
+            </HorizontalLayout>
+
+            <HorizontalLayout spacing="5" height="30">
+                <Text width="25%" color="#BBBBBB">Faction:</Text>
+                <InputField id="playerMgmt_factionInput"
+                            width="75%"
+                            placeholder="e.g., Space Marines"
+                            onValueChanged="onUIButtonClick" />
+            </HorizontalLayout>
+
+            <HorizontalLayout spacing="10" height="40">
+                <Button id="playerMgmt_addPlayer"
+                        width="50%"
+                        fontStyle="Bold"
+                        colors="#8B6914|#D4A843|#6B5010|#44340A"
+                        textColor="#FFFFFF"
+                        onClick="onUIButtonClick">
+                    Add Player
+                </Button>
+                <Button id="playerMgmt_close"
+                        width="50%"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">
+                    Close
+                </Button>
+            </HorizontalLayout>
+        </VerticalLayout>
+    </Panel>
+
+    <!-- Battle Honours Panel -->
+    <Panel id="battleHonoursPanel"
+           width="100%"
+           height="100%"
+           active="false">
+
+        <VerticalLayout spacing="8" padding="15">
+            <Text fontSize="20" fontStyle="Bold" color="#D4A843">Battle Honours</Text>
+
+            <!-- Unit Info -->
+            <Panel width="100%" height="40" color="rgba(20,20,30,0.9)" padding="5">
+                <HorizontalLayout>
+                    <Text id="battleHonours_unitName" width="60%" fontSize="14" color="#EEEEEE">No Unit Selected</Text>
+                    <Text id="battleHonours_currentHonours" width="40%" fontSize="12" color="#888888" alignment="MiddleRight">Honours: 0 / 3</Text>
+                </HorizontalLayout>
+            </Panel>
+
+            <!-- Category Selection -->
+            <HorizontalLayout spacing="5" height="35">
+                <Button id="battleHonours_category_Battle Trait"
+                        width="33%"
+                        fontSize="11"
+                        colors="#8B6914|#D4A843|#6B5010|#44340A"
+                        textColor="#FFFFFF"
+                        onClick="onUIButtonClick">
+                    Battle Trait
+                </Button>
+                <Button id="battleHonours_category_Weapon Modification"
+                        width="34%"
+                        fontSize="11"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">
+                    Weapon Mod
+                </Button>
+                <Button id="battleHonours_category_Crusade Relic"
+                        width="33%"
+                        fontSize="11"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">
+                    Crusade Relic
+                </Button>
+            </HorizontalLayout>
+
+            <!-- Honours List -->
+            <Panel id="battleHonours_honoursList"
+                   width="100%"
+                   height="350"
+                   color="rgba(20,20,30,0.9)">
+                <Text fontSize="12" color="#888888">
+                    Select a category to view available honours.
+                </Text>
+            </Panel>
+
+            <!-- Pagination -->
+            <HorizontalLayout spacing="10" height="30">
+                <Button id="battleHonours_previousPage"
+                        width="30%"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">
+                    Previous
+                </Button>
+                <Text id="battleHonours_pageIndicator" width="40%" alignment="MiddleCenter" color="#888888" fontSize="12">
+                    Page 1 of 1
+                </Text>
+                <Button id="battleHonours_nextPage"
+                        width="30%"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">
+                    Next
+                </Button>
+            </HorizontalLayout>
+
+            <Button id="battleHonours_close"
+                    height="40"
+                    colors="#444444|#666666|#333333|#222222"
+                    textColor="#CCCCCC"
+                    onClick="onUIButtonClick">
+                Close
+            </Button>
+        </VerticalLayout>
+    </Panel>
+
+    <!-- Requisitions Menu Panel -->
+    <Panel id="requisitionsMenuPanel"
+           width="100%"
+           height="100%"
+           active="false">
+
+        <VerticalLayout spacing="8" padding="15">
+            <Text fontSize="20" fontStyle="Bold" color="#D4A843">Requisitions</Text>
+
+            <!-- Player Info -->
+            <Panel width="100%" height="50" color="rgba(20,20,30,0.9)" padding="8">
+                <HorizontalLayout>
+                    <Text id="requisitions_playerName" width="50%" fontSize="14" color="#EEEEEE">No Player Selected</Text>
+                    <Text id="requisitions_rpDisplay" width="50%" fontSize="14" color="#D4A843" alignment="MiddleRight">RP: 0</Text>
+                </HorizontalLayout>
+            </Panel>
+
+            <!-- Player Selector -->
+            <HorizontalLayout spacing="10" height="35">
+                <Text width="25%" color="#BBBBBB">Player:</Text>
+                <Dropdown id="requisitions_playerSelect"
+                          width="75%"
+                          onValueChanged="onUIButtonClick">
+                </Dropdown>
+            </HorizontalLayout>
+
+            <!-- Requisition List -->
+            <Panel id="requisitions_reqList"
+                   width="100%"
+                   height="250"
+                   color="rgba(20,20,30,0.9)">
+                <Text fontSize="12" color="#888888">
+                    Select a player to view available requisitions.
+                </Text>
+            </Panel>
+
+            <!-- Requisition Details -->
+            <Panel id="requisitions_detailsPanel"
+                   width="100%"
+                   height="100"
+                   color="rgba(20,20,30,0.9)"
+                   padding="8"
+                   active="false">
+                <VerticalLayout spacing="5">
+                    <Text id="requisitions_reqName" fontSize="14" color="#D4A843" fontStyle="Bold">Requisition Name</Text>
+                    <Text id="requisitions_reqDesc" fontSize="11" color="#BBBBBB">Description</Text>
+                    <Text id="requisitions_reqCost" fontSize="12" color="#EEEEEE">Cost: 0 RP</Text>
+                </VerticalLayout>
+            </Panel>
+
+            <!-- Unit Selector (for unit-specific requisitions) -->
+            <Panel id="requisitions_unitSelector"
+                   width="100%"
+                   height="60"
+                   active="false">
+                <HorizontalLayout spacing="10" height="35">
+                    <Text width="25%" color="#BBBBBB">Unit:</Text>
+                    <Dropdown id="requisitions_unitSelect"
+                              width="75%"
+                              onValueChanged="onUIButtonClick">
+                    </Dropdown>
+                </HorizontalLayout>
+            </Panel>
+
+            <!-- Action Buttons -->
+            <HorizontalLayout spacing="10" height="40">
+                <Button id="requisitions_purchase"
+                        width="50%"
+                        fontStyle="Bold"
+                        colors="#8B6914|#D4A843|#6B5010|#44340A"
+                        textColor="#FFFFFF"
+                        onClick="onUIButtonClick">
+                    Purchase
+                </Button>
+                <Button id="requisitions_close"
+                        width="50%"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">
+                    Close
+                </Button>
+            </HorizontalLayout>
+        </VerticalLayout>
+    </Panel>
+
+    <!-- Export/Import Panel -->
+    <Panel id="exportImportPanel"
+           width="100%"
+           height="100%"
+           active="false">
+
+        <VerticalLayout spacing="8" padding="15">
+            <Text fontSize="20" fontStyle="Bold" color="#D4A843">Export / Import</Text>
+
+            <!-- Mode Selection -->
+            <HorizontalLayout spacing="5" height="35">
+                <Button id="exportImport_mode_full"
+                        width="33%"
+                        fontSize="11"
+                        colors="#8B6914|#D4A843|#6B5010|#44340A"
+                        textColor="#FFFFFF"
+                        onClick="onUIButtonClick">
+                    Full Campaign
+                </Button>
+                <Button id="exportImport_mode_player"
+                        width="34%"
+                        fontSize="11"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">
+                    Player
+                </Button>
+                <Button id="exportImport_mode_units"
+                        width="33%"
+                        fontSize="11"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">
+                    Units Only
+                </Button>
+            </HorizontalLayout>
+
+            <!-- Player Selector -->
+            <Panel id="exportImport_playerSelector" active="false">
+                <HorizontalLayout spacing="10" height="35">
+                    <Text width="25%" color="#BBBBBB">Player:</Text>
+                    <Dropdown id="exportImport_playerSelect"
+                              width="75%"
+                              onValueChanged="onUIButtonClick">
+                    </Dropdown>
+                </HorizontalLayout>
+            </Panel>
+
+            <!-- Export Button -->
+            <Button id="exportImport_export"
+                    height="40"
+                    fontStyle="Bold"
+                    colors="#2E6B3A|#3D8B4D|#1E4B2A|#152E1A"
+                    textColor="#FFFFFF"
+                    onClick="onUIButtonClick">
+                Export Data
+            </Button>
+
+            <!-- Import Section -->
+            <Text fontSize="13" color="#D4A843" fontStyle="Bold">IMPORT</Text>
+            <InputField id="exportImport_importField"
+                        width="100%"
+                        height="200"
+                        characterLimit="50000"
+                        lineType="MultiLine"
+                        placeholder="Paste JSON data here to import..."
+                        onValueChanged="onUIButtonClick" />
+
+            <Button id="exportImport_import"
+                    height="40"
+                    colors="#8B6914|#D4A843|#6B5010|#44340A"
+                    textColor="#FFFFFF"
+                    onClick="onUIButtonClick">
+                Import Data
+            </Button>
+
+            <Button id="exportImport_close"
+                    height="40"
+                    colors="#444444|#666666|#333333|#222222"
+                    textColor="#CCCCCC"
+                    onClick="onUIButtonClick">
+                Close
+            </Button>
+        </VerticalLayout>
+    </Panel>
+
+    <!-- Statistics Panel -->
+    <Panel id="statisticsPanelPanel"
+           width="100%"
+           height="100%"
+           active="false">
+
+        <VerticalLayout spacing="8" padding="15">
+            <Text fontSize="20" fontStyle="Bold" color="#D4A843" alignment="MiddleCenter">
+                Campaign Statistics
+            </Text>
+
+            <!-- View Tabs -->
+            <HorizontalLayout spacing="5" height="35">
+                <Button id="statisticsViewOverview"
+                        width="25%"
+                        fontSize="11"
+                        colors="#8B6914|#D4A843|#6B5010|#44340A"
+                        textColor="#FFFFFF"
+                        onClick="onUIButtonClick">
+                    Overview
+                </Button>
+                <Button id="statisticsViewPlayers"
+                        width="25%"
+                        fontSize="11"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">
+                    Players
+                </Button>
+                <Button id="statisticsViewUnits"
+                        width="25%"
+                        fontSize="11"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">
+                    Units
+                </Button>
+                <Button id="statisticsViewBattles"
+                        width="25%"
+                        fontSize="11"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">
+                    Battles
+                </Button>
+            </HorizontalLayout>
+
+            <!-- Statistics Content Area -->
+            <Panel width="100%" height="420" color="rgba(20,20,30,0.9)" padding="10">
+                <VerticalLayout spacing="5">
+                    <Text id="statisticsOverviewText" fontSize="12" color="#BBBBBB">
+                        Loading statistics...
+                    </Text>
+                    <Text id="statisticsPlayerList" fontSize="12" color="#BBBBBB" active="false" />
+                    <Text id="statisticsUnitList" fontSize="12" color="#BBBBBB" active="false" />
+                    <Text id="statisticsBattleText" fontSize="12" color="#BBBBBB" active="false" />
+                </VerticalLayout>
+            </Panel>
+
+            <!-- Actions -->
+            <HorizontalLayout spacing="10" height="40">
+                <Button id="statisticsRefresh"
+                        width="50%"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">
+                    Refresh
+                </Button>
+                <Button id="statisticsClose"
+                        width="50%"
+                        colors="#444444|#666666|#333333|#222222"
+                        textColor="#CCCCCC"
+                        onClick="onUIButtonClick">
+                    Close
+                </Button>
+            </HorizontalLayout>
         </VerticalLayout>
     </Panel>
 

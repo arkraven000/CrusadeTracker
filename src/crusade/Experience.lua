@@ -15,7 +15,14 @@ Three XP Award Types:
 
 local Utils = require("src/core/Utils")
 local Constants = require("src/core/Constants")
+local DataModel = require("src/core/DataModel")
 local CrusadePoints = require("src/crusade/CrusadePoints")
+
+-- Forward declarations for local functions (required for forward references in Lua 5.1)
+local calculateRank, getRankDetails, getNextRankRequirements, getXPForNextRank
+local addXP, awardBattleExperienceXP, calculateDealersOfDeathXP
+local awardMarkedForGreatnessXP, processPostBattleXP
+local incrementBattlesParticipated, getNextDealersOfDeathThreshold, applyLegendaryVeterans
 
 -- ============================================================================
 -- RANK CALCULATION
@@ -27,7 +34,7 @@ local CrusadePoints = require("src/crusade/CrusadePoints")
 -- @param hasLegendaryVeterans boolean Has Legendary Veterans requisition?
 -- @return number Rank (1-5)
 -- @return string Rank name
-function calculateRank(xp, isCharacter, hasLegendaryVeterans)
+calculateRank = function(xp, isCharacter, hasLegendaryVeterans)
     local rank = 1
     local rankName = "Battle-Ready"
 
@@ -51,7 +58,7 @@ end
 --- Get rank details
 -- @param rank number Rank number (1-5)
 -- @return table Rank details or nil
-function getRankDetails(rank)
+getRankDetails = function(rank)
     for _, threshold in ipairs(Constants.RANK_THRESHOLDS) do
         if threshold.rank == rank then
             return threshold
@@ -65,7 +72,7 @@ end
 -- @param isCharacter boolean Is this a CHARACTER unit?
 -- @param hasLegendaryVeterans boolean Has Legendary Veterans?
 -- @return table Next rank details or nil if maxed
-function getNextRankRequirements(currentRank, isCharacter, hasLegendaryVeterans)
+getNextRankRequirements = function(currentRank, isCharacter, hasLegendaryVeterans)
     for i, threshold in ipairs(Constants.RANK_THRESHOLDS) do
         if threshold.rank == currentRank + 1 then
             -- Check if next rank is available
@@ -81,7 +88,7 @@ end
 --- Calculate XP needed for next rank
 -- @param unit table The unit object
 -- @return number XP needed, or nil if at max rank
-function getXPForNextRank(unit)
+getXPForNextRank = function(unit)
     local nextRank = getNextRankRequirements(
         unit.rank,
         unit.isCharacter,
@@ -108,7 +115,7 @@ end
 -- @return boolean Success
 -- @return number Actual XP added
 -- @return string Message
-function addXP(unit, amount, reason, campaignLog)
+addXP = function(unit, amount, reason, campaignLog)
     if not unit.canGainXP then
         return false, 0, "Unit cannot gain XP"
     end
@@ -127,15 +134,14 @@ function addXP(unit, amount, reason, campaignLog)
             )
 
             if campaignLog then
-                table.insert(campaignLog, {
-                    type = "XP_CAP_REACHED",
-                    timestamp = Utils.getUnixTimestamp(),
-                    details = {
+                table.insert(campaignLog, DataModel.createEventLogEntry(
+                    "XP_CAP_REACHED",
+                    {
                         unit = unit.name,
                         xp = oldXP,
                         message = message
                     }
-                })
+                ))
             end
 
             return false, 0, message
@@ -146,16 +152,15 @@ function addXP(unit, amount, reason, campaignLog)
             local requestedAmount = amount
             amount = maxXP - oldXP
             if campaignLog then
-                table.insert(campaignLog, {
-                    type = "XP_CAPPED",
-                    timestamp = Utils.getUnixTimestamp(),
-                    details = {
+                table.insert(campaignLog, DataModel.createEventLogEntry(
+                    "XP_CAPPED",
+                    {
                         unit = unit.name,
                         requestedAmount = requestedAmount,
                         cappedAmount = amount,
                         message = "XP capped at 30 for non-CHARACTER"
                     }
-                })
+                ))
             end
         end
     end
@@ -177,16 +182,15 @@ function addXP(unit, amount, reason, campaignLog)
 
         if campaignLog then
             local oldRankName = getRankDetails(oldRank).name
-            table.insert(campaignLog, {
-                type = "RANK_UP",
-                timestamp = Utils.getUnixTimestamp(),
-                details = {
+            table.insert(campaignLog, DataModel.createEventLogEntry(
+                "RANK_UP",
+                {
                     unit = unit.name,
                     oldRank = oldRankName,
                     newRank = newRankName,
                     xp = unit.experiencePoints
                 }
-            })
+            ))
         end
     end
 
@@ -195,10 +199,9 @@ function addXP(unit, amount, reason, campaignLog)
 
     -- Log XP gain
     if campaignLog then
-        table.insert(campaignLog, {
-            type = "XP_GAINED",
-            timestamp = Utils.getUnixTimestamp(),
-            details = {
+        table.insert(campaignLog, DataModel.createEventLogEntry(
+            "XP_GAINED",
+            {
                 unit = unit.name,
                 amount = amount,
                 reason = reason,
@@ -206,7 +209,7 @@ function addXP(unit, amount, reason, campaignLog)
                 newXP = unit.experiencePoints,
                 rankedUp = newRank > oldRank
             }
-        })
+        ))
     end
 
     local message = string.format(
@@ -230,7 +233,7 @@ end
 -- @param campaignUnits table Campaign units collection
 -- @param campaignLog table Campaign log
 -- @return table Results {unitId -> {success, xp, message}}
-function awardBattleExperienceXP(battleRecord, campaignUnits, campaignLog)
+awardBattleExperienceXP = function(battleRecord, campaignUnits, campaignLog)
     local results = {}
 
     for _, participant in ipairs(battleRecord.participants) do
@@ -260,7 +263,7 @@ end
 -- @param newKills number New kills this battle
 -- @param campaignLog table Campaign log
 -- @return number XP awarded
-function calculateDealersOfDeathXP(unit, newKills, campaignLog)
+calculateDealersOfDeathXP = function(unit, newKills, campaignLog)
     local oldTotal = unit.combatTallies.unitsDestroyed
     local newTotal = oldTotal + newKills
 
@@ -293,7 +296,7 @@ end
 -- @param campaignUnits table Campaign units collection
 -- @param campaignLog table Campaign log
 -- @return table Results {unitId -> {success, xp, message}}
-function awardMarkedForGreatnessXP(battleRecord, campaignUnits, campaignLog)
+awardMarkedForGreatnessXP = function(battleRecord, campaignUnits, campaignLog)
     local results = {}
 
     for playerId, unitId in pairs(battleRecord.markedForGreatness) do
@@ -306,14 +309,13 @@ function awardMarkedForGreatnessXP(battleRecord, campaignUnits, campaignLog)
                     if scar.name == "Disgraced" or scar.name == "Mark of Shame" then
                         canMark = false
                         if campaignLog then
-                            table.insert(campaignLog, {
-                                type = "WARNING",
-                                timestamp = Utils.getUnixTimestamp(),
-                                details = {
+                            table.insert(campaignLog, DataModel.createEventLogEntry(
+                                "WARNING",
+                                {
                                     unit = unit.name,
                                     message = "Cannot be Marked for Greatness due to Battle Scar: " .. scar.name
                                 }
-                            })
+                            ))
                         end
                         results[unitId] = {
                             success = false,
@@ -349,7 +351,7 @@ end
 -- @param campaignUnits table Campaign units collection
 -- @param campaignLog table Campaign log
 -- @return table Summary of all XP awards
-function processPostBattleXP(battleRecord, campaignUnits, campaignLog)
+processPostBattleXP = function(battleRecord, campaignUnits, campaignLog)
     local summary = {
         battleExperience = {},
         dealersOfDeath = {},
@@ -386,14 +388,14 @@ end
 
 --- Update unit's battles participated tally
 -- @param unit table The unit object
-function incrementBattlesParticipated(unit)
+incrementBattlesParticipated = function(unit)
     unit.combatTallies.battlesParticipated = unit.combatTallies.battlesParticipated + 1
 end
 
 --- Get next Dealers of Death XP threshold (every 3rd kill)
 -- @param currentKills number Current total kills
 -- @return number Next threshold
-function getNextDealersOfDeathThreshold(currentKills)
+getNextDealersOfDeathThreshold = function(currentKills)
     return math.ceil((currentKills + 1) / 3) * 3
 end
 
@@ -405,7 +407,7 @@ end
 -- @param unit table The unit object
 -- @param campaignLog table Campaign log
 -- @return boolean Success
-function applyLegendaryVeterans(unit, campaignLog)
+applyLegendaryVeterans = function(unit, campaignLog)
     if unit.isCharacter then
         return false, "CHARACTER units don't need Legendary Veterans"
     end
@@ -432,16 +434,15 @@ function applyLegendaryVeterans(unit, campaignLog)
     unit.rank = newRank
 
     if campaignLog then
-        table.insert(campaignLog, {
-            type = "LEGENDARY_VETERANS",
-            timestamp = Utils.getUnixTimestamp(),
-            details = {
+        table.insert(campaignLog, DataModel.createEventLogEntry(
+            "LEGENDARY_VETERANS",
+            {
                 unit = unit.name,
                 xp = unit.experiencePoints,
                 newRank = newRankName,
                 message = "XP cap removed, max honours increased to 6, can reach Heroic/Legendary ranks"
             }
-        })
+        ))
     end
 
     return true, "Legendary Veterans applied successfully"
