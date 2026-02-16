@@ -18,6 +18,13 @@ local DataModel = require("src/core/DataModel")
 local Experience = require("src/crusade/Experience")
 local OutOfAction = require("src/crusade/OutOfAction")
 
+-- Forward declarations for local functions (required for forward references in Lua 5.1)
+local createBattleParticipant, addUnitToParticipants, removeUnitFromParticipants
+local getParticipatingUnits, addDestroyedUnit, removeDestroyedUnit, getDestroyedUnits
+local setCombatTallies, getCombatTallies, setMarkedForGreatness, getMarkedForGreatness
+local validateMarkedForGreatness, setVictoryPoints, getVictoryPoints
+local processPostBattle, validateBattleRecord, getBattleSummary
+
 -- ============================================================================
 -- BATTLE PARTICIPANT MANAGEMENT
 -- ============================================================================
@@ -26,7 +33,7 @@ local OutOfAction = require("src/crusade/OutOfAction")
 -- @param playerId string Player ID
 -- @param unitsDeployed table Array of unit IDs
 -- @return table Participant object
-function createBattleParticipant(playerId, unitsDeployed)
+createBattleParticipant = function(playerId, unitsDeployed)
     return {
         playerId = playerId,
         unitsDeployed = unitsDeployed or {},
@@ -39,7 +46,7 @@ end
 -- @param battleRecord table Battle record
 -- @param playerId string Player ID
 -- @param unitId string Unit ID
-function addUnitToParticipants(battleRecord, playerId, unitId)
+addUnitToParticipants = function(battleRecord, playerId, unitId)
     -- Find or create participant entry for player
     local participant = nil
     for _, p in ipairs(battleRecord.participants) do
@@ -64,7 +71,7 @@ end
 -- @param battleRecord table Battle record
 -- @param playerId string Player ID
 -- @param unitId string Unit ID
-function removeUnitFromParticipants(battleRecord, playerId, unitId)
+removeUnitFromParticipants = function(battleRecord, playerId, unitId)
     for _, participant in ipairs(battleRecord.participants) do
         if participant.playerId == playerId then
             for i, uid in ipairs(participant.unitsDeployed) do
@@ -81,7 +88,7 @@ end
 -- @param battleRecord table Battle record
 -- @param playerId string Player ID
 -- @return table Array of unit IDs
-function getParticipatingUnits(battleRecord, playerId)
+getParticipatingUnits = function(battleRecord, playerId)
     for _, participant in ipairs(battleRecord.participants) do
         if participant.playerId == playerId then
             return participant.unitsDeployed
@@ -98,7 +105,7 @@ end
 -- @param battleRecord table Battle record
 -- @param playerId string Owning player ID
 -- @param unitId string Unit ID
-function addDestroyedUnit(battleRecord, playerId, unitId)
+addDestroyedUnit = function(battleRecord, playerId, unitId)
     if not battleRecord.destroyedUnits[playerId] then
         battleRecord.destroyedUnits[playerId] = {}
     end
@@ -112,7 +119,7 @@ end
 -- @param battleRecord table Battle record
 -- @param playerId string Owning player ID
 -- @param unitId string Unit ID
-function removeDestroyedUnit(battleRecord, playerId, unitId)
+removeDestroyedUnit = function(battleRecord, playerId, unitId)
     if not battleRecord.destroyedUnits[playerId] then
         return
     end
@@ -129,7 +136,7 @@ end
 -- @param battleRecord table Battle record
 -- @param playerId string Player ID
 -- @return table Array of unit IDs
-function getDestroyedUnits(battleRecord, playerId)
+getDestroyedUnits = function(battleRecord, playerId)
     return battleRecord.destroyedUnits[playerId] or {}
 end
 
@@ -141,7 +148,7 @@ end
 -- @param battleRecord table Battle record
 -- @param unitId string Unit ID
 -- @param kills number Units destroyed this battle
-function setCombatTallies(battleRecord, unitId, kills)
+setCombatTallies = function(battleRecord, unitId, kills)
     battleRecord.combatTallies[unitId] = {
         killsThisBattle = kills,
         unitsDestroyed = 0 -- This will be updated from unit's existing total
@@ -152,7 +159,7 @@ end
 -- @param battleRecord table Battle record
 -- @param unitId string Unit ID
 -- @return table Combat tallies or nil
-function getCombatTallies(battleRecord, unitId)
+getCombatTallies = function(battleRecord, unitId)
     return battleRecord.combatTallies[unitId]
 end
 
@@ -164,7 +171,7 @@ end
 -- @param battleRecord table Battle record
 -- @param playerId string Player ID
 -- @param unitId string Unit ID (or nil to clear)
-function setMarkedForGreatness(battleRecord, playerId, unitId)
+setMarkedForGreatness = function(battleRecord, playerId, unitId)
     battleRecord.markedForGreatness[playerId] = unitId
 end
 
@@ -172,7 +179,7 @@ end
 -- @param battleRecord table Battle record
 -- @param playerId string Player ID
 -- @return string Unit ID or nil
-function getMarkedForGreatness(battleRecord, playerId)
+getMarkedForGreatness = function(battleRecord, playerId)
     return battleRecord.markedForGreatness[playerId]
 end
 
@@ -183,7 +190,7 @@ end
 -- @param campaignUnits table Campaign units collection
 -- @return boolean Valid
 -- @return string Error message if invalid
-function validateMarkedForGreatness(battleRecord, playerId, unitId, campaignUnits)
+validateMarkedForGreatness = function(battleRecord, playerId, unitId, campaignUnits)
     if not unitId or unitId == "" then
         return true, nil -- Clearing selection is valid
     end
@@ -222,7 +229,7 @@ end
 -- @param battleRecord table Battle record
 -- @param playerId string Player ID
 -- @param points number Victory points
-function setVictoryPoints(battleRecord, playerId, points)
+setVictoryPoints = function(battleRecord, playerId, points)
     battleRecord.victoryPoints[playerId] = points
 end
 
@@ -230,7 +237,7 @@ end
 -- @param battleRecord table Battle record
 -- @param playerId string Player ID
 -- @return number Victory points
-function getVictoryPoints(battleRecord, playerId)
+getVictoryPoints = function(battleRecord, playerId)
     return battleRecord.victoryPoints[playerId] or 0
 end
 
@@ -242,7 +249,7 @@ end
 -- @param battleRecord table Battle record
 -- @param campaign table Campaign data
 -- @return table Processing summary
-function processPostBattle(battleRecord, campaign)
+processPostBattle = function(battleRecord, campaign)
     local summary = {
         xpAwards = {},
         outOfActionTests = {},
@@ -360,7 +367,7 @@ end
 -- @param campaign table Campaign data
 -- @return boolean Valid
 -- @return string Error message if invalid
-function validateBattleRecord(battleRecord, campaign)
+validateBattleRecord = function(battleRecord, campaign)
     -- Check for participants
     if #battleRecord.participants == 0 then
         return false, "Battle must have at least one participant"
@@ -438,7 +445,7 @@ end
 -- @param battleRecord table Battle record
 -- @param campaign table Campaign data
 -- @return table Battle summary
-function getBattleSummary(battleRecord, campaign)
+getBattleSummary = function(battleRecord, campaign)
     local summary = {
         id = battleRecord.id,
         timestamp = battleRecord.timestamp,

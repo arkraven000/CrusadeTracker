@@ -20,7 +20,7 @@ local Constants = require("src/core/Constants")
 -- ============================================================================
 
 --- 10th Edition Crusade Rules Configuration
--- Source: config/rules_10th.json
+-- Data source: Constants.lua (config/rules_10th.json is documentation-only reference)
 local RULES_10TH = {
     edition = "10th",
     version = "1.0.0",
@@ -71,7 +71,7 @@ local RULES_10TH = {
 }
 
 --- 10th Edition Battle Scars Configuration
--- Source: config/battle_scars.json
+-- Data source: Constants.lua (config/battle_scars.json is documentation-only reference)
 local BATTLE_SCARS_10TH = {
     edition = "10th",
     version = "1.0.0",
@@ -87,7 +87,7 @@ local BATTLE_SCARS_10TH = {
 }
 
 --- 10th Edition Weapon Modifications Configuration
--- Source: config/weapon_mods.json
+-- Data source: Constants.lua (config/weapon_mods.json is documentation-only reference)
 local WEAPON_MODS_10TH = {
     edition = "10th",
     version = "1.0.0",

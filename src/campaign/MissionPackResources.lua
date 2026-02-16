@@ -13,13 +13,19 @@ local Utils = require("src/core/Utils")
 local Constants = require("src/core/Constants")
 local DataModel = require("src/core/DataModel")
 
+-- Forward declarations for local functions (required for forward references in Lua 5.1)
+local getCommonResourceTypes, initializePlayerResource, addPlayerResource
+local spendPlayerResource, getPlayerResource, getAllPlayerResources
+local awardBattleResources, setupMissionPackResources, getCampaignResourceSummary
+local getSupplementResourceTypes, initializeSupplementResources, initialize
+
 -- ============================================================================
 -- RESOURCE TYPE DEFINITIONS
 -- ============================================================================
 
 --- Get common mission pack resource types
 -- @return table Array of resource type definitions
-function getCommonResourceTypes()
+getCommonResourceTypes = function()
     return {
         {
             name = "Archaeotech Fragments",
@@ -67,7 +73,7 @@ end
 -- @param player table Player object
 -- @param resourceName string Resource name
 -- @param initialValue number Initial amount
-function initializePlayerResource(player, resourceName, initialValue)
+initializePlayerResource = function(player, resourceName, initialValue)
     if not player.resources then
         player.resources = {}
     end
@@ -83,7 +89,7 @@ end
 -- @param campaignLog table Campaign log
 -- @return boolean Success
 -- @return number Actual amount added
-function addPlayerResource(player, resourceName, amount, maxValue, campaignLog)
+addPlayerResource = function(player, resourceName, amount, maxValue, campaignLog)
     if not player.resources then
         player.resources = {}
     end
@@ -105,16 +111,12 @@ function addPlayerResource(player, resourceName, amount, maxValue, campaignLog)
 
     -- Log resource gain
     if campaignLog and actualAdded > 0 then
-        table.insert(campaignLog, {
-            type = "RESOURCE_GAINED",
-            timestamp = Utils.getUnixTimestamp(),
-            details = {
-                player = player.name,
-                resource = resourceName,
-                amount = actualAdded,
-                total = newValue
-            }
-        })
+        table.insert(campaignLog, DataModel.createEventLogEntry("RESOURCE_GAINED", {
+            player = player.name,
+            resource = resourceName,
+            amount = actualAdded,
+            total = newValue
+        }))
     end
 
     return true, actualAdded
@@ -126,7 +128,7 @@ end
 -- @param amount number Amount to spend
 -- @param campaignLog table Campaign log
 -- @return boolean Success
-function spendPlayerResource(player, resourceName, amount, campaignLog)
+spendPlayerResource = function(player, resourceName, amount, campaignLog)
     if not player.resources or not player.resources[resourceName] then
         return false, "Resource not found"
     end
@@ -140,16 +142,12 @@ function spendPlayerResource(player, resourceName, amount, campaignLog)
 
     -- Log resource spent
     if campaignLog then
-        table.insert(campaignLog, {
-            type = "RESOURCE_SPENT",
-            timestamp = Utils.getUnixTimestamp(),
-            details = {
-                player = player.name,
-                resource = resourceName,
-                amount = amount,
-                remaining = player.resources[resourceName]
-            }
-        })
+        table.insert(campaignLog, DataModel.createEventLogEntry("RESOURCE_SPENT", {
+            player = player.name,
+            resource = resourceName,
+            amount = amount,
+            remaining = player.resources[resourceName]
+        }))
     end
 
     return true
@@ -159,7 +157,7 @@ end
 -- @param player table Player object
 -- @param resourceName string Resource name
 -- @return number Amount
-function getPlayerResource(player, resourceName)
+getPlayerResource = function(player, resourceName)
     if not player.resources then
         return 0
     end
@@ -170,7 +168,7 @@ end
 --- Get all player resources
 -- @param player table Player object
 -- @return table Resources keyed by name
-function getAllPlayerResources(player)
+getAllPlayerResources = function(player)
     return player.resources or {}
 end
 
@@ -182,7 +180,7 @@ end
 -- @param battleRecord table Battle record
 -- @param campaign table Campaign object
 -- @param resourceRules table Resource award rules
-function awardBattleResources(battleRecord, campaign, resourceRules)
+awardBattleResources = function(battleRecord, campaign, resourceRules)
     if not resourceRules then
         return
     end
@@ -225,7 +223,7 @@ end
 -- @param campaign table Campaign object
 -- @param missionPackName string Mission pack name
 -- @param campaignLog table Campaign log
-function setupMissionPackResources(campaign, missionPackName, campaignLog)
+setupMissionPackResources = function(campaign, missionPackName, campaignLog)
     local resourceTypes = getCommonResourceTypes()
 
     -- Initialize resources for all players
@@ -237,14 +235,10 @@ function setupMissionPackResources(campaign, missionPackName, campaignLog)
 
     -- Log mission pack setup
     if campaignLog then
-        table.insert(campaignLog, {
-            type = "MISSION_PACK_RESOURCES_INITIALIZED",
-            timestamp = Utils.getUnixTimestamp(),
-            details = {
-                missionPack = missionPackName,
-                resourceCount = #resourceTypes
-            }
-        })
+        table.insert(campaignLog, DataModel.createEventLogEntry("MISSION_PACK_RESOURCES_INITIALIZED", {
+            missionPack = missionPackName,
+            resourceCount = #resourceTypes
+        }))
     end
 
     Utils.logInfo("Mission pack resources initialized: " .. missionPackName)
@@ -253,7 +247,7 @@ end
 --- Get resource summary for campaign
 -- @param campaign table Campaign object
 -- @return table Summary of all player resources
-function getCampaignResourceSummary(campaign)
+getCampaignResourceSummary = function(campaign)
     local summary = {}
 
     for playerId, player in pairs(campaign.players) do
@@ -273,7 +267,7 @@ end
 --- Get resource types for a specific crusade supplement
 -- @param supplementId string Supplement ID ("none", "pariah_nexus", etc.)
 -- @return table Array of resource type definitions
-function getSupplementResourceTypes(supplementId)
+getSupplementResourceTypes = function(supplementId)
     local supplementResources = {
         tyrannic_war = {
             {
@@ -323,7 +317,7 @@ end
 
 --- Initialize supplement resources for all players in a campaign
 -- @param campaign table Campaign object
-function initializeSupplementResources(campaign)
+initializeSupplementResources = function(campaign)
     local supplementId = campaign.crusadeSupplement
     if not supplementId or supplementId == "none" then
         return
@@ -342,7 +336,7 @@ end
 
 --- Initialize module with campaign data
 -- @param campaign table Campaign object
-function initialize(campaign)
+initialize = function(campaign)
     if not campaign then
         Utils.logWarning("MissionPackResources.initialize called with nil campaign")
         return

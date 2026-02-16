@@ -17,6 +17,11 @@ local Utils = require("src/core/Utils")
 local Constants = require("src/core/Constants")
 local DataModel = require("src/core/DataModel")
 
+-- Forward declarations for local functions (required for forward references in Lua 5.1)
+local addBonusToHex, removeBonusFromHex, getHexBonuses, applyTerritoryBonuses
+local applyAllTerritoryBonuses, getCommonBonusTemplates
+local createBonusFromTemplate, getPlayerTerritoryInfo
+
 -- ============================================================================
 -- TERRITORY BONUS MANAGEMENT
 -- ============================================================================
@@ -27,7 +32,7 @@ local DataModel = require("src/core/DataModel")
 -- @param bonusType string "RP", "Resource", "BattleHonour", "Custom"
 -- @param value any Bonus value
 -- @return table Bonus object
-function addBonusToHex(hex, description, bonusType, value)
+addBonusToHex = function(hex, description, bonusType, value)
     local bonus = DataModel.createTerritoryBonus(description, bonusType, value)
     table.insert(hex.bonuses, bonus)
     return bonus
@@ -37,7 +42,7 @@ end
 -- @param hex table Hex object
 -- @param bonusId string Bonus ID
 -- @return boolean Success
-function removeBonusFromHex(hex, bonusId)
+removeBonusFromHex = function(hex, bonusId)
     for i, bonus in ipairs(hex.bonuses) do
         if bonus.id == bonusId then
             table.remove(hex.bonuses, i)
@@ -50,7 +55,7 @@ end
 --- Get all bonuses for a hex
 -- @param hex table Hex object
 -- @return table Array of bonus objects
-function getHexBonuses(hex)
+getHexBonuses = function(hex)
     return hex.bonuses or {}
 end
 
@@ -63,7 +68,7 @@ end
 -- @param playerId string Player ID
 -- @param campaignLog table Campaign log
 -- @return table Summary of applied bonuses
-function applyTerritoryBonuses(campaign, playerId, campaignLog)
+applyTerritoryBonuses = function(campaign, playerId, campaignLog)
     local player = campaign.players[playerId]
     if not player then
         return {}
@@ -89,16 +94,12 @@ function applyTerritoryBonuses(campaign, playerId, campaignLog)
                     bonusesApplied.rpGained = bonusesApplied.rpGained + bonus.value
 
                     if campaignLog then
-                        table.insert(campaignLog, {
-                            type = "TERRITORY_BONUS_RP",
-                            timestamp = Utils.getUnixTimestamp(),
-                            details = {
-                                player = player.name,
-                                hex = hex.name,
-                                amount = bonus.value,
-                                description = bonus.description
-                            }
-                        })
+                        table.insert(campaignLog, DataModel.createEventLogEntry("TERRITORY_BONUS_RP", {
+                            player = player.name,
+                            hex = hex.name,
+                            amount = bonus.value,
+                            description = bonus.description
+                        }))
                     end
 
                 elseif bonus.type == "Resource" then
@@ -133,7 +134,7 @@ end
 -- @param campaign table Campaign object
 -- @param campaignLog table Campaign log
 -- @return table Summary keyed by player ID
-function applyAllTerritoryBonuses(campaign, campaignLog)
+applyAllTerritoryBonuses = function(campaign, campaignLog)
     local allBonuses = {}
 
     for playerId, player in pairs(campaign.players) do
@@ -149,7 +150,7 @@ end
 
 --- Get common territory bonus templates
 -- @return table Array of bonus templates
-function getCommonBonusTemplates()
+getCommonBonusTemplates = function()
     return {
         {
             description = "Supply Cache",
@@ -193,7 +194,7 @@ end
 --- Create bonus from template
 -- @param template table Bonus template
 -- @return function Function that creates the bonus
-function createBonusFromTemplate(template)
+createBonusFromTemplate = function(template)
     return function(hex)
         return addBonusToHex(hex, template.description, template.type, template.value)
     end
@@ -207,7 +208,7 @@ end
 -- @param campaign table Campaign object
 -- @param playerId string Player ID
 -- @return table Territory summary
-function getPlayerTerritoryInfo(campaign, playerId)
+getPlayerTerritoryInfo = function(campaign, playerId)
     if not campaign.mapConfig then
         return {
             hexesControlled = 0,

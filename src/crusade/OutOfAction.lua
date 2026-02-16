@@ -20,6 +20,13 @@ local Constants = require("src/core/Constants")
 local CrusadePoints = require("src/crusade/CrusadePoints")
 local DataModel = require("src/core/DataModel")
 
+-- Forward declarations for local functions (required for forward references in Lua 5.1)
+local conductOutOfActionTest, canChooseBattleScar, canChooseDevastatingBlow
+local getAvailableConsequences, applyDevastatingBlow, destroyUnitPermanently
+local applyBattleScar, getBattleScar, getAllBattleScars, removeBattleScar
+local processOutOfActionTests, applyOutOfActionConsequence
+local hasPendingOutOfActionChoice, getOutOfActionStatus
+
 -- ============================================================================
 -- OUT OF ACTION TEST MECHANICS
 -- ============================================================================
@@ -29,7 +36,7 @@ local DataModel = require("src/core/DataModel")
 -- @param campaignLog table Campaign event log
 -- @return boolean Passed test
 -- @return number Dice roll result
-function conductOutOfActionTest(unit, campaignLog)
+conductOutOfActionTest = function(unit, campaignLog)
     -- All destroyed units must take the Out of Action test per 10th Edition rules.
     -- Units that cannot gain XP still suffer consequences if they fail.
 
@@ -39,14 +46,13 @@ function conductOutOfActionTest(unit, campaignLog)
     if roll >= 2 then
         -- Passed
         if campaignLog then
-            table.insert(campaignLog, {
-                type = "OUT_OF_ACTION_PASS",
-                timestamp = Utils.getUnixTimestamp(),
-                details = {
+            table.insert(campaignLog, DataModel.createEventLogEntry(
+                "OUT_OF_ACTION_PASS",
+                {
                     unit = unit.name,
                     roll = roll
                 }
-            })
+            ))
         end
 
         Utils.logInfo(string.format(
@@ -59,15 +65,14 @@ function conductOutOfActionTest(unit, campaignLog)
     else
         -- Failed (roll == 1)
         if campaignLog then
-            table.insert(campaignLog, {
-                type = "OUT_OF_ACTION_FAIL",
-                timestamp = Utils.getUnixTimestamp(),
-                details = {
+            table.insert(campaignLog, DataModel.createEventLogEntry(
+                "OUT_OF_ACTION_FAIL",
+                {
                     unit = unit.name,
                     roll = roll,
                     message = "Must choose consequence: Devastating Blow or Battle Scar"
                 }
-            })
+            ))
         end
 
         Utils.logWarning(string.format(
@@ -84,7 +89,7 @@ end
 -- @param unit table The unit object
 -- @return boolean Can choose Battle Scar
 -- @return string Reason if cannot
-function canChooseBattleScar(unit)
+canChooseBattleScar = function(unit)
     -- If unit already has 3 Battle Scars, MUST choose Devastating Blow
     if #unit.battleScars >= Constants.MAX_BATTLE_SCARS then
         return false, "Unit already has 3 Battle Scars (maximum)"
@@ -97,7 +102,7 @@ end
 -- @param unit table The unit object
 -- @return boolean Can choose Devastating Blow
 -- @return string Warning message if unit will be destroyed
-function canChooseDevastatingBlow(unit)
+canChooseDevastatingBlow = function(unit)
     -- Can always choose Devastating Blow, but warn if no honours
     if #unit.battleHonours == 0 then
         return true, "WARNING: Unit has no Battle Honours. Choosing Devastating Blow will permanently destroy the unit."
@@ -109,7 +114,7 @@ end
 --- Get available consequences for failed Out of Action test
 -- @param unit table The unit object
 -- @return table Array of available consequences {type, allowed, warning}
-function getAvailableConsequences(unit)
+getAvailableConsequences = function(unit)
     local consequences = {}
 
     -- Devastating Blow
@@ -145,7 +150,7 @@ end
 -- @param campaignLog table Campaign event log
 -- @return boolean Success
 -- @return string Message
-function applyDevastatingBlow(unit, honourIndex, campaignLog)
+applyDevastatingBlow = function(unit, honourIndex, campaignLog)
     -- Check if unit has any honours
     if #unit.battleHonours == 0 then
         -- Unit is permanently destroyed
@@ -188,16 +193,15 @@ function applyDevastatingBlow(unit, honourIndex, campaignLog)
 
     -- Log event
     if campaignLog then
-        table.insert(campaignLog, {
-            type = "DEVASTATING_BLOW",
-            timestamp = Utils.getUnixTimestamp(),
-            details = {
+        table.insert(campaignLog, DataModel.createEventLogEntry(
+            "DEVASTATING_BLOW",
+            {
                 unit = unit.name,
                 honourLost = honourName,
                 category = honourCategory,
                 remainingHonours = #unit.battleHonours
             }
-        })
+        ))
     end
 
     local message = string.format(
@@ -217,17 +221,16 @@ end
 -- @param campaignLog table Campaign event log
 -- @return boolean Success (always true)
 -- @return string Message
-function destroyUnitPermanently(unit, campaignLog)
+destroyUnitPermanently = function(unit, campaignLog)
     -- Mark unit for deletion
     unit._markedForDeletion = true
     unit.lastModified = Utils.getUnixTimestamp()
 
     -- Log event
     if campaignLog then
-        table.insert(campaignLog, {
-            type = "UNIT_PERMANENTLY_DESTROYED",
-            timestamp = Utils.getUnixTimestamp(),
-            details = {
+        table.insert(campaignLog, DataModel.createEventLogEntry(
+            "UNIT_PERMANENTLY_DESTROYED",
+            {
                 unit = unit.name,
                 owner = unit.ownerId,
                 message = "Unit lost to Devastating Blow with no Battle Honours remaining",
@@ -235,7 +238,7 @@ function destroyUnitPermanently(unit, campaignLog)
                 rank = unit.rank,
                 scars = #unit.battleScars
             }
-        })
+        ))
     end
 
     local message = string.format(
@@ -258,7 +261,7 @@ end
 -- @param attempts number Recursion attempt counter (internal use)
 -- @return boolean Success
 -- @return string Message
-function applyBattleScar(unit, scarId, campaignLog, attempts)
+applyBattleScar = function(unit, scarId, campaignLog, attempts)
     attempts = attempts or 0
 
     -- Prevent infinite recursion
@@ -335,16 +338,15 @@ function applyBattleScar(unit, scarId, campaignLog, attempts)
 
     -- Log event
     if campaignLog then
-        table.insert(campaignLog, {
-            type = "BATTLE_SCAR_GAINED",
-            timestamp = Utils.getUnixTimestamp(),
-            details = {
+        table.insert(campaignLog, DataModel.createEventLogEntry(
+            "BATTLE_SCAR_GAINED",
+            {
                 unit = unit.name,
                 scar = scar.name,
                 scarCount = #unit.battleScars,
                 source = "Out of Action test"
             }
-        })
+        ))
     end
 
     local message = string.format(
@@ -371,13 +373,13 @@ end
 --- Get Battle Scar by ID
 -- @param scarId number Scar ID (1-6)
 -- @return table Battle Scar definition or nil
-function getBattleScar(scarId)
+getBattleScar = function(scarId)
     return Constants.BATTLE_SCARS[scarId]
 end
 
 --- Get all Battle Scars
 -- @return table Array of all Battle Scar definitions
-function getAllBattleScars()
+getAllBattleScars = function()
     return Constants.BATTLE_SCARS
 end
 
@@ -387,7 +389,7 @@ end
 -- @param campaignLog table Campaign event log
 -- @return boolean Success
 -- @return string Message
-function removeBattleScar(unit, scarIndex, campaignLog)
+removeBattleScar = function(unit, scarIndex, campaignLog)
     if not scarIndex or scarIndex < 1 or scarIndex > #unit.battleScars then
         return false, "Invalid scar index"
     end
@@ -403,16 +405,15 @@ function removeBattleScar(unit, scarIndex, campaignLog)
 
     -- Log event
     if campaignLog then
-        table.insert(campaignLog, {
-            type = "BATTLE_SCAR_REMOVED",
-            timestamp = Utils.getUnixTimestamp(),
-            details = {
+        table.insert(campaignLog, DataModel.createEventLogEntry(
+            "BATTLE_SCAR_REMOVED",
+            {
                 unit = unit.name,
                 scar = scarName,
                 remainingScars = #unit.battleScars,
                 method = "Repair and Recuperate requisition"
             }
-        })
+        ))
     end
 
     local message = string.format(
@@ -435,7 +436,7 @@ end
 -- @param campaignUnits table Campaign units collection
 -- @param campaignLog table Campaign event log
 -- @return table Results {unitId -> {passed, roll, consequence}}
-function processOutOfActionTests(battleRecord, campaignUnits, campaignLog)
+processOutOfActionTests = function(battleRecord, campaignUnits, campaignLog)
     local results = {}
 
     for playerId, unitIds in pairs(battleRecord.destroyedUnits) do
@@ -469,7 +470,7 @@ end
 -- @param campaignLog table Campaign event log
 -- @return boolean Success
 -- @return string Message
-function applyOutOfActionConsequence(unit, consequenceType, params, campaignLog)
+applyOutOfActionConsequence = function(unit, consequenceType, params, campaignLog)
     params = params or {}
 
     -- Clear pending flag
@@ -493,14 +494,14 @@ end
 --- Check if unit has pending Out of Action choice
 -- @param unit table The unit object
 -- @return boolean Has pending choice
-function hasPendingOutOfActionChoice(unit)
+hasPendingOutOfActionChoice = function(unit)
     return unit._pendingOutOfActionChoice == true
 end
 
 --- Get summary of Out of Action status for unit
 -- @param unit table The unit object
 -- @return table Status summary
-function getOutOfActionStatus(unit)
+getOutOfActionStatus = function(unit)
     return {
         hasPendingChoice = hasPendingOutOfActionChoice(unit),
         canChooseScar = canChooseBattleScar(unit),

@@ -20,13 +20,18 @@ local Constants = require("src/core/Constants")
 local DataModel = require("src/core/DataModel")
 local CrusadePoints = require("src/crusade/CrusadePoints")
 
+-- Forward declarations for local functions (required for forward references in Lua 5.1)
+local getWeaponModificationTypes, getWeaponModification, rollWeaponModifications
+local applyWeaponModifications, canApplyWeaponModifications
+local removeWeaponModifications, getUnitWeaponModifications, getModifiableWeapons
+
 -- ============================================================================
 -- WEAPON MODIFICATION LIBRARY
 -- ============================================================================
 
 --- Get all weapon modification types
 -- @return table Array of weapon modification definitions
-function getWeaponModificationTypes()
+getWeaponModificationTypes = function()
     return {
         {
             id = 1,
@@ -64,7 +69,7 @@ end
 --- Get weapon modification by ID
 -- @param modId number Modification ID (1-6)
 -- @return table Modification definition or nil
-function getWeaponModification(modId)
+getWeaponModification = function(modId)
     local mods = getWeaponModificationTypes()
     for _, mod in ipairs(mods) do
         if mod.id == modId then
@@ -76,7 +81,7 @@ end
 
 --- Roll two different weapon modifications
 -- @return table Two modification IDs
-function rollWeaponModifications()
+rollWeaponModifications = function()
     local mod1 = Utils.rollDie(6)
     local mod2 = Utils.rollDie(6)
 
@@ -100,7 +105,7 @@ end
 -- @param campaignLog table Campaign event log
 -- @return boolean Success
 -- @return string Message
-function applyWeaponModifications(unit, modelIndex, weaponName, modIds, campaignLog)
+applyWeaponModifications = function(unit, modelIndex, weaponName, modIds, campaignLog)
     -- Validate
     local canApply, reason = canApplyWeaponModifications(unit, weaponName)
     if not canApply then
@@ -186,7 +191,7 @@ end
 -- @param weaponName string Name of the weapon
 -- @return boolean Can apply
 -- @return string Reason if cannot
-function canApplyWeaponModifications(unit, weaponName)
+canApplyWeaponModifications = function(unit, weaponName)
     -- Check honour limit
     local maxHonours = unit.isCharacter and Constants.MAX_BATTLE_HONOURS_CHAR or Constants.MAX_BATTLE_HONOURS_NON_CHAR
     if unit.hasLegendaryVeterans then
@@ -226,7 +231,7 @@ end
 -- @param campaignLog table Campaign event log
 -- @return boolean Success
 -- @return string Message
-function removeWeaponModifications(unit, weaponName, campaignLog)
+removeWeaponModifications = function(unit, weaponName, campaignLog)
     -- Find and remove weapon modification entry
     for i, weaponMod in ipairs(unit.weaponModifications) do
         if weaponMod.weaponName == weaponName then
@@ -273,14 +278,14 @@ end
 --- Get unit's current weapon modifications
 -- @param unit table Unit object
 -- @return table Array of weapon modification entries
-function getUnitWeaponModifications(unit)
+getUnitWeaponModifications = function(unit)
     return unit.weaponModifications or {}
 end
 
 --- Get available weapons for modification
 -- @param unit table Unit object
 -- @return table Array of weapon names that can be modified
-function getModifiableWeapons(unit)
+getModifiableWeapons = function(unit)
     local weapons = {}
 
     -- Extract weapon names from unit equipment

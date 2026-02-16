@@ -20,13 +20,18 @@ local DataModel = require("src/core/DataModel")
 local CrusadePoints = require("src/crusade/CrusadePoints")
 local Experience = require("src/crusade/Experience")
 
+-- Forward declarations for local functions (required for forward references in Lua 5.1)
+local getArtificerRelics, getAntiquityRelics, getLegendaryRelics
+local getCrusadeRelicsByTier, getAllCrusadeRelics, getAvailableRelicsForUnit
+local applyCrusadeRelic, canApplyCrusadeRelic, removeCrusadeRelic, getUnitCrusadeRelics
+
 -- ============================================================================
 -- CRUSADE RELIC LIBRARY
 -- ============================================================================
 
 --- Get Artificer Crusade Relics (Tier 1: +1 CP, any rank)
 -- @return table Array of Artificer relic definitions
-function getArtificerRelics()
+getArtificerRelics = function()
     return {
         {
             name = "Blade of Valor",
@@ -73,7 +78,7 @@ end
 
 --- Get Antiquity Crusade Relics (Tier 2: +2 CP, Heroic/Legendary)
 -- @return table Array of Antiquity relic definitions
-function getAntiquityRelics()
+getAntiquityRelics = function()
     return {
         {
             name = "Relic Blade of Heroes",
@@ -112,7 +117,7 @@ end
 
 --- Get Legendary Crusade Relics (Tier 3: +3 CP, Legendary only)
 -- @return table Array of Legendary relic definitions
-function getLegendaryRelics()
+getLegendaryRelics = function()
     return {
         {
             name = "Sword of the Imperium",
@@ -144,7 +149,7 @@ end
 --- Get all Crusade Relics for a tier
 -- @param tier string "Artificer", "Antiquity", or "Legendary"
 -- @return table Array of relic definitions
-function getCrusadeRelicsByTier(tier)
+getCrusadeRelicsByTier = function(tier)
     if tier == "Artificer" then
         return getArtificerRelics()
     elseif tier == "Antiquity" then
@@ -157,7 +162,7 @@ end
 
 --- Get all Crusade Relics
 -- @return table Array of all relic definitions
-function getAllCrusadeRelics()
+getAllCrusadeRelics = function()
     local allRelics = {}
 
     for _, relic in ipairs(getArtificerRelics()) do
@@ -178,7 +183,7 @@ end
 --- Get available relics for a unit based on rank
 -- @param unit table Unit object
 -- @return table Array of available relic definitions
-function getAvailableRelicsForUnit(unit)
+getAvailableRelicsForUnit = function(unit)
     local available = {}
 
     -- Artificer available to all CHARACTER units
@@ -213,7 +218,7 @@ end
 -- @param campaignLog table Campaign event log
 -- @return boolean Success
 -- @return string Message
-function applyCrusadeRelic(unit, relicName, campaignLog)
+applyCrusadeRelic = function(unit, relicName, campaignLog)
     -- Check if unit can receive relic
     local canApply, reason = canApplyCrusadeRelic(unit, relicName)
     if not canApply then
@@ -309,7 +314,7 @@ end
 -- @param relicName string Name of the relic (optional, for specific checks)
 -- @return boolean Can apply
 -- @return string Reason if cannot
-function canApplyCrusadeRelic(unit, relicName)
+canApplyCrusadeRelic = function(unit, relicName)
     -- Must be CHARACTER
     if not unit.isCharacter then
         return false, "Only CHARACTER units can have Crusade Relics"
@@ -330,7 +335,7 @@ end
 -- @param campaignLog table Campaign event log
 -- @return boolean Success
 -- @return string Message
-function removeCrusadeRelic(unit, relicName, campaignLog)
+removeCrusadeRelic = function(unit, relicName, campaignLog)
     -- Find and remove from crusadeRelics array
     for i, relic in ipairs(unit.crusadeRelics) do
         if relic.name == relicName then
@@ -382,7 +387,7 @@ end
 --- Get unit's current Crusade Relics
 -- @param unit table Unit object
 -- @return table Array of crusade relic objects
-function getUnitCrusadeRelics(unit)
+getUnitCrusadeRelics = function(unit)
     return unit.crusadeRelics or {}
 end
 

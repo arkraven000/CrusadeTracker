@@ -186,6 +186,40 @@ local RELIC_TIERS = {
 }
 
 -- ============================================================================
+-- BATTLE TRAITS
+-- ============================================================================
+
+local GENERIC_BATTLE_TRAITS = {
+    {name = "Inspiring Leader", description = "Units within 6\" of this unit can use this unit's Leadership characteristic instead of their own when taking Battle-shock tests", category = "Leadership"},
+    {name = "Lethal Sharpshooter", description = "Ranged weapons equipped by models in this unit have the [LETHAL HITS] ability", category = "Shooting"},
+    {name = "Melee Expert", description = "Melee weapons equipped by models in this unit have the [LETHAL HITS] ability", category = "Melee"},
+    {name = "Tank Hunter", description = "Each time a model in this unit makes an attack that targets a VEHICLE or MONSTER unit, add 1 to the Wound roll", category = "Anti-Vehicle"},
+    {name = "Fortified Position", description = "While this unit is within range of an objective marker you control, models in this unit have a 5+ invulnerable save", category = "Defensive"},
+    {name = "Rapid Deployment", description = "This unit can make a Normal move of up to 6\" at the start of the first battle round, before the first turn begins", category = "Movement"},
+    {name = "Devastating Charge", description = "Each time this unit makes a Charge move, until the end of the turn, melee weapons equipped by models in this unit have the [DEVASTATING WOUNDS] ability", category = "Melee"},
+    {name = "Marked for Death", description = "At the start of the first battle round, select one enemy unit to be this unit's mark. Each time this unit makes an attack that targets its marked unit, re-roll a Wound roll of 1", category = "Special"},
+    {name = "Stealth Specialist", description = "Each time a ranged attack targets this unit, if this unit is within or wholly within terrain, subtract 1 from the Hit roll", category = "Defensive"},
+    {name = "Never Give Up", description = "This unit is eligible to shoot in a turn in which it Fell Back", category = "Movement"},
+    {name = "Chem-enhanced", description = "Add 1 to the Strength characteristic of weapons equipped by models in this unit", category = "Enhancement"},
+    {name = "Tenacious Survivor", description = "Each time a model in this unit would lose a wound, roll one D6: on a 6, that wound is not lost", category = "Defensive"}
+}
+
+local FACTION_BATTLE_TRAITS = {
+    ["Space Marines"] = {
+        {name = "Tactical Precision", description = "Once per battle, this unit can re-roll all failed Hit rolls when shooting", category = "Shooting"},
+        {name = "And They Shall Know No Fear", description = "This unit automatically passes Battle-shock tests and can re-roll Advance and Charge rolls", category = "Leadership"}
+    },
+    ["Necrons"] = {
+        {name = "Reanimation Protocols", description = "Each time this unit uses its Reanimation Protocols ability, you can re-roll one Reanimation roll", category = "Special"},
+        {name = "Quantum Shielding", description = "Improve this unit's Save characteristic by 1 (to a maximum of 2+) against attacks with a Damage characteristic of 1", category = "Defensive"}
+    },
+    ["Orks"] = {
+        {name = "Mob Rule", description = "While this unit contains 10 or more models, add 1 to the Leadership characteristic of models in this unit", category = "Leadership"},
+        {name = "Dakka Dakka Dakka", description = "Each time this unit shoots, if it remained stationary this turn, add 1 to its ranged weapons' Attacks characteristic", category = "Shooting"}
+    }
+}
+
+-- ============================================================================
 -- EVENT TYPES (for logging)
 -- ============================================================================
 
@@ -396,5 +430,7 @@ return {
     CRUSADE_SUPPLEMENTS = CRUSADE_SUPPLEMENTS,
     SUPPLEMENT_DATA = SUPPLEMENT_DATA,
     PARIAH_NEXUS_ALLIANCES = PARIAH_NEXUS_ALLIANCES,
-    STRATEGIC_FOOTINGS = STRATEGIC_FOOTINGS
+    STRATEGIC_FOOTINGS = STRATEGIC_FOOTINGS,
+    GENERIC_BATTLE_TRAITS = GENERIC_BATTLE_TRAITS,
+    FACTION_BATTLE_TRAITS = FACTION_BATTLE_TRAITS
 }
