@@ -162,16 +162,15 @@ applyWeaponModifications = function(unit, modelIndex, weaponName, modIds, campai
 
     -- Log event
     if campaignLog then
-        table.insert(campaignLog, {
-            type = "WEAPON_MODIFICATION_GAINED",
-            timestamp = Utils.getUnixTimestamp(),
-            details = {
+        table.insert(campaignLog, DataModel.createEventLogEntry(
+            "WEAPON_MODIFICATION_GAINED",
+            {
                 unit = unit.name,
                 weapon = weaponName,
                 modifications = modNames,
                 totalHonours = #unit.battleHonours
             }
-        })
+        ))
     end
 
     local message = string.format(
@@ -250,15 +249,14 @@ removeWeaponModifications = function(unit, weaponName, campaignLog)
 
             -- Log event
             if campaignLog then
-                table.insert(campaignLog, {
-                    type = "WEAPON_MODIFICATION_REMOVED",
-                    timestamp = Utils.getUnixTimestamp(),
-                    details = {
+                table.insert(campaignLog, DataModel.createEventLogEntry(
+                    "WEAPON_MODIFICATION_REMOVED",
+                    {
                         unit = unit.name,
                         weapon = weaponName,
                         remainingHonours = #unit.battleHonours
                     }
-                })
+                ))
             end
 
             local message = string.format(

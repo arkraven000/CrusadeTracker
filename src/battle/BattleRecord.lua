@@ -353,7 +353,7 @@ processPostBattle = function(battleRecord, campaign)
             missionType = battleRecord.missionType,
             winner = battleRecord.winner and campaign.players[battleRecord.winner].name or "Draw",
             participants = #battleRecord.participants,
-            unitsDestroyed = Utils.tableCount(battleRecord.destroyedUnits)
+            unitsDestroyed = Utils.tableSize(battleRecord.destroyedUnits)
         }
     ))
 

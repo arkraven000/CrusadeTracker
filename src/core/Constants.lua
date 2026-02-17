@@ -61,6 +61,7 @@ local OVERLAY_ALPHA_DEFAULT = 0.4 -- Default transparency for territory overlays
 local DEFAULT_SUPPLY_LIMIT = 1000
 local SUPPLY_LIMIT_INCREASE = 200
 local STARTING_RP = 5
+local RP_PER_BATTLE_WIN = 1 -- 10th Edition: winner gains 1 RP after a battle
 
 -- ============================================================================
 -- TTS PLAYER COLORS (RGB values)
@@ -417,6 +418,7 @@ return {
     DEFAULT_SUPPLY_LIMIT = DEFAULT_SUPPLY_LIMIT,
     SUPPLY_LIMIT_INCREASE = SUPPLY_LIMIT_INCREASE,
     STARTING_RP = STARTING_RP,
+    RP_PER_BATTLE_WIN = RP_PER_BATTLE_WIN,
     PLAYER_COLORS = PLAYER_COLORS,
     PLAYER_COLOR_NAMES = PLAYER_COLOR_NAMES,
     RANK_THRESHOLDS = RANK_THRESHOLDS,

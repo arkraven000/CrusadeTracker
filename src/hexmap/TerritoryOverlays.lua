@@ -342,7 +342,7 @@ function TerritoryOverlays.setOverlayTransparency(alpha)
         end
     end
 
-    log("Overlay transparency updated for " .. Utils.tableCount(TerritoryOverlays.overlays) .. " overlays")
+    log("Overlay transparency updated for " .. Utils.tableSize(TerritoryOverlays.overlays) .. " overlays")
 end
 
 -- ============================================================================

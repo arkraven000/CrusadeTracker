@@ -26,8 +26,8 @@ local getUnitStatistics, getTopUnits, getBattleStatistics, getPlayerLeaderboard
 getCampaignOverview = function(campaign)
     local stats = {
         campaignName = campaign.name,
-        totalPlayers = Utils.tableCount(campaign.players),
-        totalUnits = Utils.tableCount(campaign.units),
+        totalPlayers = Utils.tableSize(campaign.players),
+        totalUnits = Utils.tableSize(campaign.units),
         totalBattles = #campaign.battles,
         activePlayers = 0,
         totalSupplyUsed = 0,

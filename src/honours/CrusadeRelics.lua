@@ -284,17 +284,16 @@ applyCrusadeRelic = function(unit, relicName, campaignLog)
 
     -- Log event
     if campaignLog then
-        table.insert(campaignLog, {
-            type = "CRUSADE_RELIC_GAINED",
-            timestamp = Utils.getUnixTimestamp(),
-            details = {
+        table.insert(campaignLog, DataModel.createEventLogEntry(
+            "CRUSADE_RELIC_GAINED",
+            {
                 unit = unit.name,
                 relic = relicName,
                 tier = relicDef.tier,
                 cpCost = relicDef.crusadePointsCost,
                 totalHonours = #unit.battleHonours
             }
-        })
+        ))
     end
 
     local message = string.format(
@@ -357,17 +356,16 @@ removeCrusadeRelic = function(unit, relicName, campaignLog)
 
             -- Log event
             if campaignLog then
-                table.insert(campaignLog, {
-                    type = "CRUSADE_RELIC_REMOVED",
-                    timestamp = Utils.getUnixTimestamp(),
-                    details = {
+                table.insert(campaignLog, DataModel.createEventLogEntry(
+                    "CRUSADE_RELIC_REMOVED",
+                    {
                         unit = unit.name,
                         relic = relicName,
                         tier = tier,
                         cpCost = cpCost,
                         remainingHonours = #unit.battleHonours
                     }
-                })
+                ))
             end
 
             local message = string.format(

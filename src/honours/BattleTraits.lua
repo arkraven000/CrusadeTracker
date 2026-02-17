@@ -43,12 +43,16 @@ end
 -- @param faction string Faction name
 -- @return table Array of all available battle trait definitions
 getAllBattleTraits = function(faction)
-    local allTraits = getGenericBattleTraits()
+    -- Shallow copy generic traits to avoid mutating the shared Constants table
+    local allTraits = {}
+    for _, trait in ipairs(getGenericBattleTraits()) do
+        allTraits[#allTraits + 1] = trait
+    end
 
     -- Add faction-specific traits
     local factionTraits = getFactionBattleTraits(faction)
     for _, trait in ipairs(factionTraits) do
-        table.insert(allTraits, trait)
+        allTraits[#allTraits + 1] = trait
     end
 
     return allTraits
