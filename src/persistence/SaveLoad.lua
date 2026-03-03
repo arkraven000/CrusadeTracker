@@ -271,7 +271,7 @@ importCampaignJSON = function(jsonString)
             exportData.version,
             Constants.CAMPAIGN_VERSION
         ))
-        -- TODO: Implement migration if needed
+        -- DEFERRED(v2): Data migration between campaign versions. Not needed until a breaking schema change.
     end
 
     local campaign = exportData.campaign

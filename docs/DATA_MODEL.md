@@ -41,14 +41,13 @@ Root data structure containing all campaign data.
     -- Metadata
     id*: string,                    -- Unique campaign ID (GUID)
     name*: string,                  -- Campaign name
-    createdAt*: number,             -- Unix timestamp
-    lastModified*: number,          -- Unix timestamp
+    createdDate*: number,            -- Unix timestamp
     version*: string,               -- Mod version (e.g., "1.0.0-alpha")
 
     -- Configuration
     config*: {
         edition: string,            -- "10th" (default)
-        supplyLimit: number,        -- 50 (default)
+        supplyLimitDefault: number, -- 50 (default)
         allowNegativeCP: boolean,   -- true (default)
         autosaveInterval: number,   -- 300 seconds (default)
         enableMapSystem: boolean,   -- true (default)
@@ -63,8 +62,8 @@ Root data structure containing all campaign data.
         [unitId]: Unit              -- Keyed by unit GUID
     },
 
-    battles*: {
-        [battleId]: BattleRecord    -- Keyed by battle GUID
+    battles*: {                     -- Array of BattleRecord (indexed, not keyed)
+        BattleRecord, ...
     },
 
     -- Map System
@@ -83,7 +82,7 @@ Root data structure containing all campaign data.
     },
 
     -- Event Log
-    eventLog*: {
+    log*: {
         {
             timestamp: number,
             type: string,
@@ -121,7 +120,7 @@ Represents a player/faction in the campaign.
     supplyLimit*: number,           -- Max CP allowed
 
     -- Order of Battle
-    unitIds*: {                     -- Array of unit GUIDs
+    orderOfBattle*: {               -- Array of unit GUIDs
         string, string, ...
     },
 
@@ -142,8 +141,7 @@ Represents a player/faction in the campaign.
     isAI: boolean,                  -- false (default)
 
     -- Metadata
-    createdAt: number,
-    lastModified: number
+    joinedDate: number              -- Unix timestamp
 }
 ```
 
@@ -236,8 +234,7 @@ Complete Crusade card data for a unit.
     notes: string,                  -- Custom notes
 
     -- Metadata
-    createdAt: number,
-    lastModified: number,
+    createdDate: number,            -- Unix timestamp
     importedFrom: string            -- "newrecruit", "manual", etc.
 }
 ```
@@ -245,8 +242,8 @@ Complete Crusade card data for a unit.
 **Factory Function**: `DataModel.createUnit(name, unitType, role, powerLevel)`
 
 **Key Calculations**:
-- `rank = floor(XP / 6) + 1` (max 5)
-- `crusadePoints = floor(XP / 5) + honoursCP - scarsCP`
+- Rank determined by XP thresholds (see Constants.RANK_THRESHOLDS)
+- `crusadePoints = Battle Honours CP - Battle Scars count`
 
 ---
 
@@ -432,7 +429,7 @@ Multi-player alliance.
     memberIds*: {string},           -- Player IDs
     sharedTerritories: boolean,     -- Share territory control
     sharedResources: boolean,       -- Share RP/resources
-    createdAt: number
+    createdDate: number             -- Unix timestamp
 }
 ```
 
@@ -552,7 +549,7 @@ assert(#campaign.players <= 20, "Maximum 20 players")
 
 -- Unit limit per player
 for playerId, player in pairs(campaign.players) do
-    assert(#player.unitIds <= 50, "Maximum 50 units per player")
+    assert(#player.orderOfBattle <= 50, "Maximum 50 units per player")
 end
 
 -- Supply limit (soft warning)
@@ -661,8 +658,7 @@ When adding new fields:
     combatTallies = 12,
     battlesParticipated = 7,
     timesMVP = 2,
-    createdAt = 1699564800,
-    lastModified = 1699651200
+    createdDate = 1699564800
 }
 ```
 

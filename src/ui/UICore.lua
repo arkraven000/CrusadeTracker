@@ -614,7 +614,7 @@ function UICore.showNotification(message, messageType)
 
     broadcastToAll(message, color)
 
-    -- TODO: Add in-UI notification panel
+    -- DEFERRED(v2): In-UI notification panel. broadcastToAll() is sufficient for v1.
 end
 
 --- Show notification to specific player
@@ -886,38 +886,7 @@ end
 -- @param moduleName string Module identifier
 -- @param moduleRef table Module reference
 function UICore.registerModule(moduleName, moduleRef)
-    if moduleName == "campaignSetup" then
-        UICore.campaignSetupModule = moduleRef
-    elseif moduleName == "playerManagement" then
-        UICore.playerManagementModule = moduleRef
-    elseif moduleName == "settings" then
-        UICore.settingsModule = moduleRef
-    elseif moduleName == "campaignLog" then
-        UICore.campaignLogModule = moduleRef
-    elseif moduleName == "manageForces" then
-        UICore.manageForcesModule = moduleRef
-    elseif moduleName == "unitDetails" then
-        UICore.unitDetailsModule = moduleRef
-    elseif moduleName == "newRecruit" then
-        UICore.newRecruitModule = moduleRef
-    elseif moduleName == "mapView" then
-        UICore.mapViewModule = moduleRef
-    elseif moduleName == "mapControls" then
-        UICore.mapControlsModule = moduleRef
-    elseif moduleName == "battleLog" then
-        UICore.battleLogModule = moduleRef
-    elseif moduleName == "supplement" then
-        UICore.supplementModule = moduleRef
-    elseif moduleName == "battleHonours" then
-        UICore.battleHonoursModule = moduleRef
-    elseif moduleName == "requisitionsMenu" then
-        UICore.requisitionsMenuModule = moduleRef
-    elseif moduleName == "exportImport" then
-        UICore.exportImportModule = moduleRef
-    elseif moduleName == "statisticsPanel" then
-        UICore.statisticsPanelModule = moduleRef
-    end
-
+    UICore[moduleName .. "Module"] = moduleRef
     log("UI module registered: " .. moduleName)
 end
 
