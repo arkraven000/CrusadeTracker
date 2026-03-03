@@ -198,10 +198,8 @@ CrusadeCampaign
 ## Git & Branch Status
 
 - **Default branch**: `origin/main`
-- **Current branch**: `claude/add-claude-documentation-g1MpU`
-- **All feature branches are merged** — no outstanding unmerged branches
-- All development was done in 10 phases via feature branches, all merged to main through PRs #1-#9
-- The latest merge (PR #9) includes critical TTS integration fixes
+- All development was done in 10 phases via feature branches, all merged to main
+- Post-development cleanup has been performed (global namespace fixes, validator corrections, UI wiring, code quality)
 
 ## Common Pitfalls
 

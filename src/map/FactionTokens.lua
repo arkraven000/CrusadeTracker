@@ -275,7 +275,7 @@ function FactionTokens.canPlaceToken(hexKey, playerId, tokenType)
     end
 
     -- Check if player controls the hex (optional rule)
-    if hex.controllerId and hex.controllerId ~= playerId then
+    if hex.controlledBy and hex.controlledBy ~= playerId then
         return false, "Hex controlled by another player"
     end
 
